@@ -1,8 +1,15 @@
 <template>
   <div class="project-container">
     <header class="header">
-      <h1>PikuTrade</h1>
-      <p class="subtitle">Un bot de trading crypto innovant avec Bitget</p>
+      <div class="flex-container">
+        <div class="image-container">
+          <img :src="require('@/assets/image/pikuTradeLogo.png')" alt="Logo PikuTrade" class="header-image"/>
+        </div>
+        <div class="text-container">
+          <h1>PikuTrade</h1>
+          <p class="subtitle">Un bot de trading crypto innovant avec Bitget</p>
+        </div>
+      </div>
     </header>
 
     <section class="about-project">
@@ -135,6 +142,22 @@ export default class PikuTradeComponent extends Vue {
   margin-bottom: 20px;
 }
 
+.flex-container {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.image-container {
+  flex: 1;
+  padding: 10px;
+}
+
+.text-container {
+  flex: 2;
+  padding: 10px;
+}
+
 .subtitle {
   font-size: 1.2em;
   color: var(--sub-color);
@@ -154,7 +177,8 @@ export default class PikuTradeComponent extends Vue {
 }
 
 .api-image,
-.chart-image {
+.chart-image,
+.header-image {
   max-width: 100%;
   height: auto;
   border: 1px solid #ddd;
