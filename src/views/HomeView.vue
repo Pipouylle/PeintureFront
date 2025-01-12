@@ -1,12 +1,12 @@
 <script lang="ts">
 
-import {Component, Vue, Watch} from "vue-facing-decorator";
+import {Component, Vue} from "vue-facing-decorator";
 import ProjectPreviewList from "@/component/ProjectPreviewList.vue";
-import Footer from "@/component/common/Footer.vue";
+import NavBar from "@/component/common/NavBar.vue";
 
 @Component({
   components: {
-    Footer,
+    NavBar,
     ProjectPreviewList
   },
 
@@ -16,8 +16,8 @@ export default class HomeView extends Vue {
 </script>
 
 <template>
+  <NavBar/>
   <project-preview-list/>
-  <Footer/>
 </template>
 
 <style scoped>
