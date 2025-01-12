@@ -1,13 +1,23 @@
 <script lang="ts">
 import { Vue, Component } from 'vue-facing-decorator';
 import {useColorStore} from "@/stores";
+import {useRouter} from "vue-router";
 
 @Component({})
 export default class NavBar extends Vue {
   private colorStore = useColorStore();
+  private router = useRouter();
 
   private toggleTheme() {
     this.colorStore.toggleTheme();
+  }
+
+  private navigateToHome() {
+    this.router.push({ name: 'home' });
+  }
+
+  private navigateToAbout() {
+    this.router.push({ name: 'about' });
   }
 }
 </script>
@@ -15,8 +25,8 @@ export default class NavBar extends Vue {
 <template>
   <header class="header">
     <div class="top">
-      <a href="/" class="mdi mdi-home"></a>
-      <a href="/about" class="mdi mdi-information"></a>
+      <a @click="navigateToHome" class="mdi mdi-home"></a>
+      <a @click="navigateToAbout" class="mdi mdi-information"></a>
       <a href="/path-to-your-cv.pdf" download class="mdi mdi-file-download"></a>
     </div>
     <button @click="toggleTheme" class="theme-toggle-btn">
@@ -65,6 +75,7 @@ export default class NavBar extends Vue {
 }
 
 .header a:hover {
+  cursor: pointer;
   color: #ddd;
 }
 

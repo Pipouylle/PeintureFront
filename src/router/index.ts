@@ -1,6 +1,6 @@
 import {createRouter, createWebHistory, RouteRecordRaw} from "vue-router";
 import HomeView from "@/views/HomeView.vue";
-import PikueTradeProjet from "@/views/PikueTradeProjet.vue";
+import PikuTradeView from "@/views/PikuTradeView.vue";
 import About from "@/views/About.vue";
 
 
@@ -16,9 +16,14 @@ const routes: Array<RouteRecordRaw> = [
         component: About,
     },
     {
-        path: "/projet1",
-        name: "projet1",
-        component: PikueTradeProjet,
+        path: "/home",
+        name: "homeAlias",
+        component: HomeView,
+    },
+    {
+        path: "/pikuTrade",
+        name: "pikuTrade",
+        component: PikuTradeView,
     },
 
 ];

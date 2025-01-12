@@ -2,20 +2,20 @@
 import {Vue, Component} from 'vue-facing-decorator';
 import ProjectPreview from "@/component/ProjectPreview.vue";
 import ProjectPreviewModel from "@/models/ProjectPreviewModel";
-import PikueTradeProjet from "@/views/PikueTradeProjet.vue";
 import CGJProject2 from "@/views/CGJProject2.vue";
 import CGJProject3 from "@/views/CGJProject3.vue";
 import CGJProject4 from "@/views/CGJProject4.vue";
+import PikuTradeComponent from "@/component/project/PikuTradeComponent.vue";
 
 @Component({
   components: {ProjectPreview},
 })
 export default class ProjectPreviewList extends Vue {
   private list: ProjectPreviewModel[] = [
-    {title: "Projet 1", project: PikueTradeProjet},
-    {title: "Projet 2", project: CGJProject2},
-    {title: "Projet 3", project: CGJProject3},
-    {title: "Projet 4", project: CGJProject4},
+    {pathToProject: "pikuTrade", project: PikuTradeComponent},
+    {pathToProject: "Projet 2", project: CGJProject2},
+    {pathToProject: "Projet 3", project: CGJProject3},
+    {pathToProject: "Projet 4", project: CGJProject4},
   ];
 
   private suivant: ProjectPreviewModel = this.list[1];
@@ -80,6 +80,7 @@ export default class ProjectPreviewList extends Vue {
     this.index = this.modulo(this.index + 1, this.list.length);
     this.update();
   }
+
   private update(): void {
     this.suivant = this.list[this.modulo(this.index + 1, this.list.length)];
     this.courant = this.list[this.modulo(this.index, this.list.length)];
@@ -113,25 +114,24 @@ export default class ProjectPreviewList extends Vue {
     </div>
     <div class="preview-cards">
       <project-preview @click="scrollAvant"
-                       :title="precedent.title"
-                       :project="precedent.project"
+                       :model="precedent"
+
                        class="back-cards"
       />
       <project-preview
-          :title="courant.title"
-          :project="courant.project"
+          :model="courant"
           :can-redirect="true"
           size-prop="30"
           class="front-card"
       />
       <project-preview @click="scrollApres"
-                       :title="suivant.title"
-                       :project="suivant.project"
+                       :model="suivant"
                        class="back-cards"
       />
     </div>
     <div v-if="!isMobile" class="dots">
-      <span v-for="(item, dotIndex) in list" :key="dotIndex" :class="getDotClass(dotIndex)" @click="scrollToIndex(dotIndex)"></span>
+      <span v-for="(item, dotIndex) in list" :key="dotIndex" :class="getDotClass(dotIndex)"
+            @click="scrollToIndex(dotIndex)"></span>
     </div>
   </div>
 </template>

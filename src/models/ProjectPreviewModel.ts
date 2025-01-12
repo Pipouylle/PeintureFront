@@ -1,6 +1,6 @@
 import { Component } from "vue";
 
 export default interface ProjectPreviewModel {
-    title: string;
+    pathToProject: string;
     project: Component;
 }

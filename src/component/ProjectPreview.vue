@@ -1,13 +1,13 @@
 <script lang="ts">
 import {Vue, Component, Prop, Inject} from 'vue-facing-decorator';
 import {useRouter} from "vue-router";
+import ProjectPreviewModel from "@/models/ProjectPreviewModel";
 
 @Component({})
 export default class ProjectPreview extends Vue {
-  @Prop({required: true}) private title!: string;
+  @Prop({required: true}) private model!: ProjectPreviewModel;
   @Prop({required: false}) private sizeProp?: number;
   @Prop({required: false}) private canRedirect?: boolean;
-  @Prop({required: true}) private project!: typeof Vue; // Accepte n'importe quel composant
   private router = useRouter();
   private size: number = 25;
 
@@ -18,7 +18,7 @@ export default class ProjectPreview extends Vue {
       card.classList.add('animate');
       await new Promise((resolve) => setTimeout(resolve, 500));
       card.classList.remove('animate');
-      this.router.push({name: this.title.replaceAll(" ", "").toLowerCase()});
+      await this.router.push({name: this.model.pathToProject});
     }
   }
 
@@ -36,7 +36,7 @@ export default class ProjectPreview extends Vue {
       <div class="faded-top" :style="{ height: size + 'vh' }">
         <div class="blurry-content">
           <!-- Rend dynamiquement n'importe quel composant transmis -->
-          <component :is="project"/>
+          <component :is="this.model.project"/>
         </div>
       </div>
     </div>
