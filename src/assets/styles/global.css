@@ -1,18 +1,21 @@
 :root {
     --navbar-background-color: #373737;
     --background-color: #333333;
+    --h2-color: #cdc6c6;
     --text-color: #ffffff;
 }
 
 [data-theme="dark"] {
     --navbar-background-color: #373737;
     --background-color: #333333;
+    --h2-color: #cdc6c6;
     --text-color: #ffffff;
 }
 
 [data-theme="light"] {
     --navbar-background-color: #ffffff;
     --background-color: #ffffff;
+    --h2-color:  #333;;
     --text-color: #000000;
 }
 

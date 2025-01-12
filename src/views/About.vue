@@ -74,8 +74,8 @@ export default class About extends Vue {
   display: flex;
   flex-direction: column;
   align-items: center;
-  max-width: 80%; /* Adjust the width as needed */
-  margin: 0 auto; /* Center the content */
+  max-width: 80%;
+  margin: 0 auto;
 }
 
 .about-page {
@@ -90,13 +90,13 @@ section {
 
 h2 {
   font-size: 1.8rem;
-  color: #333;
+  color: var(--h2-color);
   margin-bottom: 10px;
 }
 
 p, ul {
   font-size: 1.2rem;
-  color: #555;
+  color: var(--text-color);
 }
 
 ul {
