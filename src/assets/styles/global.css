@@ -2,6 +2,7 @@
     --navbar-background-color: #373737;
     --background-color: #333333;
     --h2-color: #cdc6c6;
+    --sub-color: #666;
     --text-color: #ffffff;
 }
 
@@ -9,6 +10,7 @@
     --navbar-background-color: #373737;
     --background-color: #333333;
     --h2-color: #cdc6c6;
+    --sub-color: #9a9898;
     --text-color: #ffffff;
 }
 
@@ -16,6 +18,7 @@
     --navbar-background-color: #ffffff;
     --background-color: #ffffff;
     --h2-color:  #333;;
+    --sub-color: #666;
     --text-color: #000000;
 }
 
