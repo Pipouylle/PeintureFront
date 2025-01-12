@@ -12,16 +12,20 @@ export default class ProjectPreview extends Vue {
   private size: number = 25;
 
 
-  private navigateToProject() {
-    if(this.canRedirect)
+  private async navigateToProject() {
+    if (this.canRedirect) {
+      const card = this.$el as HTMLElement;
+      card.classList.add('animate');
+      await new Promise((resolve) => setTimeout(resolve, 500));
+      card.classList.remove('animate');
       this.router.push({name: this.title.replaceAll(" ", "").toLowerCase()});
+    }
   }
 
   public mounted() {
     if (this.sizeProp) {
       this.size = this.sizeProp;
     }
-    console.log(this.size);
   }
 }
 </script>
@@ -63,5 +67,25 @@ export default class ProjectPreview extends Vue {
   height: 100%;
   background: linear-gradient(to top, rgba(255, 255, 255, 1), rgba(255, 255, 255, 0));
   pointer-events: none;
+}
+
+.animate {
+  animation: growAndFade 0.5s ease forwards;
+}
+
+
+@keyframes growAndFade {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.2);
+    opacity: 0.8;
+  }
+  100% {
+    transform: scale(0.7);
+    opacity: 0;
+  }
 }
 </style>

@@ -69,15 +69,12 @@ export default class NavBar extends Vue {
   color: #FF5722;
 }
 
-
-
-
 .header a.mdi-linkedin:hover {
-  color: #0077B5; /* Couleur officielle de LinkedIn */
+  color: #0077B5;
 }
 
 .header a.mdi-github:hover {
-  color: #6e5494; /* Couleur violette GitHub */
+  color: #333;
 }
 
 .header a.mdi-gmail:hover {
