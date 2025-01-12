@@ -115,7 +115,6 @@ export default class ProjectPreviewList extends Vue {
     <div class="preview-cards">
       <project-preview @click="scrollAvant"
                        :model="precedent"
-
                        class="back-cards"
       />
       <project-preview

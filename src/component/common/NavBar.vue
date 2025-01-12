@@ -25,18 +25,18 @@ export default class NavBar extends Vue {
 <template>
   <header class="header">
     <div class="top">
-      <a @click="navigateToHome" class="mdi mdi-home"></a>
-      <a @click="navigateToAbout" class="mdi mdi-information"></a>
-      <a href="/path-to-your-cv.pdf" download class="mdi mdi-file-download"></a>
+      <a @click="navigateToHome" class="mdi mdi-home" v-tooltip="'Accueil'"></a>
+      <a @click="navigateToAbout" class="mdi mdi-information" v-tooltip="'À Propos de moi'"></a>
+      <a href="/path-to-your-cv.pdf" download class="mdi mdi-file-download" v-tooltip="'Télécharger mon CV'"></a>
     </div>
     <button @click="toggleTheme" class="theme-toggle-btn">
       <span v-if="colorStore.isLightTheme" class="mdi mdi-weather-night"></span>
       <span v-else class="mdi mdi-white-balance-sunny"></span>
     </button>
     <div class="bottom">
-      <a href="https://www.linkedin.com/in/your-profile" target="_blank" class="mdi mdi-linkedin"></a>
-      <a href="https://github.com/your-profile" target="_blank" class="mdi mdi-github"></a>
-      <a href="mailto:your-email@example.com" class="mdi mdi-gmail"></a>
+      <a href="https://www.linkedin.com/in/your-profile" target="_blank" class="mdi mdi-linkedin" v-tooltip="'LinkedIn'"></a>
+      <a href="https://github.com/your-profile" target="_blank" class="mdi mdi-github" v-tooltip="'GitHub'"></a>
+      <a href="mailto:your-email@example.com" class="mdi mdi-gmail" v-tooltip="'Mail'"></a>
     </div>
   </header>
 </template>
