@@ -3,6 +3,7 @@ import HomeView from "@/views/HomeView.vue";
 import PikuTradeView from "@/views/PikuTradeView.vue";
 import SubnauticaModeView from "@/views/SubnauticaModeView.vue";
 import About from "@/views/About.vue";
+import CGJView from "@/views/CGJView.vue";
 
 
 const routes: Array<RouteRecordRaw> = [
@@ -30,6 +31,11 @@ const routes: Array<RouteRecordRaw> = [
         path: "/subnautica",
         name: "subnautica",
         component: SubnauticaModeView,
+    },
+    {
+        path: "/codeGameJam",
+        name: "cgj",
+        component: CGJView,
     },
 
 ];
