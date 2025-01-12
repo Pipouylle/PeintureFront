@@ -1,6 +1,7 @@
 import {createRouter, createWebHistory, RouteRecordRaw} from "vue-router";
 import HomeView from "@/views/HomeView.vue";
 import CGJProject1 from "@/views/CGJProject.vue";
+import About from "@/views/About.vue";
 
 
 const routes: Array<RouteRecordRaw> = [
@@ -13,7 +14,12 @@ const routes: Array<RouteRecordRaw> = [
         path: "/projet1",
         name: "projet1",
         component: CGJProject1,
-    }
+    },
+    {
+        path: "/about",
+        name: "about",
+        component: About,
+    },
 ];
 
 const router = createRouter({
