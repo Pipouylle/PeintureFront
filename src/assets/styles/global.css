@@ -1,0 +1,22 @@
+:root {
+    --navbar-background-color: #1a1a1a;
+    --background-color: #333333;
+    --text-color: #ffffff;
+}
+
+[data-theme="dark"] {
+    --navbar-background-color: #1a1a1a;
+    --background-color: #333333;
+    --text-color: #ffffff;
+}
+
+[data-theme="light"] {
+    --navbar-background-color: #ffffff;
+    --background-color: #ffffff;
+    --text-color: #000000;
+}
+
+body {
+    background-color: var(--background-color);
+    color: var(--text-color);
+}

@@ -1,9 +1,14 @@
 <script lang="ts">
-import {Vue, Component} from 'vue-facing-decorator';
+import { Vue, Component } from 'vue-facing-decorator';
+import {useColorStore} from "@/stores";
 
 @Component({})
 export default class NavBar extends Vue {
+  private colorStore = useColorStore();
 
+  private toggleTheme() {
+    this.colorStore.toggleTheme();
+  }
 }
 </script>
 
@@ -14,6 +19,10 @@ export default class NavBar extends Vue {
       <a href="/about" class="mdi mdi-information"></a>
       <a href="/path-to-your-cv.pdf" download class="mdi mdi-file-download"></a>
     </div>
+    <button @click="toggleTheme" class="theme-toggle-btn">
+      <span v-if="colorStore.isLightTheme">Dark Mode</span>
+      <span v-else>Light Mode</span>
+    </button>
     <div class="bottom">
       <a href="https://www.linkedin.com/in/your-profile" target="_blank" class="mdi mdi-linkedin"></a>
       <a href="https://github.com/your-profile" target="_blank" class="mdi mdi-github"></a>
@@ -29,14 +38,16 @@ export default class NavBar extends Vue {
   left: 0;
   width: 5%;
   height: 100%;
-  background-color: #333;
-  color: white;
+  background-color: var(--navbar-background-color);
+  color: var(--text-color);
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   align-items: center;
   padding: 10px 0;
   z-index: 1000;
+  border-top-right-radius: 10px;
+  border-bottom-right-radius: 10px;
 }
 
 .header .top, .header .bottom {
@@ -46,7 +57,7 @@ export default class NavBar extends Vue {
 }
 
 .header a {
-  color: white;
+  color: var(--text-color);
   margin: 20px 0;
   font-size: 24px;
   text-decoration: none;
