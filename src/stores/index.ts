@@ -13,5 +13,6 @@ export const useColorStore = defineStore('colorStore', {
             document.documentElement.setAttribute('data-theme', this.isLightTheme ? 'light' : 'dark');
         },
     },
+
 });
 

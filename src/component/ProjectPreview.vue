@@ -31,7 +31,7 @@ export default class ProjectPreview extends Vue {
 </script>
 
 <template>
-  <v-card class="project-card" @click="navigateToProject">
+  <v-card class="project-card" @click="navigateToProject" :ripple="false">
     <div class="text-container">
       <div class="faded-top" :style="{ height: size + 'vh' }">
         <div class="blurry-content">
