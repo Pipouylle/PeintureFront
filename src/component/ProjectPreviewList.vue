@@ -1,5 +1,5 @@
 <script lang="ts">
-import { Vue, Component } from 'vue-facing-decorator';
+import {Vue, Component} from 'vue-facing-decorator';
 import ProjectPreview from "@/component/ProjectPreview.vue";
 import ProjectPreviewModel from "@/models/ProjectPreviewModel";
 import CGJProject from "@/views/CGJProject.vue";
@@ -8,14 +8,14 @@ import CGJProject3 from "@/views/CGJProject3.vue";
 import CGJProject4 from "@/views/CGJProject4.vue";
 
 @Component({
-  components: { ProjectPreview },
+  components: {ProjectPreview},
 })
 export default class ProjectPreviewList extends Vue {
   private list: ProjectPreviewModel[] = [
-    { title: "Projet 1", description: "Description du projet 1", project: CGJProject },
-    { title: "Projet 2", description: "Description du projet 2", project: CGJProject2 },
-    { title: "Projet 3", description: "Description du projet 3", project: CGJProject3 },
-    { title: "Projet 4", description: "Description du projet 4", project: CGJProject4 },
+    {title: "Projet 1", description: "Description du projet 1", project: CGJProject},
+    {title: "Projet 2", description: "Description du projet 2", project: CGJProject2},
+    {title: "Projet 3", description: "Description du projet 3", project: CGJProject3},
+    {title: "Projet 4", description: "Description du projet 4", project: CGJProject4},
   ];
 
   private suivant: ProjectPreviewModel = this.list[1];
@@ -29,7 +29,7 @@ export default class ProjectPreviewList extends Vue {
     this.detectDevice();
     window.addEventListener("resize", this.detectDevice);
     if (!this.isMobile) {
-      window.addEventListener("wheel", this.handleScroll, { passive: true });
+      window.addEventListener("wheel", this.handleScroll, {passive: true});
       window.addEventListener("keydown", this.handleKeydown); // Ajout de l'écoute du clavier
     }
   }
@@ -43,7 +43,7 @@ export default class ProjectPreviewList extends Vue {
   }
 
   private detectDevice() {
-    this.isMobile = window.innerWidth <= 768;
+    this.isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);;
   }
 
   private handleScroll(event: WheelEvent) {
@@ -94,8 +94,8 @@ export default class ProjectPreviewList extends Vue {
   <div class="list-container">
     <!-- Boutons visibles uniquement sur mobile -->
     <div v-if="isMobile" class="nav-btn">
-      <v-btn  @click="scrollAvant">Précédent</v-btn>
-      <v-btn  @click="scrollApres">Suivant</v-btn>
+      <v-btn @click="scrollAvant">Précédent</v-btn>
+      <v-btn @click="scrollApres">Suivant</v-btn>
 
     </div>
     <div class="preview-cards">
@@ -118,7 +118,7 @@ export default class ProjectPreviewList extends Vue {
           class="project-card back-cards"
       />
     </div>
-</div>
+  </div>
 </template>
 
 
