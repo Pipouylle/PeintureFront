@@ -30,6 +30,7 @@ export default class ProjectPreviewList extends Vue {
     window.addEventListener("resize", this.detectDevice);
     if (!this.isMobile) {
       window.addEventListener("wheel", this.handleScroll, { passive: true });
+      window.addEventListener("keydown", this.handleKeydown); // Ajout de l'écoute du clavier
     }
   }
 
@@ -37,11 +38,12 @@ export default class ProjectPreviewList extends Vue {
     window.removeEventListener("resize", this.detectDevice);
     if (!this.isMobile) {
       window.removeEventListener("wheel", this.handleScroll);
+      window.removeEventListener("keydown", this.handleKeydown); // Suppression de l'écoute du clavier
     }
   }
 
   private detectDevice() {
-    this.isMobile = window.innerWidth <= 768; // Détecte un écran mobile (max largeur 768px)
+    this.isMobile = window.innerWidth <= 768;
   }
 
   private handleScroll(event: WheelEvent) {
@@ -53,6 +55,14 @@ export default class ProjectPreviewList extends Vue {
     if (delta > 0) {
       this.scrollApres();
     } else {
+      this.scrollAvant();
+    }
+  }
+
+  private handleKeydown(event: KeyboardEvent) {
+    if (event.key === "ArrowRight" || event.key === "ArrowDown") {
+      this.scrollApres();
+    } else if (event.key === "ArrowLeft" || event.key === "ArrowUp") {
       this.scrollAvant();
     }
   }
@@ -78,7 +88,6 @@ export default class ProjectPreviewList extends Vue {
   }
 }
 </script>
-
 
 <template>
   <div class="list-container">
