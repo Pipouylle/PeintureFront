@@ -1,9 +1,18 @@
+
+
+<script lang="ts">
+import {Vue, Component} from 'vue-facing-decorator';
+
+@Component({})
+export default class PikuTradeComponent extends Vue {
+}
+</script>
 <template>
   <div class="project-container">
-    <header class="header">
+    <div class="header">
       <h1>PikuTrade</h1>
       <p class="subtitle">Un bot de trading crypto innovant avec Bitget</p>
-    </header>
+    </div>
 
     <section class="about-project">
       <h2>À propos du projet</h2>
@@ -71,19 +80,11 @@
     </section>
   </div>
 </template>
-
-<script lang="ts">
-import {Vue, Component} from 'vue-facing-decorator';
-
-@Component({})
-export default class PikuTradeComponent extends Vue {
-}
-</script>
-
 <style scoped>
 .project-container {
   font-family: Arial, sans-serif;
   line-height: 1.6;
+  background-color: var(--background-color);
   color: var(--text-color);
   max-width: 800px;
   margin: 0 auto;
