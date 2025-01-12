@@ -5,6 +5,7 @@ import ProjectPreviewModel from "@/models/ProjectPreviewModel";
 import PikuTradeComponent from "@/component/project/PikuTradeComponent.vue";
 import SubnauticaModComponent from "@/component/project/SubnauticaModeComponent.vue";
 import CGJComponent from "@/component/project/CGJComponent.vue";
+import ReferundumComponent from "@/component/project/ReferundumComponent.vue";
 
 @Component({
   components: {ProjectPreview},
@@ -14,6 +15,7 @@ export default class ProjectPreviewList extends Vue {
     {pathToProject: "pikuTrade", project: PikuTradeComponent},
     {pathToProject: "subnautica", project: SubnauticaModComponent},
     {pathToProject: "cgj", project: CGJComponent},
+    {pathToProject: "referendum", project: ReferundumComponent},
   ];
 
   private suivant: ProjectPreviewModel = this.list[1];
