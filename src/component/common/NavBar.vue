@@ -27,7 +27,7 @@ export default class NavBar extends Vue {
     <div class="top">
       <a @click="navigateToHome" class="mdi mdi-home" v-tooltip="'Accueil'"></a>
       <a @click="navigateToAbout" class="mdi mdi-information" v-tooltip="'À Propos de moi'"></a>
-      <a href="/public/CV.pdf" download="CV_Johan_Merlo.pdf" class="mdi mdi-file-download"
+      <a href="/CV.pdf" class="mdi mdi-file-download"
          v-tooltip="'Télécharger mon CV'"></a></div>
     <button @click="toggleTheme" class="theme-toggle-btn">
       <span v-if="colorStore.isLightTheme" class="mdi mdi-weather-night"></span>

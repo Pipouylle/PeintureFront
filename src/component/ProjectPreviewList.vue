@@ -118,7 +118,6 @@ export default class ProjectPreviewList extends Vue {
       <project-preview
           :model="courant"
           :can-redirect="true"
-          size-prop="30"
           class="front-card"
       />
       <project-preview @click="scrollApres"

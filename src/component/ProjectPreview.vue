@@ -9,7 +9,6 @@ export default class ProjectPreview extends Vue {
   @Prop({required: false}) private sizeProp?: number;
   @Prop({required: false}) private canRedirect?: boolean;
   private router = useRouter();
-  private size: number = 25;
 
 
   private async navigateToProject() {
@@ -22,17 +21,13 @@ export default class ProjectPreview extends Vue {
     }
   }
 
-  public mounted() {
-    if (this.sizeProp) {
-      this.size = this.sizeProp;
-    }
-  }
+
 }
 </script>
 
 <template>
-  <div class="project-card" @click="navigateToProject" :ripple="false">
-    <div class="faded-top" :style="{ height: size + 'vh' }">
+  <div class="project-card" @click="navigateToProject">
+    <div class="faded-top">
       <component :is="this.model.project"/>
     </div>
   </div>
@@ -40,7 +35,7 @@ export default class ProjectPreview extends Vue {
 
 <style scoped>
 .project-card {
-  width: 100%;
+  width: 80%;
   height: 100%;
   overflow: hidden;
   display: flex;
@@ -50,7 +45,8 @@ export default class ProjectPreview extends Vue {
   border-radius: 1em; /* Bord arrondi basé sur des unités relatives */
   transition: transform 0.4s, box-shadow 0.2s;
 }
-.project-card:hover{
+
+.project-card:hover {
   cursor: pointer;
 }
 
