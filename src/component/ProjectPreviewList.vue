@@ -3,6 +3,7 @@ import {Vue, Component} from 'vue-facing-decorator';
 import ProjectPreview from "@/component/ProjectPreview.vue";
 import ProjectPreviewModel from "@/models/ProjectPreviewModel";
 import PikuTradeComponent from "@/component/project/PikuTradeComponent.vue";
+import SubnauticaModComponent from "@/component/project/SubnauticaModeComponent.vue";
 
 @Component({
   components: {ProjectPreview},
@@ -10,7 +11,7 @@ import PikuTradeComponent from "@/component/project/PikuTradeComponent.vue";
 export default class ProjectPreviewList extends Vue {
   private list: ProjectPreviewModel[] = [
     {pathToProject: "pikuTrade", project: PikuTradeComponent},
-    {pathToProject: "pikuTrade", project: PikuTradeComponent},
+    {pathToProject: "subnautica", project: SubnauticaModComponent},
     {pathToProject: "pikuTrade", project: PikuTradeComponent},
   ];
 

@@ -1,6 +1,7 @@
 import {createRouter, createWebHistory, RouteRecordRaw} from "vue-router";
 import HomeView from "@/views/HomeView.vue";
 import PikuTradeView from "@/views/PikuTradeView.vue";
+import SubnauticaModeView from "@/views/SubnauticaModeView.vue";
 import About from "@/views/About.vue";
 
 
@@ -24,6 +25,11 @@ const routes: Array<RouteRecordRaw> = [
         path: "/pikuTrade",
         name: "pikuTrade",
         component: PikuTradeView,
+    },
+    {
+        path: "/subnautica",
+        name: "subnautica",
+        component: SubnauticaModeView,
     },
 
 ];
