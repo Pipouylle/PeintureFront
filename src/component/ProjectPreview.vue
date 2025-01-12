@@ -71,6 +71,4 @@ export default class ProjectPreview extends Vue {
   background: linear-gradient(to top, rgba(255, 255, 255, 1), rgba(255, 255, 255, 0));
   pointer-events: none;
 }
-
-
 </style>
