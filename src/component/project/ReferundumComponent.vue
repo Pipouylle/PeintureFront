@@ -1,6 +1,5 @@
 <template>
   <div class="project-container">
-
     <header class="header">
       <div class="flex-container">
         <div class="image-container">
@@ -91,8 +90,8 @@
         <li>De gérer ça clé côté scrutateur nécessaire au chiffrement des réferendums.</li>
       </ul>
       <div class="double-image-container">
-        <img :src="require('@/assets/image/referendum-view.png')" alt="Referendum view" class="admin-image"/>
-        <img :src="require('@/assets/image/scrutateur-view.png')" alt="Scrutateur view" class="admin-image"/>
+        <img :src="require('@/assets/image/referendum-view.png')" alt="Referendum view" class="admin-image" v-tooltip:="'Vue pour voter'"/>
+        <img :src="require('@/assets/image/scrutateur-view.png')" alt="Scrutateur view" class="admin-image" v-tooltip:="'Vue Gérer sa clé côte scrutateur'"/>
       </div>
     </section>
 
