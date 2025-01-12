@@ -1,23 +1,29 @@
 <script lang="ts">
-import { Vue, Component, Prop } from 'vue-facing-decorator';
+import {Vue, Component, Prop, Inject} from 'vue-facing-decorator';
+import {useRouter} from "vue-router";
 
 @Component({})
 export default class ProjectPreview extends Vue {
-  @Prop({ required: true }) private title!: string;
-  @Prop({ required: true }) private description!: string;
-  @Prop({ required: true }) private project!: typeof Vue; // Accepte n'importe quel composant
+  @Prop({required: true}) private title!: string;
+  @Prop({required: true}) private description!: string;
+  @Prop({required: true}) private project!: typeof Vue; // Accepte n'importe quel composant
+  private router = useRouter();
+
+  private navigateToProject() {
+    this.router.push({name: this.title.replaceAll(" ", "").toLowerCase()});
+  }
 }
 </script>
 
 <template>
-  <v-card class="project-card">
+  <v-card class="project-card" @click="navigateToProject">
     <div class="text-container">
       <div class="title">{{ title }}</div>
       <div class="description">{{ description }}</div>
       <div class="faded-top">
         <div class="blurry-content">
           <!-- Rend dynamiquement n'importe quel composant transmis -->
-          <component :is="project" />
+          <component :is="project"/>
         </div>
       </div>
     </div>
@@ -65,4 +71,6 @@ export default class ProjectPreview extends Vue {
   background: linear-gradient(to top, rgba(255, 255, 255, 1), rgba(255, 255, 255, 0));
   pointer-events: none;
 }
+
+
 </style>

@@ -2,7 +2,7 @@
 import {Vue, Component} from 'vue-facing-decorator';
 
 @Component({})
-export default class Project extends Vue {
+export default class CGJProject1 extends Vue {
 
 }
 </script>

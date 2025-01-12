@@ -1,5 +1,6 @@
 import {createRouter, createWebHistory, RouteRecordRaw} from "vue-router";
 import HomeView from "@/views/HomeView.vue";
+import CGJProject1 from "@/views/CGJProject.vue";
 
 
 const routes: Array<RouteRecordRaw> = [
@@ -7,11 +8,12 @@ const routes: Array<RouteRecordRaw> = [
         path: "/",
         name: "home",
         component: HomeView,
-        meta: {
-            // TODO : Change to true when api will be added
-            security: false
-        }
     },
+    {
+        path: "/projet1",
+        name: "projet1",
+        component: CGJProject1,
+    }
 ];
 
 const router = createRouter({
