@@ -12,10 +12,10 @@ import CGJProject4 from "@/views/CGJProject4.vue";
 })
 export default class ProjectPreviewList extends Vue {
   private list: ProjectPreviewModel[] = [
-    {title: "Projet 1", description: "Description du projet 1", project: CGJProject},
-    {title: "Projet 2", description: "Description du projet 2", project: CGJProject2},
-    {title: "Projet 3", description: "Description du projet 3", project: CGJProject3},
-    {title: "Projet 4", description: "Description du projet 4", project: CGJProject4},
+    {title: "Projet 1", project: CGJProject},
+    {title: "Projet 2",project: CGJProject2},
+    {title: "Projet 3",  project: CGJProject3},
+    {title: "Projet 4", project: CGJProject4},
   ];
 
   private suivant: ProjectPreviewModel = this.list[1];
@@ -109,6 +109,7 @@ export default class ProjectPreviewList extends Vue {
           :title="courant.title"
           :description="courant.description"
           :project="courant.project"
+          size-prop="30"
           class="project-card front-card"
       />
       <project-preview

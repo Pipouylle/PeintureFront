@@ -5,12 +5,21 @@ import {useRouter} from "vue-router";
 @Component({})
 export default class ProjectPreview extends Vue {
   @Prop({required: true}) private title!: string;
-  @Prop({required: true}) private description!: string;
+  @Prop({required: false}) private sizeProp?: number;
   @Prop({required: true}) private project!: typeof Vue; // Accepte n'importe quel composant
   private router = useRouter();
+  private size: number = 25;
+
 
   private navigateToProject() {
     this.router.push({name: this.title.replaceAll(" ", "").toLowerCase()});
+  }
+
+  public mounted() {
+    if (this.sizeProp) {
+      this.size = this.sizeProp;
+    }
+    console.log(this.size);
   }
 }
 </script>
@@ -18,9 +27,7 @@ export default class ProjectPreview extends Vue {
 <template>
   <v-card class="project-card" @click="navigateToProject">
     <div class="text-container">
-      <div class="title">{{ title }}</div>
-      <div class="description">{{ description }}</div>
-      <div class="faded-top">
+      <div class="faded-top" :style="{ height: size + 'vh' }">
         <div class="blurry-content">
           <!-- Rend dynamiquement n'importe quel composant transmis -->
           <component :is="project"/>
@@ -43,22 +50,6 @@ export default class ProjectPreview extends Vue {
 
 .text-container {
   width: 100%; /* Utilisation de 100% pour la largeur */
-}
-
-.title {
-  font-weight: bold;
-  font-size: 1.8rem; /* Taille en rem pour mieux gérer l'accessibilité */
-  text-align: left;
-}
-
-.description {
-  font-size: 1.2rem; /* Taille en rem pour une meilleure échelle sur mobile */
-  text-align: left;
-}
-
-/* Styles pour la div personnalisée */
-.faded-top {
-  height: 15vh; /* Hauteur relative à l'écran en pourcentage */
 }
 
 .faded-top::after {
