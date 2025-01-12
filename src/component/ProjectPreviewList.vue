@@ -67,42 +67,55 @@ export default class ProjectPreviewList extends Vue {
     }
   }
 
+  private modulo(n: number, total: number): number {
+    return ((n % total) + total) % total;
+  }
+
   private scrollAvant() {
-    this.index -= 1;
+    this.index = this.modulo(this.index - 1, this.list.length);
     this.update();
   }
 
   private scrollApres() {
-    this.index += 1;
+    this.index = this.modulo(this.index + 1, this.list.length);
     this.update();
   }
-
   private update(): void {
     this.suivant = this.list[this.modulo(this.index + 1, this.list.length)];
     this.courant = this.list[this.modulo(this.index, this.list.length)];
     this.precedent = this.list[this.modulo(this.index - 1, this.list.length)];
   }
 
-  private modulo(n: number, total: number): number {
-    return ((n % total) + total) % total;
+
+  private getDotClass(dotIndex: number): string {
+    if (dotIndex === this.index) {
+      return 'dot active';
+    } else if (dotIndex === this.modulo(this.index - 1, this.list.length) || dotIndex === this.modulo(this.index + 1, this.list.length)) {
+      return 'dot adjacent';
+    } else {
+      return 'dot';
+    }
+  }
+
+  private scrollToIndex(dotIndex: number) {
+    this.index = dotIndex;
+    this.update();
   }
 }
 </script>
 
 <template>
-
   <div class="list-container">
     <!-- Boutons visibles uniquement sur mobile -->
     <div v-if="isMobile" class="nav-btn">
       <button @click="scrollAvant" class="mdi mdi-menu-up btn"></button>
       <button @click="scrollApres" class="mdi mdi-menu-down btn"></button>
-
     </div>
     <div class="preview-cards">
       <project-preview @click="scrollAvant"
-          :title="precedent.title"
-          :project="precedent.project"
-          class="back-cards"
+                       :title="precedent.title"
+                       :project="precedent.project"
+                       class="back-cards"
       />
       <project-preview
           :title="courant.title"
@@ -112,14 +125,16 @@ export default class ProjectPreviewList extends Vue {
           class="front-card"
       />
       <project-preview @click="scrollApres"
-          :title="suivant.title"
-          :project="suivant.project"
-          class="back-cards"
+                       :title="suivant.title"
+                       :project="suivant.project"
+                       class="back-cards"
       />
+    </div>
+    <div class="dots">
+      <span v-for="(item, dotIndex) in list" :key="dotIndex" :class="getDotClass(dotIndex)" @click="scrollToIndex(dotIndex)"></span>
     </div>
   </div>
 </template>
-
 
 <style scoped>
 .list-container {
@@ -156,7 +171,6 @@ export default class ProjectPreviewList extends Vue {
   transform: scale(0.9);
 }
 
-
 /* Boutons pour mobile */
 .nav-btn {
   display: flex;
@@ -172,4 +186,34 @@ export default class ProjectPreviewList extends Vue {
   border: 2px solid #ccc; /* Ajout d'une bordure fine */
 }
 
+/* Dots styles */
+.dots {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: absolute;
+  right: 10vw;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.dot {
+  width: 12px;
+  height: 12px;
+  background-color: #ccc;
+  border-radius: 50%;
+  margin: 5px 0;
+  cursor: pointer;
+  opacity: 0.5;
+}
+
+.dot.adjacent {
+  opacity: 0.75;
+}
+
+.dot.active {
+  width: 20px;
+  height: 20px;
+  opacity: 1;
+}
 </style>
