@@ -25,39 +25,39 @@ export default class ProjectPreview extends Vue {
 </template>
 
 <style scoped>
-
 .project-card {
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
-  padding: 2vw; /* Padding ajusté selon la largeur de l'écran */
+  justify-content: space-between;
+  height: 100%;
+  width: 100%;
   box-shadow: 0 0.1em 0.2em rgba(0, 0, 0, 0.2);
-  border-radius: 1em; /* Bord arrondi basé sur des unités relatives */
+  border-radius: 1em;
   transition: transform 0.4s, box-shadow 0.2s;
 }
 
 .text-container {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
   width: 100%;
 }
 
 .title {
   font-weight: bold;
   font-size: 1.8rem; /* Taille en rem pour mieux gérer l'accessibilité */
-  margin: 0;
   text-align: left;
 }
 
 .description {
   font-size: 1.2rem; /* Taille en rem pour une meilleure échelle sur mobile */
-  margin-top: 1vh; /* Espace relatif à la hauteur de l'écran */
   text-align: left;
 }
 
 /* Styles pour la div personnalisée */
 .faded-top {
-  position: relative;
-  overflow: hidden;
-  height: 15vh; /* Hauteur relative à l'écran */
+  height: 15vh; /* Hauteur relative à l'écran en pourcentage */
 }
 
 .faded-top::after {
@@ -70,5 +70,4 @@ export default class ProjectPreview extends Vue {
   background: linear-gradient(to top, rgba(255, 255, 255, 1), rgba(255, 255, 255, 0));
   pointer-events: none;
 }
-
 </style>

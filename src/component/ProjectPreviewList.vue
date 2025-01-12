@@ -1,5 +1,5 @@
 <script lang="ts">
-import {Vue, Component} from 'vue-facing-decorator';
+import { Vue, Component } from 'vue-facing-decorator';
 import ProjectPreview from "@/component/ProjectPreview.vue";
 import ProjectPreviewModel from "@/models/ProjectPreviewModel";
 import CGJProject from "@/views/CGJProject.vue";
@@ -8,31 +8,30 @@ import CGJProject3 from "@/views/CGJProject3.vue";
 import CGJProject4 from "@/views/CGJProject4.vue";
 
 @Component({
-  components: {ProjectPreview}
+  components: { ProjectPreview },
 })
 export default class ProjectPreviewList extends Vue {
-
   private list: ProjectPreviewModel[] = [
     {
       title: "Projet 1",
       description: "Description du projet 1",
-      project: CGJProject
+      project: CGJProject,
     },
     {
       title: "Projet 2",
       description: "Description du projet 2",
-      project: CGJProject2
+      project: CGJProject2,
     },
     {
       title: "Projet 3",
       description: "Description du projet 3",
-      project: CGJProject3
+      project: CGJProject3,
     },
     {
       title: "Projet 4",
       description: "Description du projet 4",
-      project: CGJProject4
-    }
+      project: CGJProject4,
+    },
   ];
 
   private suivant: ProjectPreviewModel = this.list[1];
@@ -40,8 +39,30 @@ export default class ProjectPreviewList extends Vue {
   private precedent: ProjectPreviewModel = this.list[this.list.length - 1];
   private index: number = 0;
 
+  mounted() {
+    window.addEventListener("wheel", this.handleScroll, { passive: true });
+  }
+
+  beforeDestroy() {
+    window.removeEventListener("wheel", this.handleScroll);
+  }
+
+  private handleScroll(event: WheelEvent) {
+    const delta = event.deltaY; // Valeur du défilement (positive ou négative)
+    if (delta > 0) {
+      this.scrollApres(); // Scroll vers le bas
+    } else if (delta < 0) {
+      this.scrollAvant(); // Scroll vers le haut
+    }
+  }
+
   private scrollAvant() {
     this.index -= 1;
+    this.update();
+  }
+
+  private scrollApres() {
+    this.index += 1;
     this.update();
   }
 
@@ -49,11 +70,6 @@ export default class ProjectPreviewList extends Vue {
     this.suivant = this.list[this.modulo(this.index + 1, this.list.length)];
     this.courant = this.list[this.modulo(this.index, this.list.length)];
     this.precedent = this.list[this.modulo(this.index - 1, this.list.length)];
-  }
-
-  private scrollApres() {
-    this.index += 1;
-    this.update();
   }
 
   private modulo(n: number, total: number): number {
@@ -90,22 +106,14 @@ export default class ProjectPreviewList extends Vue {
 </template>
 
 <style scoped>
-html, body {
-  margin: 0;
-  padding: 0;
-  overflow: hidden; /* Empêche la barre de défilement */
-  height: 100%;
-}
-
 .list-container {
   display: flex;
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
-  padding: 5%;
-  gap: 2vw; /* Espace entre les boutons et les cartes, adapté à la largeur de l'écran */
-  border: purple 15px solid;
-
+  height: 100vh;
+  width: 100%;
+  overflow: hidden;
 }
 
 .preview-cards {
@@ -113,10 +121,8 @@ html, body {
   justify-content: center;
   flex-direction: column;
   align-items: center;
-  gap: 5vh; /* Espace vertical adapté à la hauteur de l'écran */
-  padding: 2vw;
-  border: red 1px solid;
-
+  height: 100%;
+  width: 100%;
 }
 
 .project-card {
@@ -142,7 +148,7 @@ html, body {
   display: flex;
   align-items: center;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-  padding: 1vh 2vw; /* Padding adapté à la taille de l'écran */
+  padding: 1vh 2vw;
   font-size: 1rem;
 }
 </style>

@@ -14,25 +14,9 @@ export default class HomeView extends Vue {
 </script>
 
 <template>
-
-  <div class="bg">
-    <project-preview-list/>
-  </div>
-
-
+  <project-preview-list/>
 </template>
 
 <style scoped>
-
-.bg {
-  background: linear-gradient(to bottom, #ffffff, #4f4c4c);
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-
-}
-
-
 
 </style>
