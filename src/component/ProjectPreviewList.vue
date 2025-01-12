@@ -2,9 +2,6 @@
 import {Vue, Component} from 'vue-facing-decorator';
 import ProjectPreview from "@/component/ProjectPreview.vue";
 import ProjectPreviewModel from "@/models/ProjectPreviewModel";
-import CGJProject2 from "@/views/CGJProject2.vue";
-import CGJProject3 from "@/views/CGJProject3.vue";
-import CGJProject4 from "@/views/CGJProject4.vue";
 import PikuTradeComponent from "@/component/project/PikuTradeComponent.vue";
 
 @Component({
@@ -13,9 +10,8 @@ import PikuTradeComponent from "@/component/project/PikuTradeComponent.vue";
 export default class ProjectPreviewList extends Vue {
   private list: ProjectPreviewModel[] = [
     {pathToProject: "pikuTrade", project: PikuTradeComponent},
-    {pathToProject: "Projet 2", project: CGJProject2},
-    {pathToProject: "Projet 3", project: CGJProject3},
-    {pathToProject: "Projet 4", project: CGJProject4},
+    {pathToProject: "pikuTrade", project: PikuTradeComponent},
+    {pathToProject: "pikuTrade", project: PikuTradeComponent},
   ];
 
   private suivant: ProjectPreviewModel = this.list[1];

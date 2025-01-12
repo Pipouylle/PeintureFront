@@ -1,5 +1,5 @@
 <script lang="ts">
-import { Vue, Component } from 'vue-facing-decorator';
+import {Vue, Component} from 'vue-facing-decorator';
 import {useColorStore} from "@/stores";
 import {useRouter} from "vue-router";
 
@@ -13,11 +13,11 @@ export default class NavBar extends Vue {
   }
 
   private navigateToHome() {
-    this.router.push({ name: 'home' });
+    this.router.push({name: 'home'});
   }
 
   private navigateToAbout() {
-    this.router.push({ name: 'about' });
+    this.router.push({name: 'about'});
   }
 }
 </script>
@@ -27,16 +27,17 @@ export default class NavBar extends Vue {
     <div class="top">
       <a @click="navigateToHome" class="mdi mdi-home" v-tooltip="'Accueil'"></a>
       <a @click="navigateToAbout" class="mdi mdi-information" v-tooltip="'À Propos de moi'"></a>
-      <a href="/path-to-your-cv.pdf" download class="mdi mdi-file-download" v-tooltip="'Télécharger mon CV'"></a>
-    </div>
+      <a href="/public/CV.pdf" download="CV_Johan_Merlo.pdf" class="mdi mdi-file-download"
+         v-tooltip="'Télécharger mon CV'"></a></div>
     <button @click="toggleTheme" class="theme-toggle-btn">
       <span v-if="colorStore.isLightTheme" class="mdi mdi-weather-night"></span>
       <span v-else class="mdi mdi-white-balance-sunny"></span>
     </button>
     <div class="bottom">
-      <a href="https://www.linkedin.com/in/your-profile" target="_blank" class="mdi mdi-linkedin" v-tooltip="'LinkedIn'"></a>
-      <a href="https://github.com/your-profile" target="_blank" class="mdi mdi-github" v-tooltip="'GitHub'"></a>
-      <a href="mailto:your-email@example.com" class="mdi mdi-gmail" v-tooltip="'Mail'"></a>
+      <a href="https://www.linkedin.com/in/johan-merlo-5570002ab/" target="_blank" class="mdi mdi-linkedin"
+         v-tooltip="'LinkedIn'"></a>
+      <a href="https://github.com/HunderJD" target="_blank" class="mdi mdi-github" v-tooltip="'GitHub'"></a>
+      <a href="mailto:johan.merlo@etu.umontpellier.fr" class="mdi mdi-gmail" v-tooltip="'Mail'"></a>
     </div>
   </header>
 </template>
