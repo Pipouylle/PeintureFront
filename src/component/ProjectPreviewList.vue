@@ -12,26 +12,10 @@ import CGJProject4 from "@/views/CGJProject4.vue";
 })
 export default class ProjectPreviewList extends Vue {
   private list: ProjectPreviewModel[] = [
-    {
-      title: "Projet 1",
-      description: "Description du projet 1",
-      project: CGJProject,
-    },
-    {
-      title: "Projet 2",
-      description: "Description du projet 2",
-      project: CGJProject2,
-    },
-    {
-      title: "Projet 3",
-      description: "Description du projet 3",
-      project: CGJProject3,
-    },
-    {
-      title: "Projet 4",
-      description: "Description du projet 4",
-      project: CGJProject4,
-    },
+    { title: "Projet 1", description: "Description du projet 1", project: CGJProject },
+    { title: "Projet 2", description: "Description du projet 2", project: CGJProject2 },
+    { title: "Projet 3", description: "Description du projet 3", project: CGJProject3 },
+    { title: "Projet 4", description: "Description du projet 4", project: CGJProject4 },
   ];
 
   private suivant: ProjectPreviewModel = this.list[1];
@@ -39,20 +23,37 @@ export default class ProjectPreviewList extends Vue {
   private precedent: ProjectPreviewModel = this.list[this.list.length - 1];
   private index: number = 0;
 
+  private isMobile: boolean = false; // Variable pour détecter les appareils mobiles
+
   mounted() {
-    window.addEventListener("wheel", this.handleScroll, { passive: true });
+    this.detectDevice();
+    window.addEventListener("resize", this.detectDevice);
+    if (!this.isMobile) {
+      window.addEventListener("wheel", this.handleScroll, { passive: true });
+    }
   }
 
   beforeDestroy() {
-    window.removeEventListener("wheel", this.handleScroll);
+    window.removeEventListener("resize", this.detectDevice);
+    if (!this.isMobile) {
+      window.removeEventListener("wheel", this.handleScroll);
+    }
+  }
+
+  private detectDevice() {
+    this.isMobile = window.innerWidth <= 768; // Détecte un écran mobile (max largeur 768px)
   }
 
   private handleScroll(event: WheelEvent) {
-    const delta = event.deltaY; // Valeur du défilement (positive ou négative)
+    const delta = event.deltaY;
+
+    // Réduire la sensibilité pour les trackpads
+    if (Math.abs(delta) < 50) return;
+
     if (delta > 0) {
-      this.scrollApres(); // Scroll vers le bas
-    } else if (delta < 0) {
-      this.scrollAvant(); // Scroll vers le haut
+      this.scrollApres();
+    } else {
+      this.scrollAvant();
     }
   }
 
@@ -78,9 +79,12 @@ export default class ProjectPreviewList extends Vue {
 }
 </script>
 
+
 <template>
   <div class="list-container">
-    <v-btn class="nav-btn" @click="scrollAvant">Précédent</v-btn>
+    <!-- Boutons visibles uniquement sur mobile -->
+    <v-btn v-if="isMobile" class="nav-btn left-btn" @click="scrollAvant">Précédent</v-btn>
+
     <div class="preview-cards">
       <project-preview
           :title="precedent.title"
@@ -101,9 +105,12 @@ export default class ProjectPreviewList extends Vue {
           class="project-card back-cards"
       />
     </div>
-    <v-btn class="nav-btn" @click="scrollApres">Suivant</v-btn>
+
+    <!-- Boutons visibles uniquement sur mobile -->
+    <v-btn v-if="isMobile" class="nav-btn right-btn" @click="scrollApres">Suivant</v-btn>
   </div>
 </template>
+
 
 <style scoped>
 .list-container {
@@ -114,6 +121,7 @@ export default class ProjectPreviewList extends Vue {
   height: 100vh;
   width: 100%;
   overflow: hidden;
+  position: relative;
 }
 
 .preview-cards {
@@ -134,21 +142,26 @@ export default class ProjectPreviewList extends Vue {
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
 }
 
-.front-card:hover {
-  transform: scale(1.1);
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.5);
-}
-
 .back-cards {
   opacity: 0.5;
   transform: scale(0.9);
 }
 
+/* Boutons pour mobile */
 .nav-btn {
-  display: flex;
-  align-items: center;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 10;
+  background-color: white;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-  padding: 1vh 2vw;
-  font-size: 1rem;
+}
+
+.left-btn {
+  left: 10px;
+}
+
+.right-btn {
+  right: 10px;
 }
 </style>
