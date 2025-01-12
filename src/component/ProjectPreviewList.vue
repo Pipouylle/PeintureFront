@@ -130,7 +130,7 @@ export default class ProjectPreviewList extends Vue {
                        class="back-cards"
       />
     </div>
-    <div class="dots">
+    <div v-if="!isMobile" class="dots">
       <span v-for="(item, dotIndex) in list" :key="dotIndex" :class="getDotClass(dotIndex)" @click="scrollToIndex(dotIndex)"></span>
     </div>
   </div>
