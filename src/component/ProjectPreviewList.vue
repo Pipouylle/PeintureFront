@@ -13,8 +13,8 @@ import CGJProject4 from "@/views/CGJProject4.vue";
 export default class ProjectPreviewList extends Vue {
   private list: ProjectPreviewModel[] = [
     {title: "Projet 1", project: CGJProject},
-    {title: "Projet 2",project: CGJProject2},
-    {title: "Projet 3",  project: CGJProject3},
+    {title: "Projet 2", project: CGJProject2},
+    {title: "Projet 3", project: CGJProject3},
     {title: "Projet 4", project: CGJProject4},
   ];
 
@@ -44,7 +44,6 @@ export default class ProjectPreviewList extends Vue {
 
   private detectDevice() {
     this.isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-    ;
   }
 
   private handleScroll(event: WheelEvent) {

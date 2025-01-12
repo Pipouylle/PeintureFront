@@ -8,7 +8,7 @@ export default class CGJProject1 extends Vue {
 </script>
 
 <template>
-  <h1> PRoject preview</h1>
+  <h1> PRoject preview 1</h1>
   <a>
 
     Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam finibus, tortor ac scelerisque laoreet, turpis ipsum

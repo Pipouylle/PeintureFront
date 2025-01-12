@@ -8,6 +8,7 @@ export default class Project extends Vue {
 </script>
 
 <template>
+  <h1> PRoject preview 2</h1>
 
   <a>
 

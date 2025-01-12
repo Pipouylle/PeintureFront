@@ -6,7 +6,9 @@ export default class Project extends Vue {}
 </script>
 
 <template>
+
   <div class="project-container">
+    <h1> PRoject preview 3</h1>
     <img src="https://cdn.vuetifyjs.com/images/cards/desert.jpg" width="30%" alt="Innovation Image" class="project-image" />
     <div class="project-description">
       L'innovation est le moteur du progrès, une lumière qui guide les sociétés vers de nouvelles opportunités. Dans
