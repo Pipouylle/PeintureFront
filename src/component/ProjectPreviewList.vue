@@ -99,22 +99,20 @@ export default class ProjectPreviewList extends Vue {
 
     </div>
     <div class="preview-cards">
-      <project-preview
+      <project-preview @click="scrollAvant"
           :title="precedent.title"
-          :description="precedent.description"
           :project="precedent.project"
           class="back-cards"
       />
       <project-preview
           :title="courant.title"
-          :description="courant.description"
           :project="courant.project"
+          :can-redirect="true"
           size-prop="30"
           class="front-card"
       />
-      <project-preview
+      <project-preview @click="scrollApres"
           :title="suivant.title"
-          :description="suivant.description"
           :project="suivant.project"
           class="back-cards"
       />

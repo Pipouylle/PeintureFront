@@ -6,13 +6,15 @@ import {useRouter} from "vue-router";
 export default class ProjectPreview extends Vue {
   @Prop({required: true}) private title!: string;
   @Prop({required: false}) private sizeProp?: number;
+  @Prop({required: false}) private canRedirect?: boolean;
   @Prop({required: true}) private project!: typeof Vue; // Accepte n'importe quel composant
   private router = useRouter();
   private size: number = 25;
 
 
   private navigateToProject() {
-    this.router.push({name: this.title.replaceAll(" ", "").toLowerCase()});
+    if(this.canRedirect)
+      this.router.push({name: this.title.replaceAll(" ", "").toLowerCase()});
   }
 
   public mounted() {
