@@ -159,8 +159,7 @@ export default class ProjectPreviewList extends Vue {
 }
 
 .front-card:hover {
-  transform: scale(1.01);
-  box-shadow: 0 6px 10px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 10px 15px rgba(0, 0, 0, 0.3);
 }
 
 .back-cards {

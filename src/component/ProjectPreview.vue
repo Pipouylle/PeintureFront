@@ -31,32 +31,29 @@ export default class ProjectPreview extends Vue {
 </script>
 
 <template>
-  <v-card class="project-card" @click="navigateToProject" :ripple="false">
-    <div class="text-container">
-      <div class="faded-top" :style="{ height: size + 'vh' }">
-        <div class="blurry-content">
-          <!-- Rend dynamiquement n'importe quel composant transmis -->
-          <component :is="this.model.project"/>
-        </div>
-      </div>
+  <div class="project-card" @click="navigateToProject" :ripple="false">
+    <div class="faded-top" :style="{ height: size + 'vh' }">
+      <component :is="this.model.project"/>
     </div>
-  </v-card>
+  </div>
 </template>
 
 <style scoped>
 .project-card {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
   padding: 2%; /* Utilisation de pourcentages pour le padding */
   box-shadow: 0 0.1em 0.2em rgba(0, 0, 0, 0.2);
   border-radius: 1em; /* Bord arrondi basé sur des unités relatives */
   transition: transform 0.4s, box-shadow 0.2s;
 }
-
-.text-container {
-  width: 100%; /* Utilisation de 100% pour la largeur */
+.project-card:hover{
+  cursor: pointer;
 }
+
 
 .faded-top::after {
   content: '';
@@ -65,7 +62,7 @@ export default class ProjectPreview extends Vue {
   left: 0;
   width: 100%;
   height: 100%;
-  background: linear-gradient(to top, rgba(255, 255, 255, 1), rgba(255, 255, 255, 0));
+  background: linear-gradient(to top, var(--background-color, rgba(255, 255, 255, 1)), rgba(255, 255, 255, 0));
   pointer-events: none;
 }
 
