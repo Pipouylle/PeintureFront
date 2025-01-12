@@ -90,10 +90,14 @@ export default class ProjectPreviewList extends Vue {
 </script>
 
 <template>
+
   <div class="list-container">
     <!-- Boutons visibles uniquement sur mobile -->
-    <v-btn v-if="isMobile" class="nav-btn left-btn" @click="scrollAvant">Précédent</v-btn>
+    <div v-if="isMobile" class="nav-btn">
+      <v-btn  @click="scrollAvant">Précédent</v-btn>
+      <v-btn  @click="scrollApres">Suivant</v-btn>
 
+    </div>
     <div class="preview-cards">
       <project-preview
           :title="precedent.title"
@@ -114,10 +118,7 @@ export default class ProjectPreviewList extends Vue {
           class="project-card back-cards"
       />
     </div>
-
-    <!-- Boutons visibles uniquement sur mobile -->
-    <v-btn v-if="isMobile" class="nav-btn right-btn" @click="scrollApres">Suivant</v-btn>
-  </div>
+</div>
 </template>
 
 
@@ -126,10 +127,9 @@ export default class ProjectPreviewList extends Vue {
   display: flex;
   flex-direction: row;
   align-items: center;
-  justify-content: space-between;
+  justify-content: space-around;
   height: 100vh;
   width: 100%;
-  overflow: hidden;
   position: relative;
 }
 
@@ -139,11 +139,7 @@ export default class ProjectPreviewList extends Vue {
   flex-direction: column;
   align-items: center;
   height: 100%;
-  width: 100%;
-}
-
-.project-card {
-  transition: transform 0.3s, box-shadow 0.3s;
+  width: 50%;
 }
 
 .front-card {
@@ -151,26 +147,23 @@ export default class ProjectPreviewList extends Vue {
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
 }
 
+.front-card:hover {
+  transform: scale(1.01);
+  box-shadow: 0 6px 10px rgba(0, 0, 0, 0.3);
+}
+
 .back-cards {
   opacity: 0.5;
   transform: scale(0.9);
 }
 
+
 /* Boutons pour mobile */
 .nav-btn {
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
   position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  z-index: 10;
-  background-color: white;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-}
-
-.left-btn {
-  left: 10px;
-}
-
-.right-btn {
-  right: 10px;
+  right: 0;
 }
 </style>

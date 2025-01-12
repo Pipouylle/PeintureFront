@@ -28,20 +28,15 @@ export default class ProjectPreview extends Vue {
 .project-card {
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  height: 100%;
-  width: 100%;
+  align-items: flex-start;
+  padding: 2%; /* Utilisation de pourcentages pour le padding */
   box-shadow: 0 0.1em 0.2em rgba(0, 0, 0, 0.2);
-  border-radius: 1em;
+  border-radius: 1em; /* Bord arrondi basé sur des unités relatives */
   transition: transform 0.4s, box-shadow 0.2s;
 }
 
 .text-container {
-  flex-grow: 1;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  width: 100%;
+  width: 100%; /* Utilisation de 100% pour la largeur */
 }
 
 .title {
