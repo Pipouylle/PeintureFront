@@ -43,7 +43,8 @@ export default class ProjectPreviewList extends Vue {
   }
 
   private detectDevice() {
-    this.isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);;
+    this.isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    ;
   }
 
   private handleScroll(event: WheelEvent) {
@@ -94,8 +95,8 @@ export default class ProjectPreviewList extends Vue {
   <div class="list-container">
     <!-- Boutons visibles uniquement sur mobile -->
     <div v-if="isMobile" class="nav-btn">
-      <v-btn @click="scrollAvant">Précédent</v-btn>
-      <v-btn @click="scrollApres">Suivant</v-btn>
+      <button @click="scrollAvant" class="mdi mdi-menu-up btn"></button>
+      <button @click="scrollApres" class="mdi mdi-menu-down btn"></button>
 
     </div>
     <div class="preview-cards">
@@ -103,20 +104,20 @@ export default class ProjectPreviewList extends Vue {
           :title="precedent.title"
           :description="precedent.description"
           :project="precedent.project"
-          class="project-card back-cards"
+          class="back-cards"
       />
       <project-preview
           :title="courant.title"
           :description="courant.description"
           :project="courant.project"
           size-prop="30"
-          class="project-card front-card"
+          class="front-card"
       />
       <project-preview
           :title="suivant.title"
           :description="suivant.description"
           :project="suivant.project"
-          class="project-card back-cards"
+          class="back-cards"
       />
     </div>
   </div>
@@ -140,7 +141,7 @@ export default class ProjectPreviewList extends Vue {
   flex-direction: column;
   align-items: center;
   height: 100%;
-  width: 50%;
+  width: 75%;
 }
 
 .front-card {
@@ -165,6 +166,13 @@ export default class ProjectPreviewList extends Vue {
   justify-content: center;
   flex-direction: column;
   position: absolute;
-  right: 0;
+  right: 4vw;
 }
+
+.btn {
+  display: block;
+  border-radius: 50%; /* Assure un cercle parfait */
+  border: 2px solid #ccc; /* Ajout d'une bordure fine */
+}
+
 </style>
