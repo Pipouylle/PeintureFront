@@ -17,7 +17,7 @@ export default class NavBar extends Vue {
     <div class="bottom">
       <a href="https://www.linkedin.com/in/your-profile" target="_blank" class="mdi mdi-linkedin"></a>
       <a href="https://github.com/your-profile" target="_blank" class="mdi mdi-github"></a>
-      <a href="mailto:your-email@example.com" class="mdi mdi-email"></a>
+      <a href="mailto:your-email@example.com" class="mdi mdi-gmail"></a>
     </div>
   </header>
 </template>
@@ -67,5 +67,22 @@ export default class NavBar extends Vue {
 
 .header a.mdi-file-download:hover {
   color: #FF5722;
+}
+
+
+
+
+.header a.mdi-linkedin:hover {
+  color: #0077B5; /* Couleur officielle de LinkedIn */
+}
+
+.header a.mdi-github:hover {
+  color: #6e5494; /* Couleur violette GitHub */
+}
+
+.header a.mdi-gmail:hover {
+  background-image: linear-gradient(to left, #EA4335, #FBBC04, #34A853, #4285F4);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 </style>
