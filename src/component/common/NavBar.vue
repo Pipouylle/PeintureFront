@@ -20,8 +20,8 @@ export default class NavBar extends Vue {
       <a href="/path-to-your-cv.pdf" download class="mdi mdi-file-download"></a>
     </div>
     <button @click="toggleTheme" class="theme-toggle-btn">
-      <span v-if="colorStore.isLightTheme">Dark Mode</span>
-      <span v-else>Light Mode</span>
+      <span v-if="colorStore.isLightTheme" class="mdi mdi-weather-night"></span>
+      <span v-else class="mdi mdi-white-balance-sunny"></span>
     </button>
     <div class="bottom">
       <a href="https://www.linkedin.com/in/your-profile" target="_blank" class="mdi mdi-linkedin"></a>

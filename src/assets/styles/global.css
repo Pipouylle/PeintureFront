@@ -1,11 +1,11 @@
 :root {
-    --navbar-background-color: #1a1a1a;
+    --navbar-background-color: #373737;
     --background-color: #333333;
     --text-color: #ffffff;
 }
 
 [data-theme="dark"] {
-    --navbar-background-color: #1a1a1a;
+    --navbar-background-color: #373737;
     --background-color: #333333;
     --text-color: #ffffff;
 }
