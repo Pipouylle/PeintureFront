@@ -1,6 +1,6 @@
 import {createRouter, createWebHistory, RouteRecordRaw} from "vue-router";
 import HomeView from "@/views/HomeView.vue";
-import CGJProject1 from "@/views/CGJProject.vue";
+import PikueTradeProjet from "@/views/PikueTradeProjet.vue";
 import About from "@/views/About.vue";
 
 
@@ -11,15 +11,16 @@ const routes: Array<RouteRecordRaw> = [
         component: HomeView,
     },
     {
-        path: "/projet1",
-        name: "projet1",
-        component: CGJProject1,
-    },
-    {
         path: "/about",
         name: "about",
         component: About,
     },
+    {
+        path: "/projet1",
+        name: "projet1",
+        component: PikueTradeProjet,
+    },
+
 ];
 
 const router = createRouter({

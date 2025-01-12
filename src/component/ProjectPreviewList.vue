@@ -2,7 +2,7 @@
 import {Vue, Component} from 'vue-facing-decorator';
 import ProjectPreview from "@/component/ProjectPreview.vue";
 import ProjectPreviewModel from "@/models/ProjectPreviewModel";
-import CGJProject from "@/views/CGJProject.vue";
+import PikueTradeProjet from "@/views/PikueTradeProjet.vue";
 import CGJProject2 from "@/views/CGJProject2.vue";
 import CGJProject3 from "@/views/CGJProject3.vue";
 import CGJProject4 from "@/views/CGJProject4.vue";
@@ -12,7 +12,7 @@ import CGJProject4 from "@/views/CGJProject4.vue";
 })
 export default class ProjectPreviewList extends Vue {
   private list: ProjectPreviewModel[] = [
-    {title: "Projet 1", project: CGJProject},
+    {title: "Projet 1", project: PikueTradeProjet},
     {title: "Projet 2", project: CGJProject2},
     {title: "Projet 3", project: CGJProject3},
     {title: "Projet 4", project: CGJProject4},
