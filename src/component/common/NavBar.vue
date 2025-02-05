@@ -16,93 +16,59 @@ export default class NavBar extends Vue {
     this.router.push({name: 'home'});
   }
 
-  private navigateToAbout() {
-    this.router.push({name: 'about'});
+  private navigateToAffaireForm() {
+    this.router.push({name: 'CreerAffaire'});
   }
 }
 </script>
 
 <template>
-  <header class="header">
-    <div class="top">
-      <a @click="navigateToHome" class="mdi mdi-home" v-tooltip="'Accueil'"></a>
-      <a @click="navigateToAbout" class="mdi mdi-information" v-tooltip="'À Propos de moi'"></a>
-      <a href="/CV.pdf" class="mdi mdi-file-download"
-         v-tooltip="'Télécharger mon CV'"></a></div>
-    <button @click="toggleTheme" class="theme-toggle-btn">
-      <span v-if="colorStore.isLightTheme" class="mdi mdi-weather-night"></span>
-      <span v-else class="mdi mdi-white-balance-sunny"></span>
-    </button>
-    <div class="bottom">
-      <a href="https://www.linkedin.com/in/johan-merlo-5570002ab/" target="_blank" class="mdi mdi-linkedin"
-         v-tooltip="'LinkedIn'"></a>
-      <a href="https://github.com/HunderJD" target="_blank" class="mdi mdi-github" v-tooltip="'GitHub'"></a>
-      <a href="mailto:johan.merlo@etu.umontpellier.fr" class="mdi mdi-gmail" v-tooltip="'Mail'"></a>
-    </div>
-  </header>
+  <nav class="navbar">
+    <ul class="navbar-list">
+      <router-link to="/"> Home </router-link>
+      <router-link to="/CreerAffaire"> Affaire </router-link>
+      <router-link to="/CreerCommande"> Commande </router-link>
+      <router-link to="/CreerSysteme"> Systeme </router-link>
+      <router-link to="/SelectArticle"> Article </router-link>
+      <router-link to="/CreerDemande"> Demande </router-link>
+      <router-link to="/Calendar"> Calendar </router-link>
+    </ul>
+  </nav>
 </template>
 
 <style scoped>
-.header {
+.navbar {
   position: fixed;
   top: 0;
   left: 0;
-  width: 5%;
-  height: 100%;
-  background-color: var(--navbar-background-color);
-  color: var(--text-color);
+  width: 100%;
+  background-color: #333; /* Couleur de fond */
+  padding: 1rem;
   display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  align-items: center;
-  padding: 10px 0;
-  z-index: 1000;
-  border-top-right-radius: 10px;
-  border-bottom-right-radius: 10px;
+  justify-content: center;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
-.header .top, .header .bottom {
+.navbar-list {
+  list-style: none;
   display: flex;
-  flex-direction: column;
-  align-items: center;
+  gap: 2rem;
+  margin: 0;
+  padding: 0;
 }
 
-.header a {
-  color: var(--text-color);
-  margin: 20px 0;
-  font-size: 24px;
+.navbar-list li {
+  color: white;
+}
+
+.navbar-list li a {
   text-decoration: none;
+  color: white;
+  font-weight: bold;
   transition: color 0.3s;
 }
 
-.header a:hover {
-  cursor: pointer;
-  color: #ddd;
-}
-
-.header a.mdi-home:hover {
-  color: #4CAF50;
-}
-
-.header a.mdi-information:hover {
-  color: #2196F3;
-}
-
-.header a.mdi-file-download:hover {
-  color: #FF5722;
-}
-
-.header a.mdi-linkedin:hover {
-  color: #0077B5;
-}
-
-.header a.mdi-github:hover {
-  color: #333;
-}
-
-.header a.mdi-gmail:hover {
-  background-image: linear-gradient(to left, #EA4335, #FBBC04, #34A853, #4285F4);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+.navbar-list li a:hover {
+  color: #07bf9b; /* Couleur au survol */
 }
 </style>

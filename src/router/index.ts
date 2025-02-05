@@ -1,11 +1,13 @@
 import {createRouter, createWebHistory, RouteRecordRaw} from "vue-router";
 import HomeView from "@/views/HomeView.vue";
-import PikuTradeView from "@/views/PikuTradeView.vue";
-import SubnauticaModeView from "@/views/SubnauticaModeView.vue";
-import About from "@/views/About.vue";
-import CGJView from "@/views/CGJView.vue";
-import ReferundumView from "@/views/ReferendumView.vue";
 
+import CreationAffaireView from "@/views/forms/CreationAffaireView.vue";
+import CreationCoucheView from "@/views/forms/CreationCoucheView.vue";
+import CreationSystemeView from "@/views/forms/CreationSystemeView.vue";
+import SelectArticleView from "@/views/SelectArticleView.vue";
+import CreationCommandeView from "@/views/forms/CreationCommandeView.vue";
+import CreationDemandeView from "@/views/forms/CreationDemandeView.vue";
+import CalendarView from "@/views/CalendarView.vue";
 
 const routes: Array<RouteRecordRaw> = [
     {
@@ -14,37 +16,40 @@ const routes: Array<RouteRecordRaw> = [
         component: HomeView,
     },
     {
-        path: "/about",
-        name: "about",
-        component: About,
+        path: "/CreerAffaire",
+        name: "CreerAffaire",
+        component: CreationAffaireView,
     },
     {
-        path: "/home",
-        name: "homeAlias",
-        component: HomeView,
+        path: "/CreerCouche",
+        name: "CreerCouche",
+        component: CreationCoucheView,
     },
     {
-        path: "/pikuTrade",
-        name: "pikuTrade",
-        component: PikuTradeView,
+        path: "/CreerSysteme",
+        name: "CreerSysteme",
+        component: CreationSystemeView,
     },
     {
-        path: "/subnautica",
-        name: "subnautica",
-        component: SubnauticaModeView,
+        path: "/SelectArticle",
+        name: "SelectArticle",
+        component: SelectArticleView,
     },
     {
-        path: "/codeGameJam",
-        name: "cgj",
-        component: CGJView,
+        path: "/CreerCommande",
+        name: "CreerCommande",
+        component: CreationCommandeView,
     },
     {
-
-        path: "/referendum",
-        name: "referendum",
-        component: ReferundumView,
-    }
-
+        path : "/CreerDemande",
+        name : "CreerDemande",
+        component : CreationDemandeView,
+    },
+    {
+        path : "/Calendar",
+        name : "Calendar",
+        component : CalendarView,
+    },
 ];
 
 const router = createRouter({

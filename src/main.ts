@@ -21,6 +21,7 @@ const vuetify = createVuetify({
     },
     directives,
 })
+
 const pinia = createPinia();
 pinia.use(piniaPluginPersistedstate);
 
