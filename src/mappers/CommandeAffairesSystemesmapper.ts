@@ -14,7 +14,7 @@ export class CommandeAffairesSystemesmapper {
             regieSFPCommande: data.regieSFPCommande,
             regieFPCommande: data.regieFPCommande,
             ficheHCommande: data.ficheHCommande,
-            tarifFichehCommande: data.tarifFichehCommande
+            pvPeintureCommande: data.tarifFichehCommande
         };
     }
 

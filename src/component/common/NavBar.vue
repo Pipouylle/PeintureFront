@@ -2,8 +2,11 @@
 import {Vue, Component} from 'vue-facing-decorator';
 import {useColorStore} from "@/stores";
 import {useRouter} from "vue-router";
+import Menu from "@/component/common/Menu.vue";
 
-@Component({})
+@Component({
+  components: {Menu}
+})
 export default class NavBar extends Vue {
   private colorStore = useColorStore();
   private router = useRouter();
@@ -25,6 +28,7 @@ export default class NavBar extends Vue {
 <template>
   <nav class="navbar">
     <ul class="navbar-list">
+      <Menu/>
       <router-link to="/"> Home </router-link>
       <router-link to="/CreerAffaire"> Affaire </router-link>
       <router-link to="/CreerCommande"> Commande </router-link>

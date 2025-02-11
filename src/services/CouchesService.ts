@@ -1,17 +1,8 @@
-import App from "@/App.vue";
-import axios from 'axios';
-import {ref} from 'vue';
+import {apiClient} from "@/stores/apiClient";
 import {Couche} from "@/models/types/couche";
 import {Couches} from "@/models/objectsApi/Couches";
 import {ApiResponseCollection} from "@/models/ApiResponseCollection";
 import Couchemapper from "@/mappers/Couchemapper";
-
-const apiClient = axios.create({
-    baseURL: 'http://127.0.0.1:8000/api', // URL de votre API Symfony
-    headers: {
-        'Content-Type': 'application/ld+json',
-    },
-});
 
 export const getAllCouches = async (): Promise<Couche[]> => {
     try {
@@ -41,6 +32,26 @@ export const getArticlesCoucheByDemande = async (id: number) => {
         return response.data;
     } catch (error) {
         console.error('Erreur lors de la récupération des id des articles:', error);
+        throw error;
+    }
+}
+
+export const getCouchesBySysteme = async (id: number): Promise<Couche[]> => {
+    try {
+        const response = await apiClient.get<ApiResponseCollection>(`/couches?systeme_couche=/api/systemes/${id}`);
+        return Couchemapper.mapArrayCouche(response.data.member);
+    } catch (error) {
+        console.error('Erreur lors de la récupération des articles:', error);
+        throw error;
+    }
+}
+
+export const getCoucheById = async (id: number): Promise<Couche> => {
+    try {
+        const response = await apiClient.get<Couches>(`/couches/${id}`);
+        return Couchemapper.mapCouche(response.data);
+    } catch (error) {
+        console.error('Erreur lors de la récupération des articles:', error);
         throw error;
     }
 }

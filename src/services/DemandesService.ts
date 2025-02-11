@@ -1,4 +1,4 @@
-import axios from "axios";
+import {apiClient} from "@/stores/apiClient";
 import {Demande} from "@/models/types/demande";
 import Demandesmapper from "@/mappers/Demandesmapper";
 import {ApiResponseCollection} from "@/models/ApiResponseCollection";
@@ -6,15 +6,6 @@ import {Demandes} from "@/models/objectsApi/Demandes";
 import {Couche} from "@/models/types/couche";
 import Couchemapper from "@/mappers/Couchemapper";
 import {DemandesCalendar} from "@/models/calendar/DemandesCalendar";
-import _default from "chart.js/dist/plugins/plugin.tooltip";
-import numbers = _default.defaults.animations.numbers;
-
-const apiClient = axios.create({
-    baseURL: 'http://127.0.0.1:8000/api', // URL de votre API Symfony
-    headers: {
-        'Content-Type': 'application/ld+json',
-    },
-});
 
 export const getAllDemandes = async (): Promise<Demande[]> => {
     try {
@@ -64,6 +55,15 @@ export const getCouchesDemande = async (idSysteme: number): Promise <Couche[]> =
         return Couchemapper.mapArrayCouche(reponse.data.member)
     } catch (error) {
         console.log('Erreur lors de la récupération des couches:', error)
+        throw error;
+    }
+}
+
+export const deleteDemande = async (demande: Demande) => {
+    try {
+        await apiClient.delete(`/demandes/${demande.id}`)
+    } catch (error) {
+        console.log('Erreur lors de la suppression de la demande:', error)
         throw error;
     }
 }

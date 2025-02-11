@@ -1,18 +1,18 @@
 import {Demande} from '@/models/types/demande';
 import {Demandes} from "@/models/objectsApi/Demandes";
-import {Commande, createDefaultCommande} from "@/models/types/commande";
+import {createDefaultCommande} from "@/models/types/commande";
 
 export default class Demandesmapper {
     static mapDemande(obj: Demandes): Demande {
         return {
             id: obj.id,
-            numeroDemande: obj.numeroDemande,
-            numeroPhaseDemande: obj.numeroPhaseDemande,
-            etatDemande: obj.etatDemande,
-            nombrePieceDemande: obj.nombrePieceDemande,
-            idCommandeDemande: createDefaultCommande({id: parseInt(obj.commandeDemande.split("/")[3])}),
-            surfaceDemande: parseFloat(obj.surfaceDemande),
-            ofDemande: []
+            numero: obj.numeroDemande,
+            etat: obj.etatDemande,
+            date: obj.dateDemande,
+            nombrePiece: obj.nombrePieceDemande,
+            commande: createDefaultCommande({id: parseInt(obj.commandeDemande.split("/")[3])}),
+            surface: parseFloat(obj.surfaceDemande),
+            ofs: []
         }
     }
 
@@ -23,12 +23,12 @@ export default class Demandesmapper {
     static mapDemandes(obj: Demande): Demandes {
         return {
             id: obj.id,
-            numeroDemande: obj.numeroDemande,
-            numeroPhaseDemande: obj.numeroPhaseDemande,
-            commandeDemande: "/api/commandes/" + obj.idCommandeDemande.id,
-            nombrePieceDemande: obj.nombrePieceDemande,
-            surfaceDemande: String(obj.surfaceDemande).replace(/,/g, '.'),
-            etatDemande: obj.etatDemande,
+            numeroDemande: obj.numero,
+            commandeDemande: "/api/commandes/" + obj.commande.id,
+            dateDemande: obj.date,
+            nombrePieceDemande: obj.nombrePiece,
+            surfaceDemande: String(obj.surface).replace(/,/g, '.'),
+            etatDemande: obj.etat,
         }
     }
 

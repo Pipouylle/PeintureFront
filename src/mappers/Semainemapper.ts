@@ -5,9 +5,9 @@ export class Semainemapper {
     static mapSemaine(obj: Semaines): Semaine{
         return {
             id: obj.id,
-            numeroSemaine: obj.semaine,
-            numeroAnnee: obj.annees,
-            numeroMois: obj.mois,
+            semaine: obj.semaine,
+            annee: obj.annees,
+            mois: obj.mois,
             dateDebut: obj.dateDebutSemaine,
             dateFin: new Date(new Date(obj.dateDebutSemaine).getDate() + 5).toISOString(),
         }
@@ -20,9 +20,9 @@ export class Semainemapper {
     static mapSemaines(obj: Semaine): Semaines{
         return {
             id: obj.id,
-            semaine: obj.numeroSemaine,
-            annees: obj.numeroAnnee,
-            mois: obj.numeroMois,
+            semaine: obj.semaine,
+            annees: obj.annee,
+            mois: obj.mois,
             dateDebutSemaine: obj.dateDebut,
         }
     }

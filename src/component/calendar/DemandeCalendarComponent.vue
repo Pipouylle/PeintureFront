@@ -7,12 +7,6 @@ import {CalendarStore} from "@/stores";
 export default class DemandeCalendarComponent extends Vue {
   @Prop({required: true}) private demande!: DemandesCalendar;
   private CalendarStore = CalendarStore();
-
-  public dragStart = (event: DragEvent,demande : any) => {
-    console.log(this.demande.idDemande);
-    event.dataTransfer?.setData("demandeId", demande.idDemande.toString());
-  };
-
   public getCouleur = (etat: string) => {
     switch (etat) {
       case 'non commencé':

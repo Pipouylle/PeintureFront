@@ -18,10 +18,11 @@ export const getAllConsommations = async (): Promise<Consommation[]> => {
 export const creerConsommation = async (consommation: Consommation): Promise<Consommation> => {
     try {
         const consommations = Consommationsmapper.mapConsommations(consommation);
+        console.log(consommations);
         const response = await apiClient.post<Consommations>('/consommations', consommations);
         return Consommationsmapper.mapConsommation(response.data);
     } catch (error) {
-        console.error('Erreur lors de la récupération de la consommation:', error);
+        console.error('Erreur lors de la création de la consommation:', error);
         throw error;
     }
 }
@@ -29,9 +30,21 @@ export const creerConsommation = async (consommation: Consommation): Promise<Con
 export const getAllConsommationBySemaine = async (semaine: Semaine): Promise<Consommation[]> => {
     try {
         const response = await apiClient.get<Consommations[]>(`/consommationsSemaine/${semaine.id}`);
+        console.log(response.data);
         return Consommationsmapper.mapArrayConsommation(response.data);
     } catch (error) {
         console.error('Erreur lors de la récupération des consommations:', error);
+        throw error;
+    }
+}
+
+export const updateConsommation = async (consommation: Consommation): Promise<Consommation> => {
+    try {
+        const consommations = Consommationsmapper.mapConsommations(consommation);
+        const response = await apiClient.patch<Consommations>(`/consommations/${consommation.id}`, consommations);
+        return Consommationsmapper.mapConsommation(response.data);
+    } catch (error) {
+        console.error('Erreur lors de la modification de la consommation:', error);
         throw error;
     }
 }

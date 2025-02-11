@@ -5,8 +5,8 @@ export default class Affairemappers {
     static mapAffaire(obj: any): Affaire {
         return {
             id: obj.id,
-            numeroAffaire: obj.numeroAffaire,
-            nomAffaire: obj.nomAffaire,
+            numero: obj.numeroAffaire,
+            nom: obj.nomAffaire,
             commandes: [],
             systemes: []
         }
@@ -19,8 +19,8 @@ export default class Affairemappers {
     static mapAffaires(obj: any): Affaires {
         return {
             id: obj.id,
-            numeroAffaire: obj.numeroAffaire,
-            nomAffaire: obj.nomAffaire,
+            numeroAffaire: obj.numero,
+            nomAffaire: obj.nom,
         }
     }
     static mapArrayAffaires(dataArray: any): Affaires[] {

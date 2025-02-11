@@ -4,17 +4,17 @@ import {createDefaultOf, Of} from "@/models/types/of";
 
 export interface Consommation {
     id: number;
-    quantiterConsommation: number;
-    idOfConsommation: Of;
-    codeArticleConsommation: Article;
+    quantiter: number;
+    of: Of;
+    article: Article;
 }
 
 export function createDefaultConsommation(overrides: Partial<Consommation> = {}): Consommation {
     return {
         id: 0,
-        quantiterConsommation: 0,
-        idOfConsommation: createDefaultOf(),
-        codeArticleConsommation: createDefaultArticle(),
+        quantiter: 0,
+        of: createDefaultOf(),
+        article: createDefaultArticle(),
         ...overrides
     };
 }

@@ -1,9 +1,10 @@
 <script lang="ts">
 import {Vue, Component} from 'vue-facing-decorator';
 import calendar from "@/component/calendar/calendar.vue";
-import NavBar from "@/component/common/NavBar.vue";
+import Menu from "@/component/common/Menu.vue";
+
 @Component({
-  components: {NavBar, calendar}
+  components: {Menu, calendar}
 })
 export default class CalendarView extends Vue {
 
@@ -11,8 +12,8 @@ export default class CalendarView extends Vue {
 </script>
 
 <template>
-  <NavBar />
-  <calendar />
+  <Menu/>
+  <calendar/>
 </template>
 
 <style scoped>

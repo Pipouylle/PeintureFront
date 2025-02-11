@@ -1,25 +1,17 @@
-import {Consommation, createDefaultConsommation} from "@/models/types/consommation";
-import {Couche} from "@/models/types/couche";
+import {Consommation} from "@/models/types/consommation";
+import {ArticleCouche} from "@/models/types/articleCouche";
 
 export interface Article {
     id: number;
-    nomArticle: string;
-    rALArticle: string;
-    quantiterArticle: number;
-    typeArticle: string;
-    fournisseurArticle: string;
+    descriptif: string;
     consommations: Consommation[];
-    couches: Couche[];
+    couches: ArticleCouche[];
 }
 
 export function createDefaultArticle (overrides: Partial<Article> = {}): Article {
     return {
         id: 0,
-        nomArticle: "",
-        rALArticle: "",
-        quantiterArticle: 0,
-        typeArticle: "",
-        fournisseurArticle: "",
+        descriptif: "",
         consommations: [],
         couches: [],
         ...overrides

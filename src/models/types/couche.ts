@@ -1,22 +1,24 @@
-import {Article, createDefaultArticle} from "@/models/types/article";
 
 import {createDefaultSysteme, Systeme} from "@/models/types/systeme";
+import {ArticleCouche} from "@/models/types/articleCouche";
 
 export interface Couche {
     id: number;
-    epaisseurCouche: number;
-    tarifCouche: number;
-    codeArticleCouche: Article;
-    systemeCouche: Systeme;
+    epaisseur: number;
+    nom:string;
+    tarif: number;
+    article: ArticleCouche[];
+    systeme: Systeme;
 }
 
 export function createDefaultCouche(overrides: Partial<Couche> = {}): Couche {
     return {
         id: 0,
-        epaisseurCouche: 0,
-        tarifCouche: 0,
-        codeArticleCouche: createDefaultArticle(),
-        systemeCouche: createDefaultSysteme(),
+        epaisseur: 0,
+        nom: "",
+        tarif: 0,
+        article: [],
+        systeme: createDefaultSysteme(),
         ...overrides
     };
 }

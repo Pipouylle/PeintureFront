@@ -1,9 +1,9 @@
 import {defineStore} from "pinia";
-import {CoucheFormModel} from "src/models/forms/CoucheFormModel";
+import {CreerCoucheFormModel} from "@/models/forms/CreerCoucheFormModel";
 import {createDefaultDemandeFormModel, DemandeFormModel} from "@/models/forms/DemandeFormModel";
 import {ModifDemandeCoucheModel} from "@/models/forms/ModifDemandeCoucheModel";
-import {getAllDemandeCalendar} from "@/services/DemandesService";
-import {DemandesCalendar} from "@/models/calendar/DemandesCalendar";
+import {getAllDemandeCalendar, getAllDemandes} from "@/services/DemandesService";
+import {createDefaultDemandesCalendar, DemandesCalendar} from "@/models/calendar/DemandesCalendar";
 import {CalendarModel, createDefaultCalendarModel} from "@/models/calendar/CalendarModel";
 import {createDefaultOf} from "@/models/types/of";
 import {creerOf, getAllOfbySemaine, updateOF} from "@/services/OfsService";
@@ -14,12 +14,25 @@ import {getAllSemaines} from "@/services/SemainesService";
 import {creerConsommation, getAllConsommationBySemaine} from "@/services/ConsommationService";
 import {createDefaultDemande} from "@/models/types/demande";
 import {Consommation, createDefaultConsommation} from "@/models/types/consommation";
-import {getArticlesCoucheByDemande} from "@/services/CouchesService";
+import {getAllCouches} from "@/services/CouchesService";
 import {getJourEnumValue} from "@/enums/Jour";
+import {createCreerAffaireFormModel} from "@/models/forms/CreerAffaireFormModel";
+import {
+    createDefaultCreerCommandeFormModel,
+    CreerCommandeFormModel
+} from "@/models/forms/CreerCommande/creerCommandeFormModel";
+import {ModifCommandeCoucheModel} from "@/models/forms/CreerCommande/ModifCommandeCoucheModel";
+import {getAllArticles, getIDArticleByDemande} from "@/services/ArticlesService";
+import {createDefaultListAffaireModel} from "@/models/lists/ListAffaireModel";
+import {getAllAffaires} from "@/services/AffairesService";
+import {createDefaultListDemandeModel} from "@/models/lists/ListDemandeModel";
+import {createDefaultListSystemeModel} from "@/models/lists/ListSystemeModel";
+import {getAllSystemes} from "@/services/SystemesService";
+import {createDefaultListCommandeModel} from "@/models/lists/ListCommandeModel";
+import {getAllCommandes} from "@/services/CommandesService";
 
 export const useColorStore = defineStore('colorStore', {
     state: () => ({
-
         isLightTheme: false,
     }),
     getters: {
@@ -32,16 +45,25 @@ export const useColorStore = defineStore('colorStore', {
         },
     },
 });
-
+export const AffaireFormStore = defineStore('AffaireFromStore', {
+    state: () => ({
+        affaireform: createCreerAffaireFormModel(),
+    }),
+    actions: {
+        clear() {
+            this.affaireform = createCreerAffaireFormModel();
+        }
+    }
+})
 export const CoucheFormStore = defineStore('coucheFromStore', {
     state: () => ({
-        coucheFroms: [] as CoucheFormModel[],
+        coucheFroms: [] as CreerCoucheFormModel[],
     }),
     getters: {
         getnbCoucheForm: (state) => state.coucheFroms.length,
     },
     actions: {
-        addCoucheFrom(coucheFrom: CoucheFormModel) {
+        addCoucheFrom(coucheFrom: CreerCoucheFormModel) {
             this.coucheFroms.push(coucheFrom);
         },
         deleteCoucheFrom(index: number) {
@@ -49,37 +71,52 @@ export const CoucheFormStore = defineStore('coucheFromStore', {
         },
     },
 });
-
-export const nbCoucheFromStore = defineStore('nbCoucheFromStore', {
+export const DemandeFormStore = defineStore('demandeFromStore', {
     state: () => ({
-        nbCoucheFrom: 0,
+        demandeFrom: createDefaultDemandeFormModel() as DemandeFormModel,
+        modifCouchesDemande: [] as ModifDemandeCoucheModel[],
     }),
     actions: {
-        setNbCoucheFrom(nb: number) {
-            this.nbCoucheFrom = nb;
+        async initialiser() {
+            this.modifCouchesDemande = [];
+            this.demandeFrom.affaires = await getAllAffaires();
+            this.demandeFrom.systemes = await getAllSystemes()
+        },
+        clearDemandeFrom() {
+            this.demandeFrom = createDefaultDemandeFormModel();
+            this.clearModifCoucheDemande();
+        },
+        addModifCoucheDemande(modifCouche: ModifDemandeCoucheModel) {
+            this.modifCouchesDemande.push(modifCouche);
+        },
+        clearModifCoucheDemande() {
+            this.modifCouchesDemande = [];
         },
     },
 });
 
-export const DemandeFormStore = defineStore('demandeFromStore',
-    {
-        state: () => ({
-            demandeFrom: createDefaultDemandeFormModel() as DemandeFormModel,
-            modifCouchesDemande: [] as ModifDemandeCoucheModel[],
-        }),
-        actions: {
-            clearDemandeFrom() {
-                this.demandeFrom = createDefaultDemandeFormModel();
-                this.clearModifCoucheDemande();
-            },
-            addModifCoucheDemande(modifCouche: ModifDemandeCoucheModel) {
-                this.modifCouchesDemande.push(modifCouche);
-            },
-            clearModifCoucheDemande() {
-                this.modifCouchesDemande = [];
-            },
+export const CommandeFormStore = defineStore('commandeFromStore', {
+    state: () => ({
+        commandeFrom: createDefaultCreerCommandeFormModel() as CreerCommandeFormModel,
+        modifCouchesCommande: [] as ModifCommandeCoucheModel[],
+    }),
+    actions: {
+        clearCommandeFrom() {
+            this.commandeFrom = createDefaultCreerCommandeFormModel();
+            this.clearModifCoucheCommande();
         },
-    });
+        async setAllArticle() {
+            this.commandeFrom.articles = await getAllArticles();
+        },
+        addModifCoucheCommande(modifCouche: ModifCommandeCoucheModel) {
+            this.modifCouchesCommande.push(modifCouche);
+        },
+        clearModifCoucheCommande() {
+            this.modifCouchesCommande = [];
+        },
+    },
+});
+
 
 export const CalendarStore = defineStore('calendarStore', {
     state: () => ({
@@ -105,8 +142,9 @@ export const CalendarStore = defineStore('calendarStore', {
             for (const ofCalendar of this.ofsCalendar) {
                 const demande = this.demandesCalendar.find(d => d.idDemande === ofCalendar.idDemandeOf.idDemande);
                 ofCalendar.idDemandeOf = demande ? demande : ofCalendar.idDemandeOf;
-                ofCalendar.consommationOf = responseConsommation.filter(c => c.idOfConsommation.id === ofCalendar.id);
+                ofCalendar.consommationOf = responseConsommation.filter(c => c.of.id === ofCalendar.id);
             }
+            console.log(this.ofsCalendar);
         },
 
         async updateOfCalendar(ofId: number, jour: string, cabine: string) {
@@ -117,8 +155,8 @@ export const CalendarStore = defineStore('calendarStore', {
                 try {
                     const Of = createDefaultOf({
                         id: ofId,
-                        jourOf: jour,
-                        cabineOf: cabine,
+                        jour: jour,
+                        cabine: cabine,
                     });
                     await updateOF(Of);
                 } catch (error) {
@@ -130,27 +168,29 @@ export const CalendarStore = defineStore('calendarStore', {
         async creerOfCalendar(demandeId: number, jour: string, cabine: string) {
             try {
                 const Of = createDefaultOf({
-                    idDemandeOf: createDefaultDemande({
+                    demande: createDefaultDemande({
                         id: demandeId,
                     }),
-                    dateOf: new Date().toISOString().split('T')[0],
-                    jourOf: String(getJourEnumValue(jour)),
-                    cabineOf: cabine,
+                    jour: String(getJourEnumValue(jour)),
+                    cabine: cabine,
                 });
-                Of.avancementOf = "0";
-                Of.semaineOf = CalendarStore().calendarModel.semaine;
+                Of.avancement = "0";
+                Of.semaine = CalendarStore().calendarModel.semaine;
                 const responseOf = await creerOf(Of);
-                const responseArticle = await getArticlesCoucheByDemande(demandeId);
+                const responseArticle = await getIDArticleByDemande(demandeId);
                 const consommations: Consommation[] = [];
                 for (const id of responseArticle) {
                     const consommation = createDefaultConsommation();
-                    consommation.idOfConsommation.id = responseOf.id;
-                    consommation.codeArticleConsommation.id = id["id"];
+                    consommation.of.id = responseOf.id;
+                    consommation.article.id = id["id"];
                     const responseConsommation = await creerConsommation(consommation);
                     consommations.push(responseConsommation);
                 }
-                responseOf.consommationOf = consommations;
-                this.addOfCalendar(OfCalendarmapper.mapOfCalendar(responseOf));
+                responseOf.consommations = consommations;
+                const ofmapper = OfCalendarmapper.mapOfCalendar(responseOf)
+                ofmapper.idDemandeOf = this.demandesCalendar.find(d => d.idDemande === demandeId) || createDefaultDemandesCalendar();
+                this.addOfCalendar(ofmapper);
+                console.log(this.ofsCalendar);
             } catch (error) {
                 console.error('Erreur lors de la création de l’OF', error);
             }
@@ -160,6 +200,10 @@ export const CalendarStore = defineStore('calendarStore', {
         getOFsByLigneEtJour(ligne: string, jour: string) {
             return this.ofsCalendar.filter(of => of.cabineOF === ligne && of.jourOf === jour);
         },
+
+        getOfByJour(jour: string) {
+            return this.ofsCalendar.filter(of => of.jourOf === jour && of.cabineOF === this.calendarModel.cabine);
+        }
 
     },
 })
@@ -171,6 +215,34 @@ export const SemaineStore = defineStore('SemaineStore', {
     actions: {
         async setSemaines() {
             this.Semaines = await getAllSemaines();
+        }
+    }
+})
+
+export const ListStore = defineStore('ListStore', {
+    state: () => ({
+        ListAffaire: createDefaultListAffaireModel(),
+        ListDemande: createDefaultListDemandeModel(),
+        ListSysteme: createDefaultListSystemeModel(),
+        ListCommande: createDefaultListCommandeModel(),
+    }),
+    actions: {
+        async setListAffaire() {
+            this.ListAffaire.affaires = await getAllAffaires();
+        },
+        async setListDemande() {
+            this.ListDemande.demandes = await getAllDemandes();
+        },
+        async setListSysteme() {
+            this.ListSysteme.systemes = await getAllSystemes();
+            const responseCouche = await getAllCouches()
+            for (const systeme of this.ListSysteme.systemes) {
+                systeme.couches = responseCouche.filter(c => c.systeme.id === systeme.id);
+            }
+            console.log(this.ListSysteme.systemes);
+        },
+        async setListCommande() {
+            this.ListCommande.commandes = await getAllCommandes();
         }
     }
 })

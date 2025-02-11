@@ -1,12 +1,10 @@
 <script lang="ts">
 import {Vue, Component} from 'vue-facing-decorator';
 import NavBar from "@/component/common/NavBar.vue";
-import SelectArticle from "@/component/SelectArticleComponent.vue";
 
 @Component({
   components: {
-    NavBar,
-    SelectArticle
+    NavBar
   }
 })
 export default class SelectArticleView extends Vue {
@@ -16,7 +14,6 @@ export default class SelectArticleView extends Vue {
 
 <template>
   <NavBar />
-  <SelectArticle />
 </template>
 
 <style scoped>

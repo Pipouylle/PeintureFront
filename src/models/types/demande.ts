@@ -4,25 +4,25 @@ import {Of} from "@/models/types/of";
 
 export interface Demande {
     id: number;
-    numeroDemande: string;
-    numeroPhaseDemande: string;
-    etatDemande: string;
-    surfaceDemande: number;
-    nombrePieceDemande: number;
-    idCommandeDemande: Commande;
-    ofDemande: Of[];
+    numero: string;
+    etat: string;
+    surface: number;
+    date: string;
+    nombrePiece: number;
+    commande: Commande;
+    ofs: Of[];
 }
 
 export function createDefaultDemande(overrides: Partial<Demande> = {}): Demande {
     return {
         id: 0,
-        numeroDemande: "",
-        numeroPhaseDemande: "",
-        etatDemande: "pas commencer",
-        surfaceDemande: 0,
-        nombrePieceDemande: 0,
-        idCommandeDemande: createDefaultCommande(),
-        ofDemande: [],
+        numero: "",
+        etat: "pas commencer",
+        surface: 0,
+        date: "",
+        nombrePiece: 0,
+        commande: createDefaultCommande(),
+        ofs: [],
         ...overrides
     };
 }

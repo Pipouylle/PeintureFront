@@ -1,19 +1,13 @@
-import axios from 'axios';
-
-
 import {Article} from "@/models/types/article";
-import {TypesArticles} from "@/models/objectsApi/TypesArticles";
 import {ApiResponseCollection} from "@/models/ApiResponseCollection";
 import {Articles} from "@/models/objectsApi/Articles";
 import Articlemapper from "@/mappers/Articlemapper";
-import Affairemappers from "@/mappers/Affairemappers";
+import {getArticlesByIdArticleCouche} from "@/services/ArticleCoucheService";
+import {ArticleCouche} from "@/models/types/articleCouche";
+import {apiClient, apiClientPatch} from "@/stores/apiClient";
 
-const apiClient = axios.create({
-    baseURL: 'http://127.0.0.1:8000/api', // URL de votre API Symfony
-    headers: {
-        'Content-Type': 'application/ld+json',
-    },
-});
+
+
 
 export const getAllArticles = async (): Promise<Article[]> => {
     try {
@@ -36,26 +30,28 @@ export const getArticleByCode = async (code: string): Promise<Article[]> => {
         console.error('Erreur lors de la récupération de l\'article:', error);
         throw error;
     }
-}
+};
 
-export const getTypesArticles = async (): Promise<TypesArticles[]> => {
+export const getIDArticleByDemande = async (demandeId: number): Promise<Article[]> => {
     try {
-        const response = await apiClient.get<TypesArticles[]>('/articlesTypes');
-        console.log(response.data);
-        return response.data;
+        const response = await apiClient.get<Articles[]>(`/articleCouche/${demandeId}`);
+        return Articlemapper.mapArrayArticle(response.data);
     } catch (error) {
-        console.error('Erreur lors de la récupération des categorie:', error);
+        console.error('Erreur lors de la récupération de l\'article:', error);
         throw error;
     }
 }
 
-export const getArticleByCategorie = async (type: string): Promise<Article[]> => {
+export const getArticlesByArticleCouche = async (articleCouche: ArticleCouche): Promise<Article[]> => {
     try {
-        const response = await apiClient.get<ApiResponseCollection>(`/articles?type_article=${type}`);
-        const data :Articles[] = response.data.member;
-        return Articlemapper.mapArrayArticle(data);
+        const responseIds = await getArticlesByIdArticleCouche(articleCouche);
+        const responseArticles :Articles[] = [];
+        for (const responseId of responseIds.articlesArticleCouche) {
+            responseArticles.push((await apiClient.get<Articles>(`/articles/${responseId.split('/').pop()}`)).data);
+        }
+        return Articlemapper.mapArrayArticle(responseArticles);
     } catch (error) {
-        console.error('Erreur lors de la récupération des affaires:', error);
+        console.error(error);
         throw error;
     }
 }

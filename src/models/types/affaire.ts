@@ -3,8 +3,8 @@ import {Systeme} from "@/models/types/systeme";
 
 export interface Affaire {
     id: number;
-    numeroAffaire: string;
-    nomAffaire: string;
+    numero: string;
+    nom: string;
     commandes: Commande[];
     systemes: Systeme[];
 }
@@ -12,8 +12,8 @@ export interface Affaire {
 export function createDefaultAffaire (overrides: Partial<Affaire> = {}): Affaire {
     return {
         id: 0,
-        numeroAffaire: "",
-        nomAffaire: "",
+        numero: "",
+        nom: "",
         commandes: [],
         systemes: [],
         ...overrides

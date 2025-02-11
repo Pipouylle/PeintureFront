@@ -1,20 +1,18 @@
-import {createDefaultSysteme, Systeme} from "@/models/types/systeme";
+import {Systeme} from "@/models/types/systeme";
 import {Systemes} from "@/models/objectsApi/Systemes";
-import {createDefaultAffaire} from "@/models/types/affaire";
 import {createDefaultGrenaillage} from "@/models/types/Grenaillage";
 
 export default class Systememapper {
     static mapSysteme(obj: Systemes): Systeme {
-        console.log(obj);
         return {
             id: obj.id,
-            nomSysteme: obj.nomSysteme,
-            fournisseurSysteme: obj.fournisseurSysteme,
-            grenaillageSysteme: createDefaultGrenaillage({id: parseInt(obj.grenaillageSysteme.split('/')[3])}),
-            refieFPSysteme: parseFloat(obj.refieFPSysteme),
-            refieSFPSysteme: parseFloat(obj.regieSFPSysteme),
-            commandeSysteme: [],
-            coucheSysteme: []
+            nom: obj.nomSysteme,
+            fournisseur: obj.fournisseurSysteme,
+            grenaillage: createDefaultGrenaillage({id: parseInt(obj.grenaillageSysteme.split('/')[3])}),
+            refieFP: parseFloat(obj.refieFPSysteme),
+            refieSFP: parseFloat(obj.regieSFPSysteme),
+            commandes: [],
+            couches: []
         }
     }
 
@@ -25,11 +23,11 @@ export default class Systememapper {
     static mapSystemes(obj: Systeme): Systemes {
         return {
             id: obj.id,
-            nomSysteme: obj.nomSysteme,
-            fournisseurSysteme: obj.fournisseurSysteme,
-            grenaillageSysteme: "/api/grenaillages/" + obj.grenaillageSysteme.id,
-            refieFPSysteme: String(obj.refieFPSysteme).replace(/,/g, '.'),
-            regieSFPSysteme: String(obj.refieSFPSysteme).replace(/,/g, '.'),
+            nomSysteme: obj.nom,
+            fournisseurSysteme: obj.fournisseur,
+            grenaillageSysteme: obj.grenaillage? "/api/grenaillages/" + obj.grenaillage.id : "",
+            refieFPSysteme: String(obj.refieFP).replace(/,/g, '.'),
+            regieSFPSysteme: String(obj.refieSFP).replace(/,/g, '.'),
         }
     }
 

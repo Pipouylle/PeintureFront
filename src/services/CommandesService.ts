@@ -1,19 +1,16 @@
-import axios from "axios";
-
 import {Commande} from "@/models/types/commande";
 import {Commandes} from "@/models/objectsApi/Commandes";
 import Commandemapper from "@/mappers/Commandemapper";
 import {ApiResponseCollection} from "@/models/ApiResponseCollection";
 import {CommandesAffairesSystemes} from "@/models/objectsApi/CommandesAffairesSystemes";
 import {CommandeAffairesSystemesmapper} from "@/mappers/CommandeAffairesSystemesmapper";
+import {Affaire} from "@/models/types/affaire";
+import {Systeme} from "@/models/types/systeme";
+import {apiClient} from "@/stores/apiClient";
 
 
-const apiClient = axios.create({
-    baseURL: 'http://127.0.0.1:8000/api', // URL de votre API Symfony
-    headers: {
-        'Content-Type': 'application/ld+json',
-    },
-});
+
+
 
 export const getAllCommandes = async (): Promise<Commande[]> => {
     try {
@@ -38,10 +35,28 @@ export const creerCommmande = async (commande : Commande): Promise<Commande> => 
 export const getCommandeAffairesystemes = async (): Promise<CommandesAffairesSystemes[]> => {
     try {
         const response = await apiClient.get<ApiResponseCollection>('/commandesAffaires')
-        console.log(response.data.member)
         return CommandeAffairesSystemesmapper.mapArrayCommandeAffairesSystemes(response.data.member);
     } catch (error) {
         console.log('Erreur lors de la récupération de la commande:', error)
+        throw error;
+    }
+}
+
+export const getCommandeByAffaireAndSysteme = async (affaire: Affaire, systeme: Systeme): Promise<Commande> => {
+    try{
+        const response = await apiClient.get<ApiResponseCollection>(`/commandes?affaire_commande=/api/affaires/${affaire.id}&systeme_commande=/api/systemes/${systeme.id}`)
+        console.log(response.data.member)
+        return Commandemapper.mapArrayCommande(response.data.member)[0];
+    } catch (e) {
+        throw e;
+    }
+}
+
+export const deleteCommande = async (commande: Commande) => {
+    try {
+        await apiClient.delete(`/commandes/${commande.id}`);
+    } catch (error) {
+        console.error('Erreur lors de la suppression de la commande:', error);
         throw error;
     }
 }

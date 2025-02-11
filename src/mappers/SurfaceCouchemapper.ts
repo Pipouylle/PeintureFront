@@ -1,14 +1,14 @@
 import {SurfaceCouches} from "@/models/objectsApi/surfaceCouches";
 import {SurfaceCouche} from "@/models/types/surfaceCouche";
-import {createDefaultCouche} from "@/models/types/couche";
 import {createDefaultDemande} from "@/models/types/demande";
+import {createDefaultArticleCouche} from "@/models/types/articleCouche";
 
 export class SurfaceCouchemapper {
     static mapSurfaceCouche(obj: SurfaceCouches): SurfaceCouche {
         return {
             id: obj.id,
-            coucheSurfaceCouche: createDefaultCouche({id : parseInt(obj.coucheSurfaceCouche.split("/")[3]),}),
-            demandeSurfaceCouche: createDefaultDemande({id : parseInt(obj.demandeSurfaceCouche.split("/")[3]),}),
+            articleCouche: createDefaultArticleCouche({id : parseInt(obj.articleCoucheSurfaceCouche.split("/")[3]),}),
+            demande: createDefaultDemande({id : parseInt(obj.demandeSurfaceCouche.split("/")[3]),}),
             surface: parseFloat(obj.surface),
         }
     }
@@ -20,8 +20,8 @@ export class SurfaceCouchemapper {
     static mapSurfaceCouches(obj: SurfaceCouche): SurfaceCouches {
         return {
             id: obj.id,
-            coucheSurfaceCouche: "/api/couches/" + obj.coucheSurfaceCouche.id,
-            demandeSurfaceCouche: "/api/demandes/" + obj.demandeSurfaceCouche.id,
+            articleCoucheSurfaceCouche: "/api/article_couches/" + obj.articleCouche.id,
+            demandeSurfaceCouche: "/api/demandes/" + obj.demande.id,
             surface: String(obj.surface).replace(/,/g, '.'),
         }
     }

@@ -5,11 +5,12 @@ import {createDefaultOf} from "@/models/types/of";
 
 export default class Consommationsmapper {
     static mapConsommation(obj: Consommations): Consommation {
+        console.log(obj);
         return {
             id: obj.id,
-            codeArticleConsommation: createDefaultArticle({id: parseInt(obj.articleConsommation.split("/")[3])}),
-            idOfConsommation: createDefaultOf({id: parseInt(obj.ofConsommation.split("/")[3])}),
-            quantiterConsommation: obj.quantiterConsommation,
+            article: createDefaultArticle({id: parseInt(obj.articleConsommation.split("/")[3])}) ?? createDefaultArticle(),
+            of: createDefaultOf({id: parseInt(obj.ofConsommation.split("/")[3])}) ?? createDefaultOf(),
+            quantiter: obj.quantiterConsommation,
         }
     }
 
@@ -20,9 +21,9 @@ export default class Consommationsmapper {
     static mapConsommations(obj: Consommation): Consommations {
         return {
             id: obj.id,
-            articleConsommation: "/api/consommations/" + obj.codeArticleConsommation.id,
-            ofConsommation: '/api/o_fs/' + obj.idOfConsommation.id,
-            quantiterConsommation: obj.quantiterConsommation,
+            articleConsommation: "/api/articles/" + obj.article.id,
+            ofConsommation: '/api/o_fs/' + obj.of.id,
+            quantiterConsommation: obj.quantiter,
         }
     }
     static mapArrayConsommations(dataArray: Consommation[]): Consommations[] {

@@ -1,8 +1,8 @@
 export interface Semaine {
     id: number;
-    numeroAnnee: number;
-    numeroMois: number;
-    numeroSemaine: number;
+    annee: number;
+    mois: number;
+    semaine: number;
     dateDebut: string;
     dateFin: string;
 }
@@ -10,9 +10,9 @@ export interface Semaine {
 export function createDefaultSemaine(overrides: Partial<Semaine> = {}): Semaine {
     return {
         id: 0,
-        numeroAnnee: 0,
-        numeroMois: 0,
-        numeroSemaine: 0,
+        annee: 0,
+        mois: 0,
+        semaine: 0,
         dateDebut: "",
         dateFin: "",
         ...overrides

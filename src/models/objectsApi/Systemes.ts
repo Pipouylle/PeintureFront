@@ -1,5 +1,3 @@
-import {Affaires} from "@/models/objectsApi/Affaires";
-
 export interface Systemes {
     "id": number,
     "fournisseurSysteme": string,

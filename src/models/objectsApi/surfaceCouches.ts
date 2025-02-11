@@ -1,6 +1,6 @@
 export interface SurfaceCouches {
     "id": number,
-    "coucheSurfaceCouche": string,
-    "demandeSurfaceCouche": string,
+    "articleCoucheSurfaceCouche": string, //ArticleCouche.id
+    "demandeSurfaceCouche": string, //Demande.id
     "surface": string,
 }

@@ -1,6 +1,6 @@
 export interface Consommations {
     id: number,
     ofConsommation : string, //Ofs.id
-    articleConsommation : string, //Articles.id
+    articleConsommation : string, //ArticleCouche.id
     quantiterConsommation : number,
 }

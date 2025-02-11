@@ -1,30 +1,30 @@
-import {CommandesAffairesSystemes} from "@/models/objectsApi/CommandesAffairesSystemes";
+import {Systeme} from "@/models/types/systeme";
+import {Affaire} from "@/models/types/affaire";
+import {Commande, createDefaultCommande} from "@/models/types/commande";
 
 export interface DemandeFormModel {
-    header: any,
     numeroDemande: string,
-    numeroPhase: string,
-    commandeItem: CommandesAffairesSystemes[],
-    selectedCommande: CommandesAffairesSystemes | null,
+    systemes: Systeme[],
+    selectedSysteme: { title: string; value: number } | null;
+    affaires: Affaire[],
+    selectedAffaire: { title: string; value: number } | null;
+    dateDemande: string | null,
+    commandeDemande: Commande,
     surfaceDemande: number,
+    nombrePieceDemande: number
 }
 
 export function createDefaultDemandeFormModel(override: Partial<DemandeFormModel> = {}): DemandeFormModel {
     return {
-        header: [{text: 'Numéro Commande', value: 'eurekaCommande'},
-            {text: 'Numéro Affaire', value: 'numeroAffaire'},
-            {text: 'nom Affaire', value: 'nomAffaire'},
-            {text: 'Nom Syteme', value: 'nomSysteme'},
-            {text: 'Commentaire', value: 'commentaireCommande'},
-            {text: 'RegieSFR', value: 'regieSFPCommande'},
-            {text: 'RegieFP', value: 'regieFPCommande'},
-            {text: 'fiche H', value: 'ficheHCommande'},
-        ],
         numeroDemande: '',
-        numeroPhase: '',
-        commandeItem: [],
-        selectedCommande: null,
+        systemes: [],
+        selectedSysteme: null,
+        affaires: [],
+        selectedAffaire: null,
+        dateDemande: null,
+        commandeDemande: createDefaultCommande(),
         surfaceDemande: 0,
+        nombrePieceDemande: 0,
         ...override
     }
 }

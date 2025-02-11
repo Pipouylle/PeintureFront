@@ -8,7 +8,7 @@
             <v-form>
               <v-text-field
                   label="Numéro de l'affaire"
-                  v-model="numeroAffaire"
+                  v-model="this.AffaireFormStore.affaireform.numeroAffaire"
                   outlined
                   dense
                   required
@@ -16,7 +16,7 @@
               ></v-text-field>
               <v-text-field
                   label="Nom de l'affaire"
-                  v-model="nomAffaire"
+                  v-model="this.AffaireFormStore.affaireform.nomAffaire"
                   outlined
                   dense
                   required
@@ -40,31 +40,30 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component, Prop } from 'vue-facing-decorator';
-import { ref } from 'vue';
+import { Vue, Component } from 'vue-facing-decorator';
 import { creerAffaire } from '@/services/AffairesService';
 
-import {Affaire, createDefaultAffaire} from "@/models/types/affaire";
+import { createDefaultAffaire} from "@/models/types/affaire";
+import {AffaireFormStore} from "@/stores";
 
 @Component({})
 export default class CreerAffaireForm extends Vue {
-  private nomAffaire = '';
-  private numeroAffaire: string = '';
+  private AffaireFormStore = AffaireFormStore();
 
   public async submitForm() {
     try {
-      if (!this.nomAffaire) {
+      if (!this.AffaireFormStore.affaireform.nomAffaire) {
         alert('Veuillez remplir tous les champs.');
         return;
       }
 
       const affaire = createDefaultAffaire({
-        id: 0,
-        numeroAffaire: this.numeroAffaire,
-        nomAffaire: this.nomAffaire,
+        numero: this.AffaireFormStore.affaireform.numeroAffaire,
+        nom: this.AffaireFormStore.affaireform.nomAffaire,
       });
       await creerAffaire(affaire);
       alert('Affaire créée avec succès !');
+      this.AffaireFormStore.clear();
     } catch (error) {
       alert('Erreur lors de la création de l\'affaire.');
     }
@@ -78,35 +77,10 @@ export default class CreerAffaireForm extends Vue {
   padding: 20px;
 }
 
-.v-card {
-  border-radius: 16px;
-  background-color: #1e1e2f;
-  color: #ffffff;
-}
-
 .form-title {
   font-size: 20px;
   font-weight: bold;
   text-align: center;
-  color: #07bf9b;
-}
-
-.v-btn {
-  background-color: #07bf9b;
-  color: white;
-  font-weight: bold;
-}
-
-.v-btn:hover {
-  background-color: #06ac8b;
-}
-
-.v-text-field,
-.v-date-picker {
-  margin-bottom: 16px;
-}
-
-.v-card-text {
-  padding: 20px;
+  color: #034335;
 }
 </style>

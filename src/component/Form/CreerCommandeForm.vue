@@ -1,6 +1,5 @@
 <script lang="ts">
 import {Vue, Component} from 'vue-facing-decorator';
-import SelectArticleComponent from "@/component/SelectArticleComponent.vue";
 import CreerCoucheForm from "@/component/Form/CreerCoucheForm.vue";
 import {createDefaultSysteme, Systeme} from "@/models/types/systeme";
 import {getAllSystemes} from "@/services/SystemesService";
@@ -8,10 +7,18 @@ import {Affaire, createDefaultAffaire} from "@/models/types/affaire";
 import {getAllAffaires} from "@/services/AffairesService";
 import {createDefaultCommande} from "@/models/types/commande";
 import {creerCommmande} from "@/services/CommandesService";
+import ModifCoucheForCommande from "@/component/Form/ModifCoucheForCommande.vue";
+import {CommandeFormStore} from "@/stores";
+import {createDefaultModifCommandeCoucheModel} from "@/models/forms/CreerCommande/ModifCommandeCoucheModel";
+import {createDefaultArticleCouche} from "@/models/types/articleCouche";
+import {getCouchesBySysteme} from "@/services/CouchesService";
+import {creerArticleCouche} from "@/services/ArticleCoucheService";
+import {createDefaultSelectArticles} from "@/models/forms/CreerCommande/SelectArticles";
 
 @Component({
-  components: {CreerCoucheForm, SelectArticleComponent}
+  components: {ModifCommandeCouche: ModifCoucheForCommande, CreerCoucheForm}
 })
+//TODO: restock le prix mdr qui est dans tarif
 export default class CreerCommandeForm extends Vue {
   private Systemes: Systeme[] = [];
   private selectedSysteme: { title: string; value: number } | null = null;
@@ -20,17 +27,20 @@ export default class CreerCommandeForm extends Vue {
   private commentaire: string = '';
   private eureka: string = '';
   private FicheH: boolean = false;
-  private tarifFicheH: number = 0;
   private pvCommande: boolean = false;
+
+  private CommandeFormStore = CommandeFormStore();
 
   public async mounted() {
     this.Affaires = await getAllAffaires();
+    await this.CommandeFormStore.setAllArticle();
+    this.Systemes = await getAllSystemes();
   }
 
   get formatedSysteme() {
     return this.Systemes.map((systeme: Systeme) => {
       return {
-        title: systeme.nomSysteme,
+        title: systeme.nom + " - " + systeme.fournisseur,
         value: systeme.id
       }
     })
@@ -39,33 +49,50 @@ export default class CreerCommandeForm extends Vue {
   get formatedAffaire() {
     return this.Affaires.map((affaire: Affaire) => {
       return {
-        title: affaire.numeroAffaire + ' - ' + affaire.nomAffaire,
+        title: affaire.numero + " - " + affaire.nom,
         value: affaire.id
       }
     });
   }
 
-  async onAffaireSelected() {
-    if (this.selectedAffaire) {
-      this.Systemes = await getAllSystemes();
+
+  async onSystemeSelected() {
+    const systeme = this.Systemes.find((systeme: Systeme) => systeme.id === this.selectedSysteme?.value);
+    if (systeme) {
+      this.CommandeFormStore.clearModifCoucheCommande();
+      const couches = (await getCouchesBySysteme(systeme.id)).sort((a, b) => a.id - b.id);
+      for (let i = 0; i < couches.length; i++) {
+        this.CommandeFormStore.addModifCoucheCommande(createDefaultModifCommandeCoucheModel({
+          id: i,
+          articleCouche: createDefaultArticleCouche({
+            couche: couches[i]
+          }),
+          articles: [createDefaultSelectArticles()]
+        }))
+      }
+      console.log('il est correcte');
     }
   }
 
-  public submitForm() {
+  public async submitForm() {
     try {
       if (!this.selectedAffaire || !this.selectedSysteme) {
-        throw new Error('Veuillez selectionner une affaire');
+        alert("c'est vide")
+        return;
       }
       const commande = createDefaultCommande({
-        eurekaCommande: this.eureka,
-        commentaireCommande: this.commentaire,
-        ficheHcommande: this.FicheH,
-        tarifFicheHCommande: this.FicheH ? this.tarifFicheH : 0,
-        idAffaireCommande: createDefaultAffaire({id: this.selectedAffaire.value}),
-        idSystemeCommande: createDefaultSysteme({id: this.selectedSysteme.value}),
+        eureka: this.eureka,
+        commentaire: this.commentaire,
+        ficheH: this.FicheH,
+        pvPeinture: this.pvCommande,
+        affaire: createDefaultAffaire({id: this.selectedAffaire.value}),
+        systeme: createDefaultSysteme({id: this.selectedSysteme.value}),
       });
-      creerCommmande(commande);
-
+      const reponseCommande = await creerCommmande(commande);
+      for (const modifCouche of this.CommandeFormStore.modifCouchesCommande) {
+        modifCouche.articleCouche.commande = reponseCommande;
+        await creerArticleCouche(modifCouche.articleCouche);
+      }
     } catch (error) {
       console.error(error);
     }
@@ -89,10 +116,8 @@ export default class CreerCommandeForm extends Vue {
                   variant="outlined"
                   v-model="selectedAffaire"
                   return-object
-                  @update:model-value="onAffaireSelected"
               ></v-combobox>
               <v-combobox
-                  v-if="selectedAffaire"
                   label="Systemes"
                   :items="formatedSysteme"
                   item-title="title"
@@ -100,7 +125,11 @@ export default class CreerCommandeForm extends Vue {
                   variant="outlined"
                   v-model="selectedSysteme"
                   return-object
+                  @update:model-value="onSystemeSelected"
               />
+              <div v-for="ModifCommandeCouche in CommandeFormStore.modifCouchesCommande" :key="ModifCommandeCouche.id">
+                <ModifCommandeCouche :modifCommandeCouche="ModifCommandeCouche"></ModifCommandeCouche>
+              </div>
 
               <v-divider class="mt-4"></v-divider>
               <v-text-field
@@ -120,13 +149,6 @@ export default class CreerCommandeForm extends Vue {
                   v-model="FicheH"
                   label="Fiche H"
               ></v-checkbox>
-              <v-number-input
-                  v-if="FicheH"
-                  type="number"
-                  label="tarif Fiche H"
-                  v-model="tarifFicheH"
-                  outlined
-              ></v-number-input>
               <v-checkbox
                   v-model="pvCommande"
                   label="pv commande"
@@ -155,35 +177,11 @@ export default class CreerCommandeForm extends Vue {
   padding: 20px;
 }
 
-.v-card {
-  border-radius: 16px;
-  background-color: #1e1e2f;
-  color: #ffffff;
-}
-
 .form-title {
   font-size: 20px;
   font-weight: bold;
   text-align: center;
-  color: #07bf9b;
+  color: #044336;
 }
 
-.v-btn {
-  background-color: #07bf9b;
-  color: white;
-  font-weight: bold;
-}
-
-.v-btn:hover {
-  background-color: #06ac8b;
-}
-
-.v-text-field,
-.v-date-picker {
-  margin-bottom: 16px;
-}
-
-.v-card-text {
-  padding: 20px;
-}
 </style>

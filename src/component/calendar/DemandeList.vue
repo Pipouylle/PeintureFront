@@ -12,13 +12,6 @@ export default class DemandeList extends Vue {
   dragStart = (event: DragEvent, demande: any) => {
     event.dataTransfer?.setData("demandeId", demande.idDemande.toString());
   };
-
-  drop = (event: DragEvent, jour: string, ligne: string) => {
-    const demandeId = event.dataTransfer?.getData("demandeId");
-    if (demandeId) {
-      this.CalendarStore.updateOfCalendar(parseInt(demandeId), jour, ligne);
-    }
-  };
 }
 </script>
 

@@ -10,7 +10,7 @@ export interface CommandesAffairesSystemes {
     "regieSFPCommande": string,
     "regieFPCommande": string,
     "ficheHCommande": boolean,
-    "tarifFichehCommande": string
+    "pvPeintureCommande": boolean
 }
 
 function createDefaultCommandesAffairesSystemes (overrides: Partial<CommandesAffairesSystemes> = {}): CommandesAffairesSystemes {
@@ -26,7 +26,7 @@ function createDefaultCommandesAffairesSystemes (overrides: Partial<CommandesAff
         "regieSFPCommande": "",
         "regieFPCommande": "",
         "ficheHCommande": false,
-        "tarifFichehCommande": "0",
+        "pvPeintureCommande": false,
         ...overrides
     };
 }

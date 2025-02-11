@@ -8,13 +8,12 @@ export default class Ofsmapper {
     static mapOf(obj: Ofs): Of {
         return {
             id: obj.id,
-            cabineOf: obj.cabineOF,
-            dateOf: obj.dateOf,
-            avancementOf: obj.avancementOf,
-            semaineOf: createDefaultSemaine({id: parseInt(obj.jourOf.split("/")[3])}),
-            jourOf: Jour[parseInt(obj.jourOf.split("/")[3])],
-            idDemandeOf: createDefaultDemande({id: parseInt(obj.demandeOf.split("/")[3])}),
-            consommationOf: []
+            cabine: obj.cabineOf,
+            avancement: obj.avancementOf,
+            semaine: createDefaultSemaine({id: parseInt(obj.semaineOf.split("/")[3])}),
+            jour: Jour[parseInt(obj.jourOf.split("/")[3])],
+            demande: createDefaultDemande({id: parseInt(obj.demandeOf.split("/")[3])}),
+            consommations: []
         }
     }
 
@@ -25,12 +24,11 @@ export default class Ofsmapper {
     static mapOfs(obj: Of): Ofs {
         return {
             id: obj.id,
-            cabineOF: obj.cabineOf,
-            dateOf: obj.dateOf,
-            jourOf: "/api/jours/" + obj.jourOf,
-            avancementOf: obj.avancementOf,
-            semaineOf: "/api/semaines/" + obj.semaineOf.id,
-            demandeOf: "/api/demandes/" + obj.idDemandeOf.id,
+            cabineOf: obj.cabine,
+            jourOf: "/api/jours/" + obj.jour,
+            avancementOf: obj.avancement,
+            semaineOf: "/api/semaines/" + obj.semaine.id,
+            demandeOf: "/api/demandes/" + obj.demande.id,
         }
     }
 

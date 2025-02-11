@@ -1,38 +1,21 @@
 <script lang="ts">
-import {Vue, Component, Watch} from 'vue-facing-decorator';
-import {CalendarModel} from "@/models/calendar/CalendarModel";
+import {Vue, Component} from 'vue-facing-decorator';
 import {CalendarStore, SemaineStore} from "@/stores";
-import {getSemaineByInfo} from "@/services/SemainesService";
 
-import OF from "@/component/calendar/OF.vue"
-import {Semaine} from "@/models/types/semaine";
+import OfClandar from "@/component/calendar/OfClandar.vue"
 import DemandeList from "@/component/calendar/DemandeList.vue";
 import SelectSemaine from "@/component/calendar/SelectSemaine.vue";
+import InfoOfCalendarDialogComponent from "@/component/calendar/infoOfCalendarDialogComponent.vue";
+import {OfCalendar} from "@/models/calendar/OfCalendar";
+import CalendarComponent from "@/component/calendar/calendarComponent.vue";
 
 @Component({
-  components: {SelectSemaine, DemandeList, OF}
+  components: {CalendarComponent, InfoOfCalendarDialogComponent, SelectSemaine, DemandeList, OfClandar}
 })
 export default class calendar extends Vue {
   private CalendarStore = CalendarStore();
   private SemaineStore = SemaineStore();
 
-  dragStart = (event: DragEvent, of: any) => {
-    event.dataTransfer?.setData("ofId", of.id.toString());
-  };
-
-  drop = (event: DragEvent, jour: string, ligne: string) => {
-    const ofId = event.dataTransfer?.getData("ofId");
-    const demandeId = event.dataTransfer?.getData("demandeId");
-    if (ofId) {
-      this.CalendarStore.updateOfCalendar(parseInt(ofId), jour, ligne);
-    }
-    if (demandeId) {
-      const demande = this.CalendarStore.demandesCalendar.find(d => d.idDemande === parseInt(demandeId));
-      if (demande) {
-        this.CalendarStore.creerOfCalendar(demande.idDemande, jour, ligne);
-      }
-    }
-  };
 
   mounted() {
     this.SemaineStore.setSemaines();
@@ -42,58 +25,50 @@ export default class calendar extends Vue {
 </script>
 
 <template>
-  <v-col class="calendar">
-    <v-row class="align-center fixed-select-semaine">
-      <SelectSemaine/>
-    </v-row>
-    <v-row class="content">
-      <v-col cols="3" class="demande-list-container">
-        <DemandeList/>
+  <v-card elevation="3" class="calendar-container">
+    <v-card-text>
+      <v-col class="calendar">
+        <v-row class="align-center fixed-select-semaine">
+          <SelectSemaine/>
+        </v-row>
+        <v-row class="content">
+          <v-col cols="3" class="demande-list-container">
+            <DemandeList/>
+          </v-col>
+          <v-col>
+            <calendarComponent/>
+          </v-col>
+        </v-row>
       </v-col>
-      <v-col class="planning-calendar" v-if="this.CalendarStore.calendarModel.semaine.numeroSemaine">
-        <div class="header">
-          <div v-for="jour in this.CalendarStore.calendarModel.jours" :key="jour" class="column-header">{{ jour }}</div>
-        </div>
-        <div class="rows">
-          <div v-for="cabine in this.CalendarStore.calendarModel.cabines" :key="cabine" class="row">
-            <div class="row-label">{{ cabine }}</div>
-            <div v-for="jour in this.CalendarStore.calendarModel.jours" :key="jour" class="column"
-                 @dragover.prevent
-                 @drop="drop($event, jour, cabine)">
-              <OF v-for="of in this.CalendarStore.getOFsByLigneEtJour(cabine, jour)" :key="of.id" :of="of"
-                  draggable="true"
-                  @dragstart="dragStart($event, of)"/>
-            </div>
-          </div>
-        </div>
-      </v-col>
-    </v-row>
-  </v-col>
+    </v-card-text>
+  </v-card>
 </template>
 
 <style scoped>
-.calendar {
-}
-
 .fixed-select-semaine {
   position: fixed;
   top: 6vh;
   width: 100%;
-  background-color: #0b0e0d;
   z-index: 1000;
 }
 
-.content {
-  padding-top: 13vh; /* 6djust based on the height of SelectSemaine */
+.calendar-container {
+  margin-top: 50px;;
+}
 
+.content {
+  padding-top: 2vh; /* 6djust based on the height of SelectSemaine */
+  height: calc(100vh - 16vh);
 }
 
 .demande-list-container {
-  height: calc(100vh - 16vh); /* Adjust based on the height of SelectSemaine */
+  z-index: 1000;
+  top: 10vh;
+  height: 10vw;
   overflow: auto;
-  border: 2px solid #ccc;
   border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 6px 10px rgba(0, 0, 0, 0.1);
+  position: fixed;
 }
 
 .planning-calendar {

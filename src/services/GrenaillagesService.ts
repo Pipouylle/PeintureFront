@@ -1,4 +1,3 @@
-import axios from "axios";
 import {ApiResponseCollection} from "@/models/ApiResponseCollection";
 import {Grenaillage} from "@/models/types/Grenaillage";
 import {Grenaillagemapper} from "@/mappers/Grenaillagemapper";

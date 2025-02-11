@@ -4,25 +4,23 @@ import {createDefaultSemaine, Semaine} from "@/models/types/semaine";
 
 export interface Of {
     id: number;
-    cabineOf: string;
-    dateOf: string;
-    avancementOf: string;
-    jourOf: string;
-    semaineOf: Semaine;
-    idDemandeOf: Demande;
-    consommationOf: Consommation[];
+    cabine: string;
+    avancement: string;
+    jour: string;
+    semaine: Semaine;
+    demande: Demande;
+    consommations: Consommation[];
 }
 
 export function createDefaultOf(overrides: Partial<Of> = {}): Of {
     return {
         id: 0,
-        cabineOf: "",
-        dateOf: "",
-        jourOf: "",
-        semaineOf: createDefaultSemaine(),
-        avancementOf: "0",
-        idDemandeOf: createDefaultDemande(),
-        consommationOf: [],
+        cabine: "",
+        jour: "",
+        semaine: createDefaultSemaine(),
+        avancement: "0",
+        demande: createDefaultDemande(),
+        consommations: [],
         ...overrides
     };
 }

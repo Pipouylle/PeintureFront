@@ -1,24 +1,24 @@
 import {Commande} from "@/models/types/commande";
-import {Affaire, createDefaultAffaire} from "@/models/types/affaire";
-import {createDefaultSysteme, Systeme} from "@/models/types/systeme";
-import {Demande} from "@/models/types/demande";
+import {createDefaultAffaire} from "@/models/types/affaire";
+import {createDefaultSysteme} from "@/models/types/systeme";
 import {Commandes} from "@/models/objectsApi/Commandes";
 
 export default class Commandemapper{
     static mapCommande(obj: Commandes): Commande {
+        console.log(obj);
         return {
             id: obj.id,
-            numeroCommande: obj.numeroCommande,
-            eurekaCommande: obj.eurekaCommande,
-            commentaireCommande: obj.commentaireCommande,
-            surfaceCommande: parseFloat(obj.surfaceCommande),
-            regieSFPCommande: parseFloat(obj.regieSFPCommande),
-            regieFPCommande: parseFloat(obj.regieFPCommande),
-            ficheHcommande: obj.ficheHCommande,
-            tarifFicheHCommande: parseFloat(obj.tarifFicheHCommande),
-            idAffaireCommande: createDefaultAffaire({id: parseInt(obj.affaireCommande.split("/")[3])}),
-            idSystemeCommande: createDefaultSysteme({id: parseInt(obj.systemeCommande.split("/")[3])}),
-            demandeCommande: []
+            eureka: obj.eurekaCommande,
+            commentaire: obj.commentaireCommande,
+            surface: parseFloat(obj.surfaceCommande),
+            regieSFP: parseFloat(obj.regieSFPCommande),
+            regieFP: parseFloat(obj.regieFPCommande),
+            ficheH: obj.ficheHCommande,
+            pvPeinture: obj.pvPeintureCommande,
+            affaire: createDefaultAffaire({id: parseInt(obj.affaireCommande.split("/")[3])}),
+            systeme: createDefaultSysteme({id: parseInt(obj.systemeCommande.split("/")[3])}),
+            demandes: [],
+            articles: []
         }
     }
 
@@ -29,16 +29,15 @@ export default class Commandemapper{
     static mapCommandes(obj: Commande): Commandes {
         return {
             id: obj.id,
-            numeroCommande: obj.numeroCommande,
-            eurekaCommande: obj.eurekaCommande,
-            commentaireCommande: obj.commentaireCommande,
-            surfaceCommande: String(obj.surfaceCommande).replace(/,/g, '.'),
-            regieSFPCommande: String(obj.regieSFPCommande).replace(/,/g, '.'),
-            regieFPCommande: String(obj.regieFPCommande).replace(/,/g, '.'),
-            ficheHCommande: obj.ficheHcommande,
-            tarifFicheHCommande: String(obj.tarifFicheHCommande).replace(/,/g, '.'),
-            affaireCommande: "/api/affaires/" + obj.idAffaireCommande.id,
-            systemeCommande: "/api/systemes/" + obj.idSystemeCommande.id
+            eurekaCommande: obj.eureka,
+            commentaireCommande: obj.commentaire,
+            surfaceCommande: String(obj.surface).replace(/,/g, '.'),
+            regieSFPCommande: String(obj.regieSFP).replace(/,/g, '.'),
+            regieFPCommande: String(obj.regieFP).replace(/,/g, '.'),
+            ficheHCommande: obj.ficheH,
+            pvPeintureCommande: obj.pvPeinture,
+            affaireCommande: "/api/affaires/" + obj.affaire.id,
+            systemeCommande: "/api/systemes/" + obj.systeme.id
         }
     }
 

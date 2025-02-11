@@ -1,19 +1,12 @@
 <script lang="ts">
 import {Component, Vue, Watch} from 'vue-facing-decorator';
 import CreerCoucheForm from "@/component/Form/CreerCoucheForm.vue";
-import {getAllAffaires} from "@/services/AffairesService";
-import {Affaire, createDefaultAffaire} from "@/models/types/affaire";
 import {CoucheFormStore} from "@/stores";
-import {CoucheFormModel, createDefaultCoucheFormModel} from "@/models/forms/CoucheFormModel";
+import {createDefaultCoucheFormModel} from "@/models/forms/CreerCoucheFormModel";
 import {creerSystemeWithCouche} from "@/services/SystemesService";
-import {createDefaultSysteme, Systeme} from "@/models/types/systeme";
-import {Commande} from "@/models/types/commande";
-import {Couche, createDefaultCouche} from "@/models/types/couche";
-import {Article, createDefaultArticle} from "@/models/types/article";
-import {Consommation} from "@/models/types/consommation";
-import Affairemappers from "@/mappers/Affairemappers";
+import {createDefaultSysteme} from "@/models/types/systeme";
+import {createDefaultCouche} from "@/models/types/couche";
 import {createDefaultGrenaillage, Grenaillage} from "@/models/types/Grenaillage";
-import {Grenaillages} from "@/models/objectsApi/Grenaillages";
 import {getAllGrenaillage} from "@/services/GrenaillagesService";
 
 @Component({
@@ -62,34 +55,28 @@ export default class CreerSystemeForm extends Vue {
     })
   }
 
-  public getDataCouche() {
-    const coucheForm = this.CoucheFormstore.coucheFroms;
-    return coucheForm.map((couche) => {
-      return couche.getData();
-    });
-  }
+
 
   public async submitForm() {
     if (!this.selectedGrenaillage) {
       throw new Error('Veuillez selectionner un grenaillage');
     }
     try {
-      const DataCouche = this.getDataCouche();
-      const systeme: Systeme = createDefaultSysteme({
-        nomSysteme: this.nomSysteme,
-        grenaillageSysteme: createDefaultGrenaillage({id: this.selectedGrenaillage.value}),
-        fournisseurSysteme: this.fournisseur,
-        refieSFPSysteme: this.regieSFP,
-        refieFPSysteme: this.regieFP,
+      const systeme = createDefaultSysteme({
+        nom: this.nomSysteme,
+        grenaillage: createDefaultGrenaillage({id: this.selectedGrenaillage.value}),
+        fournisseur: this.fournisseur,
+        refieSFP: this.regieSFP,
+        refieFP: this.regieFP,
       });
-      for (let i = 0; i < DataCouche.length; i++) {
+      for (const coucheFrom of this.CoucheFormstore.coucheFroms) {
         const couche = createDefaultCouche({
-          epaisseurCouche: DataCouche[i].epaisseur,
-          tarifCouche: DataCouche[i].tarif,
-          codeArticleCouche: DataCouche[i].article,
-          systemeCouche: systeme,
-        });
-        systeme.coucheSysteme.push(couche);
+          nom: coucheFrom.couche.nom,
+          epaisseur: coucheFrom.couche.epaisseur,
+          tarif: coucheFrom.couche.tarif,
+          systeme: systeme,
+        })
+        systeme.couches.push(couche);
       }
       this.CoucheFormstore.coucheFroms = [];
       this.nbCouche = 0;
@@ -186,35 +173,10 @@ export default class CreerSystemeForm extends Vue {
   padding: 20px;
 }
 
-.v-card {
-  border-radius: 16px;
-  background-color: #1e1e2f;
-  color: #ffffff;
-}
-
 .form-title {
   font-size: 20px;
   font-weight: bold;
   text-align: center;
-  color: #07bf9b;
-}
-
-.v-btn {
-  background-color: #07bf9b;
-  color: white;
-  font-weight: bold;
-}
-
-.v-btn:hover {
-  background-color: #06ac8b;
-}
-
-.v-text-field,
-.v-date-picker {
-  margin-bottom: 16px;
-}
-
-.v-card-text {
-  padding: 20px;
+  color: #044336;
 }
 </style>

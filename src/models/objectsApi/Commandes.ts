@@ -1,6 +1,5 @@
 export interface Commandes {
     "id": number,
-    "numeroCommande": string,
     "affaireCommande": string, // Affaire.id
     "systemeCommande": string, // Systeme.id
     "eurekaCommande": string,
@@ -9,5 +8,5 @@ export interface Commandes {
     "regieSFPCommande": string,
     "regieFPCommande": string,
     "ficheHCommande": boolean,
-    tarifFicheHCommande: string,
+    "pvPeintureCommande": boolean,
 }
