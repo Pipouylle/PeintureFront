@@ -1,6 +1,6 @@
 <script lang="ts">
 import {Vue, Component} from 'vue-facing-decorator';
-import {CalendarStore, SemaineStore} from "@/stores";
+import {CalendarStore, ListStore} from "@/stores";
 
 import OfClandar from "@/component/calendar/OfClandar.vue"
 import DemandeList from "@/component/calendar/DemandeList.vue";
@@ -14,33 +14,22 @@ import CalendarComponent from "@/component/calendar/calendarComponent.vue";
 })
 export default class calendar extends Vue {
   private CalendarStore = CalendarStore();
-  private SemaineStore = SemaineStore();
-
-
-  mounted() {
-    this.SemaineStore.setSemaines();
-    this.CalendarStore.setDemandesCalendar();
-  }
 }
 </script>
 
 <template>
   <v-card elevation="3" class="calendar-container">
-    <v-card-text>
-      <v-col class="calendar">
-        <v-row class="align-center fixed-select-semaine">
-          <SelectSemaine/>
-        </v-row>
-        <v-row class="content">
-          <v-col cols="3" class="demande-list-container">
-            <DemandeList/>
-          </v-col>
-          <v-col>
-            <calendarComponent/>
-          </v-col>
-        </v-row>
+    <v-row class="align-center fixed-select-semaine">
+      <SelectSemaine/>
+    </v-row>
+    <v-row class="content">
+      <v-col cols="3" class="demande-list-container">
+        <DemandeList/>
       </v-col>
-    </v-card-text>
+      <v-col v-if="CalendarStore.calendarModel.cabine">
+        <calendarComponent/>
+      </v-col>
+    </v-row>
   </v-card>
 </template>
 
@@ -57,53 +46,18 @@ export default class calendar extends Vue {
 }
 
 .content {
-  padding-top: 2vh; /* 6djust based on the height of SelectSemaine */
-  height: calc(100vh - 16vh);
+  height: 86vh;
+  z-index: 1000;
+  position: fixed;
+  top: 12vh;
+  border: chocolate;
 }
 
 .demande-list-container {
-  z-index: 1000;
-  top: 10vh;
-  height: 10vw;
+  height: 99%;
+  width: 150vh;
   overflow: auto;
   border-radius: 10px;
   box-shadow: 0 6px 10px rgba(0, 0, 0, 0.1);
-  position: fixed;
-}
-
-.planning-calendar {
-  display: flex;
-  flex-direction: column;
-}
-
-.header {
-  display: flex;
-}
-
-.column-header {
-  flex: 1;
-  text-align: center;
-  font-weight: bold;
-}
-
-.rows {
-  display: flex;
-  flex-direction: column;
-}
-
-.row {
-  display: flex;
-  align-items: center;
-}
-
-.row-label {
-  width: 150px;
-  font-weight: bold;
-}
-
-.column {
-  flex: 1;
-  min-height: 100px;
-  border: 1px solid #0b0e0d;
 }
 </style>

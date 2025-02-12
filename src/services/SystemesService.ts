@@ -22,10 +22,20 @@ export const getAllSystemes = async (): Promise<Systeme[]> => {
     }
 };
 
+export const creerSysteme = async (systeme: Systeme) : Promise<Systeme> => {
+    try {
+        const systemes = Systememapper.mapSystemes(systeme);
+        const response = await apiClient.post<Systemes>('/systemes', systemes);
+        return Systememapper.mapSysteme(response.data);
+    } catch (error) {
+        console.error('Erreur lors de la récupération des systemes:', error);
+        throw error;
+    }
+}
+
 export const creerSystemeWithCouche = async (systeme: Systeme) : Promise<Systeme> => {
     try {
         const systemes = Systememapper.mapSystemes(systeme);
-        console.log(systemes);
         const response = await apiClient.post<Systemes>('/systemes', systemes);
         const systeme1 = Systememapper.mapSysteme(response.data);
         for (let i = 0; i < systeme.couches.length; i++) {

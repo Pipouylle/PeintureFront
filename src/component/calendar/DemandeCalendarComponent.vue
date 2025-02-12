@@ -4,17 +4,18 @@ import {DemandesCalendar} from "@/models/calendar/DemandesCalendar";
 import {CalendarStore} from "@/stores";
 
 @Component({})
+
+//TODO : add date in endpoint
 export default class DemandeCalendarComponent extends Vue {
   @Prop({required: true}) private demande!: DemandesCalendar;
-  private CalendarStore = CalendarStore();
-  public getCouleur = (etat: string) => {
+  public getCouleur = (etat: string, color: string) => {
     switch (etat) {
       case 'non commencé':
         return 'transparent';
       case 'en cours':
-        return 'rgba(0, 0, 255, 0.3)';
+        return color.replace('rgb', 'rgba').replace(')', `, ${0.5})`);
       case 'terminé':
-        return 'blue';
+        return color;
       default:
         return 'transparent';
     }
@@ -24,14 +25,18 @@ export default class DemandeCalendarComponent extends Vue {
 
 <template>
   <v-container class="demandeContainer">
-    <div class="demande" :style="{ backgroundColor: getCouleur(demande.etatDemande) }"
+    <div class="demande" :style="{ backgroundColor: getCouleur(demande.etatDemande, demande.color) }"
     >
-      <div class="top" :style="{ backgroundColor: 'lightblue' }">{{
-          demande.idDemande + " - " +
-          demande.numeroDemande + " - " +
-        demande.numeroAffaire + " - " +
-        demande.nomAffaire}}</div>
-      <div class="bottom">{{ demande.nombrePieceDemande }}</div>
+      <div class="top" :style="{ backgroundColor: demande.color }">{{
+          demande.numeroAffaire + " - " +
+          demande.nomAffaire + " - " +
+          demande.numeroDemande}}</div>
+      <div class="bottom">{{
+          demande.nomSysteme + " - " +
+          demande.nombrePieceDemande + " - " +
+          demande.surfaceDemande + "m² - (" +
+          demande.dateDemande.split('T')[0] + ")"
+        }}</div>
     </div>
   </v-container>
 </template>

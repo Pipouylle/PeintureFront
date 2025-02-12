@@ -1,6 +1,6 @@
 <script lang="ts">
 import {Vue, Component, Prop} from 'vue-facing-decorator';
-import {ModifCommandeCoucheModel} from "src/models/forms/CreerCommande/ModifCommandeCoucheModel";
+import {ModifCommandeCoucheModel} from "@/models/forms/CreerCommande/ModifCommandeCoucheModel";
 import {Article} from "@/models/types/article";
 import {CommandeFormStore} from "@/stores";
 import {createDefaultSelectArticles, SelectArticles} from "@/models/forms/CreerCommande/SelectArticles";

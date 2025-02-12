@@ -1,10 +1,11 @@
 <script lang="ts">
 import {Vue, Component, Prop} from 'vue-facing-decorator';
 import {CreerCoucheFormModel} from "@/models/forms/CreerCoucheFormModel";
+import {Couche} from "@/models/types/couche";
 
 @Component({})
 export default class CreerCoucheForm extends Vue {
-  @Prop({required: true}) private coucheFromModel!: CreerCoucheFormModel;
+  @Prop({required: true}) private couche!: Couche;
 }
 </script>
 
@@ -13,7 +14,7 @@ export default class CreerCoucheForm extends Vue {
     <v-row align="center" justify="center" class="form-container">
       <v-col cols="20" md="10" lg="14">
         <v-card elevation="3">
-          <v-card-title class="form-title">Couche n°{{this.coucheFromModel.id}}</v-card-title>
+          <v-card-title class="form-title">Couche n°{{this.couche.id}}</v-card-title>
           <v-card-text>
             <v-row>
               <v-col>
@@ -21,7 +22,7 @@ export default class CreerCoucheForm extends Vue {
                     label="Nom de la couche"
                     outlined
                     dense
-                    v-model="this.coucheFromModel.couche.nom"
+                    v-model="this.couche.nom"
                 ></v-text-field>
               </v-col>
             </v-row>
@@ -31,7 +32,7 @@ export default class CreerCoucheForm extends Vue {
                     label="epaisseur"
                     outlined
                     dense
-                    v-model="this.coucheFromModel.couche.epaisseur"
+                    v-model="this.couche.epaisseur"
                 ></v-number-input>
               </v-col>
               <v-col>
@@ -39,7 +40,7 @@ export default class CreerCoucheForm extends Vue {
                     label="tarif"
                     outlined
                     dense
-                    v-model="this.coucheFromModel.couche.tarif"
+                    v-model="this.couche.tarif"
                 ></v-number-input>
               </v-col>
             </v-row>

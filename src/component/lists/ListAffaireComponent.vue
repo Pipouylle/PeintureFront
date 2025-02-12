@@ -32,10 +32,6 @@ export default class ListAffaireComponent extends Vue {
     this.listStore.ListAffaire.affairesModif = item;
     this.router.push({name: 'modifAffaire'});
   }
-
-  async mounted() {
-    await this.listStore.setListAffaire();
-  }
 }
 </script>
 

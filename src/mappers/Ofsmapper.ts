@@ -1,7 +1,7 @@
 import {Ofs} from "@/models/objectsApi/Ofs";
 import {Of} from "@/models/types/of";
 import {createDefaultDemande} from "@/models/types/demande";
-import {Jour} from "@/enums/Jour";
+import {getJourEnumValue, Jour} from "@/enums/Jour";
 import {createDefaultSemaine} from "@/models/types/semaine";
 
 export default class Ofsmapper {
@@ -22,10 +22,11 @@ export default class Ofsmapper {
     }
 
     static mapOfs(obj: Of): Ofs {
+        const jourEnumValue = getJourEnumValue(obj.jour);
         return {
             id: obj.id,
             cabineOf: obj.cabine,
-            jourOf: "/api/jours/" + obj.jour,
+            jourOf: "/api/jours/" + jourEnumValue,
             avancementOf: obj.avancement,
             semaineOf: "/api/semaines/" + obj.semaine.id,
             demandeOf: "/api/demandes/" + obj.demande.id,

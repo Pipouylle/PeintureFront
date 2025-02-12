@@ -5,7 +5,6 @@ import {createDefaultOf} from "@/models/types/of";
 
 export default class Consommationsmapper {
     static mapConsommation(obj: Consommations): Consommation {
-        console.log(obj);
         return {
             id: obj.id,
             article: createDefaultArticle({id: parseInt(obj.articleConsommation.split("/")[3])}) ?? createDefaultArticle(),

@@ -8,7 +8,7 @@
             <v-form>
               <v-text-field
                   label="Numéro de l'affaire"
-                  v-model="this.AffaireFormStore.affaireform.numeroAffaire"
+                  v-model="this.AffaireFormStore.affaire.numero"
                   outlined
                   dense
                   required
@@ -16,7 +16,7 @@
               ></v-text-field>
               <v-text-field
                   label="Nom de l'affaire"
-                  v-model="this.AffaireFormStore.affaireform.nomAffaire"
+                  v-model="this.AffaireFormStore.affaire.nom"
                   outlined
                   dense
                   required
@@ -45,25 +45,19 @@ import { creerAffaire } from '@/services/AffairesService';
 
 import { createDefaultAffaire} from "@/models/types/affaire";
 import {AffaireFormStore} from "@/stores";
+import {useRouter} from "vue-router";
 
 @Component({})
 export default class CreerAffaireForm extends Vue {
   private AffaireFormStore = AffaireFormStore();
+  private router = useRouter();
 
   public async submitForm() {
     try {
-      if (!this.AffaireFormStore.affaireform.nomAffaire) {
-        alert('Veuillez remplir tous les champs.');
-        return;
-      }
-
-      const affaire = createDefaultAffaire({
-        numero: this.AffaireFormStore.affaireform.numeroAffaire,
-        nom: this.AffaireFormStore.affaireform.nomAffaire,
-      });
-      await creerAffaire(affaire);
+      await this.AffaireFormStore.addAffaire(this.AffaireFormStore.affaire);
       alert('Affaire créée avec succès !');
       this.AffaireFormStore.clear();
+      this.router.push({name: 'listAffaire'});
     } catch (error) {
       alert('Erreur lors de la création de l\'affaire.');
     }

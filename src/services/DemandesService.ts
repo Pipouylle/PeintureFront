@@ -49,7 +49,7 @@ export const getDemandeCalendarNotEnd = async (): Promise<Demande[]> => {
     }
 }
 
-export const getCouchesDemande = async (idSysteme: number): Promise <Couche[]> => {
+export const getCouchesDemande = async (idSysteme: number): Promise<Couche[]> => {
     try {
         const reponse = await apiClient.get<ApiResponseCollection>('/couches?Systemes_couche=/api/systemes/' + idSysteme)
         return Couchemapper.mapArrayCouche(reponse.data.member)

@@ -8,7 +8,7 @@ import {creerDemande} from "@/services/DemandesService";
 import {createDefaultModifDemandeCoucheModel} from "@/models/forms/ModifDemandeCoucheModel";
 import {createDefaultSurfaceCouche, SurfaceCouche} from "@/models/types/surfaceCouche";
 import {creerSurfaceCouche} from "@/services/SurfaceCouchesService";
-import {getArticleCoucheByCommande} from "@/services/ArticleCoucheService";
+import {getArticleCoucheByCommande, getArticleCoucheForDemande} from "@/services/ArticleCoucheService";
 import {Systeme} from "@/models/types/systeme";
 import {Affaire} from "@/models/types/affaire";
 import {getArticlesByArticleCouche} from "@/services/ArticlesService";
@@ -52,7 +52,19 @@ export default class CreerDemandeForm extends Vue {
   async onSelectSysteme(){
     const systeme = this.demandeFormstore.demandeFrom.systemes.find((systeme: Systeme) => systeme.id === this.demandeFormstore.demandeFrom.selectedSysteme?.value);
     const affaire = this.demandeFormstore.demandeFrom.affaires.find((affaire: Affaire) => affaire.id === this.demandeFormstore.demandeFrom.selectedAffaire?.value);
-    if (systeme && affaire) {
+    if (systeme && affaire){
+      this.demandeFormstore.demandeFrom.commandeDemande = await getCommandeByAffaireAndSysteme(affaire, systeme);
+      const ArticlesCouches = await getArticleCoucheForDemande(this.demandeFormstore.demandeFrom.commandeDemande);
+      for (const articleCouche of ArticlesCouches) {
+        this.demandeFormstore.addModifCoucheDemande(createDefaultModifDemandeCoucheModel({
+          id: this.demandeFormstore.modifCouchesDemande.length,
+          SurfaceCouche: createDefaultSurfaceCouche({
+            articleCouche: articleCouche
+          }),
+        }))
+      }
+    }
+    /*if (systeme && affaire) {
       this.demandeFormstore.demandeFrom.commandeDemande = await getCommandeByAffaireAndSysteme(affaire, systeme);
       this.demandeFormstore.demandeFrom.commandeDemande.articles = await getArticleCoucheByCommande(this.demandeFormstore.demandeFrom.commandeDemande);
       const responseCouches = await getCouchesBySysteme(systeme.id);
@@ -70,7 +82,7 @@ export default class CreerDemandeForm extends Vue {
           })
         }))
       }
-    }
+    }*/
   }
 
 

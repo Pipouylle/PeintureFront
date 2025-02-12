@@ -31,10 +31,6 @@ export default class ListCommandeComponent extends Vue {
     }
 
   }
-
-  mounted() {
-    this.ListStore.setListCommande();
-  }
 }
 </script>
 

@@ -26,11 +26,9 @@ export default class ListDemandeComponent extends Vue {
 
   }
   editDemande(item: Demande){
+    //TODO: editDemande
   }
 
-  async mounted(){
-    await this.listeStore.setListDemande();
-  }
 }
 </script>
 

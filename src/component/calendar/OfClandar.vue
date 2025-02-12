@@ -13,8 +13,8 @@ export default class OF extends Vue {
   public getCouleur = (etat: string) => {
     switch (etat) {
       case 'non commencé': return 'transparent';
-      case 'en cours': return 'rgba(0, 0, 255, 0.3)';
-      case 'terminé': return 'blue';
+      case 'en cours': return this.of.idDemandeOf.color.replace('rgb', 'rgba').replace(')', `, ${0.5})`);
+      case 'terminé': return this.of.idDemandeOf.color;
       default: return 'transparent';
     }
   };
@@ -23,7 +23,7 @@ export default class OF extends Vue {
 
 <template>
   <v-card class="of" :style="{ backgroundColor: getCouleur(of.idDemandeOf.etatDemande) }">
-    <v-card-title class="top" :style="{ backgroundColor: 'blue' }"> {{ of.idDemandeOf.numeroDemande + "" + "" }} </v-card-title>
+    <v-card-title class="top" :style="{ backgroundColor: this.of.idDemandeOf.color }"> {{ of.idDemandeOf.numeroDemande + "" + "" }} </v-card-title>
     <v-card-text class="bottom"> {{ of.idDemandeOf.numeroAffaire }} </v-card-text>
   </v-card>
 </template>

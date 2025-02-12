@@ -18,7 +18,6 @@ export const getAllOfs = async (): Promise<Of[]> => {
 export const creerOf = async (of: Of) : Promise<Of> => {
     try {
         const ofs = Ofsmapper.mapOfs(of);
-        console.log(ofs);
         const response = await apiClient.post<Ofs>('/o_fs', ofs);
         return Ofsmapper.mapOf(response.data);
     } catch (error) {
@@ -29,7 +28,9 @@ export const creerOf = async (of: Of) : Promise<Of> => {
 
 export const updateOF = async (of: Of): Promise<Of> => {
     try {
+        console.log(of);
         const ofs = Ofsmapper.mapOfs(of);
+        console.log(ofs);
         const response = await apiClientPatch.patch<Ofs>(`/o_fs/${of.id}`, ofs);
         return Ofsmapper.mapOf(response.data);
     } catch (error) {

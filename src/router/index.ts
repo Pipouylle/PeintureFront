@@ -2,17 +2,18 @@ import {createRouter, createWebHistory, RouteRecordRaw} from "vue-router";
 import HomeView from "@/views/HomeView.vue";
 
 import CreationAffaireView from "@/views/forms/CreationAffaireView.vue";
-import CreationCoucheView from "@/views/forms/CreationCoucheView.vue";
 import CreationSystemeView from "@/views/forms/CreationSystemeView.vue";
-import SelectArticleView from "@/views/SelectArticleView.vue";
 import CreationCommandeView from "@/views/forms/CreationCommandeView.vue";
 import CreationDemandeView from "@/views/forms/CreationDemandeView.vue";
-import CalendarView from "@/views/CalendarView.vue";
+import CalendarView from "@/views/calendars/CalendarView.vue";
 import ListAffaireView from "@/views/lists/ListAffaireView.vue";
 import ModifAffaireView from "@/views/modifs/ModifAffaireView.vue";
 import ListDemandeView from "@/views/lists/ListDemandeView.vue";
 import ListSystemeView from "@/views/lists/ListSystemeView.vue";
 import ListCommandeView from "@/views/lists/ListCommandeView.vue";
+import CalendarCabine1View from "@/views/calendars/CalendarCabine1View.vue";
+import CalendarCabine2View from "@/views/calendars/CalendarCabine2View.vue";
+import {useListStore} from "@/stores";
 
 const routes: Array<RouteRecordRaw> = [
     {
@@ -26,6 +27,11 @@ const routes: Array<RouteRecordRaw> = [
         component: ListAffaireView,
     },
     {
+        path: "/CreerAffaire",
+        name: "CreerAffaire",
+        component: CreationAffaireView,
+    },
+    {
         path: "/modifAffaire",
         name: "modifAffaire",
         component: ModifAffaireView,
@@ -37,24 +43,14 @@ const routes: Array<RouteRecordRaw> = [
       component: ListDemandeView,
     },
     {
+        path: "/CreerDemande",
+        name: "CreerDemande",
+        component: CreationDemandeView,
+    },
+    {
         path: "/listSysteme",
         name: "listSysteme",
         component: ListSystemeView,
-    },
-    {
-        path: "/listCommande",
-        name: "listCommande",
-        component: ListCommandeView,
-    },
-    {
-        path: "/CreerAffaire",
-        name: "CreerAffaire",
-        component: CreationAffaireView,
-    },
-    {
-        path: "/CreerCouche",
-        name: "CreerCouche",
-        component: CreationCoucheView,
     },
     {
         path: "/CreerSysteme",
@@ -62,9 +58,9 @@ const routes: Array<RouteRecordRaw> = [
         component: CreationSystemeView,
     },
     {
-        path: "/SelectArticle",
-        name: "SelectArticle",
-        component: SelectArticleView,
+        path: "/listCommande",
+        name: "listCommande",
+        component: ListCommandeView,
     },
     {
         path: "/CreerCommande",
@@ -72,15 +68,20 @@ const routes: Array<RouteRecordRaw> = [
         component: CreationCommandeView,
     },
     {
-        path: "/CreerDemande",
-        name: "CreerDemande",
-        component: CreationDemandeView,
-    },
-    {
         path: "/Calendar",
         name: "Calendar",
         component: CalendarView,
     },
+    {
+        path: "/calendarUsineCabine1",
+        name: "calendarUsineCabine1",
+        component: CalendarCabine1View
+    },
+    {
+        path: "/calendarUsineCabine2",
+        name: "calendarUsineCabine2",
+        component: CalendarCabine2View
+    }
 ];
 
 const router = createRouter({
@@ -88,4 +89,8 @@ const router = createRouter({
     routes,
 });
 
+router.beforeEach(async (to, from, next) => {
+    await useListStore().loadList(); // Load lists only if not already loaded
+    next();
+});
 export default router;

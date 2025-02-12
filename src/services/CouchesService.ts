@@ -19,6 +19,7 @@ export const creerCouche = async (couche : Couche) => {
     try {
         const couches = Couchemapper.mapCouches(couche);
         const response = await apiClient.post<Couches>('/couches', couches);
+        console.log(response.data);
         return Couchemapper.mapCouche(response.data);
     } catch (error) {
         console.error('Erreur lors de la récupération des couches:', error);

@@ -18,18 +18,25 @@ export default class calendarComponent extends Vue {
 
   dragStart = (event: DragEvent, of: any) => {
     event.dataTransfer?.setData("ofId", of.id.toString());
+    event.dataTransfer!.effectAllowed = "move";
   };
 
-  drop = (event: DragEvent, jour: string, ligne: string) => {
+  allowDrop(event: DragEvent) {
+    event.preventDefault();
+  }
+
+  drop = (event: DragEvent, jour: string) => {
     const ofId = event.dataTransfer?.getData("ofId");
     const demandeId = event.dataTransfer?.getData("demandeId");
     if (ofId) {
-      this.CalendarStore.updateOfCalendar(parseInt(ofId), jour, ligne);
+      this.CalendarStore.updateOfCalendar(parseInt(ofId), jour, this.CalendarStore.calendarModel.cabine);
     }
     if (demandeId) {
+      console.log(jour)
+      console.log(jour == "mardi")
       const demande = this.CalendarStore.demandesCalendar.find(d => d.idDemande === parseInt(demandeId));
       if (demande) {
-        this.CalendarStore.creerOfCalendar(demande.idDemande, jour, ligne);
+        this.CalendarStore.creerOfCalendar(demande.idDemande, jour, this.CalendarStore.calendarModel.cabine);
       }
     }
   };
@@ -40,25 +47,30 @@ export default class calendarComponent extends Vue {
   <v-dialog max-width="500" v-model="this.CalendarStore.calendarModel.dialog">
     <InfoOfCalendarDialogComponent :of="this.CalendarStore.calendarModel.ofSelected"/>
   </v-dialog>
-  <v-card v-for="jour in this.CalendarStore.calendarModel.jours" :key="jour">
-    <v-list
-      :items="this.CalendarStore.getOfByJour(jour)"
-      draggable="true"
+  <div class="calendar-container">
+    <v-card
+        v-for="jour in CalendarStore.calendarModel.jours"
+        :key="jour"
+        class="day-card"
+        @drop="drop($event, jour)"
+        @dragover.prevent="allowDrop"
     >
-      <template
-          v-for="of in this.CalendarStore.getOfByJour(jour)"
-          :key="of.id"
-          class="of-item"
-          draggable="true"
-          @dragstart="dragStart($event, of)"
-          @click="showMedia(of)"
-          @dragover.prevent
-          @drop="drop($event, jour)"
-      >
-        <OfClandar :of="of"/>
-      </template>
-    </v-list>
-  </v-card>
+      <v-card-title>{{ jour }}{{ jour === 'lundi' ? ' (' + this.CalendarStore.calendarModel.semaine.dateDebut.split('T')[0] + ')' : '' }}</v-card-title>
+      <v-list>
+        <v-list-item
+            v-for="of in CalendarStore.getOfByJour(jour)"
+            :key="of.id"
+            draggable="true"
+            @dragstart="dragStart($event, of)"
+            @click="showMedia(of)"
+            class="of-item"
+        >
+          <OfClandar :of="of"/>
+        </v-list-item>
+      </v-list>
+    </v-card>
+  </div>
+
 </template>
 
 <style scoped>

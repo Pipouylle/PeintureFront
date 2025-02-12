@@ -44,10 +44,6 @@ export default class ListSystemeComponent extends Vue {
     const systeme = this.listSystemeStore.ListSysteme.systemes.find(s => s.id === systemeId);
     return systeme?.couches || [];
   }
-
-  mounted() {
-    this.listSystemeStore.setListSysteme();
-  }
 }
 </script>
 

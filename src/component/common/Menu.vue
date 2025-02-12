@@ -4,62 +4,37 @@ import {Vue, Component} from 'vue-facing-decorator';
 @Component({})
 export default class Menu extends Vue {
   private drawer = false;
+  private list: { id: number, path: string, name: string }[] = [
+    {id: 1, path: "", name: "Home"},
+    {id: 2, path: "listAffaire", name: "Affaires"},
+    {id: 3, path: "listDemande", name: "Demandes"},
+    {id: 4, path: "listSysteme", name: "Systemes"},
+    {id: 5, path: "listCommande", name: "Commandes"},
+    {id: 6, path: "calendar", name: "Planing"},
+    {id: 7, path: "calendarUsineCabine1", name: "Planing Atelier Cabine 1"},
+    {id: 8, path: "calendarUsineCabine2", name: "Planing Atelier Cabine 2"},
+  ]
 }
 </script>
 
 <template>
-  <v-app>
     <v-btn
         @click="drawer = !drawer">
       Navigation
     </v-btn>
     <v-navigation-drawer v-if="drawer">
-      <v-list>
+      <v-list
+          v-for="item in list" :key="item.id"
+      >
         <v-list-item>
           <v-card>
-            <router-link to="/">
-              <v-btn class="w-100 button" > Home</v-btn>
-            </router-link>
-          </v-card>
-        </v-list-item>
-        <v-list-item>
-          <v-card>
-            <router-link to="/listAffaire">
-              <v-btn class="w-100 button"> Affaires </v-btn>
-            </router-link>
-          </v-card>
-        </v-list-item>
-        <v-list-item>
-          <v-card>
-            <router-link to="/listDemande">
-              <v-btn class="w-100 button"> Demandes </v-btn>
-            </router-link>
-          </v-card>
-        </v-list-item>
-        <v-list-item>
-          <v-card>
-            <router-link to="/listSysteme">
-              <v-btn class="w-100 button"> Systemes </v-btn>
-            </router-link>
-          </v-card>
-        </v-list-item>
-        <v-list-item>
-          <v-card>
-            <router-link to="/listCommande">
-              <v-btn class="w-100 button"> Commandes </v-btn>
-            </router-link>
-          </v-card>
-        </v-list-item>
-        <v-list-item>
-          <v-card>
-            <router-link to="/calendar">
-              <v-btn class="w-100 button"> Planing </v-btn>
+            <router-link :to="'/' + item.path">
+              <v-btn class="w-100 button"> {{ item.name }}</v-btn>
             </router-link>
           </v-card>
         </v-list-item>
       </v-list>
     </v-navigation-drawer>
-  </v-app>
 </template>
 
 <style scoped>

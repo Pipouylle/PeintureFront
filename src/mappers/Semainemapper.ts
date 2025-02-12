@@ -9,7 +9,7 @@ export class Semainemapper {
             annee: obj.annees,
             mois: obj.mois,
             dateDebut: obj.dateDebutSemaine,
-            dateFin: new Date(new Date(obj.dateDebutSemaine).getDate() + 5).toISOString(),
+            dateFin: new Date(new Date(obj.dateDebutSemaine).setDate(new Date(obj.dateDebutSemaine).getDate() + 6)).toISOString(),
         }
     }
 

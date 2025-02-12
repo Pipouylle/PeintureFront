@@ -26,7 +26,7 @@ export class OfCalendarmapper {
         return {
             id : obj.id,
             avancement : obj.avancementOf,
-            cabine : obj.avancementOf,
+            cabine : obj.cabineOF,
             jour : obj.jourOf,
             semaine : obj.semaineOf,
             consommations : obj.consommationOf,

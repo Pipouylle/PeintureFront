@@ -1,41 +1,37 @@
 <script lang="ts">
-import {Vue, Component} from 'vue-facing-decorator';
-import {CalendarStore, SemaineStore} from "@/stores";
+import {Component, Vue} from 'vue-facing-decorator';
+import {CalendarStore, ListStore} from "@/stores";
 import {Semaine} from "@/models/types/semaine";
 import {getSemaineByInfo} from "@/services/SemainesService";
 
 @Component({})
 export default class SelectSemaine extends Vue {
-  private SemaineStore = SemaineStore();
   private CalendarStore = CalendarStore();
+  private Lists = ListStore();
 
   get availableYears() {
-    return [...new Set(this.SemaineStore.Semaines.map((semaine: Semaine) => semaine.annee))];
+    return [...new Set(this.Lists.ListSemaine.map((semaine: Semaine) => semaine.annee))];
   }
 
   get availableMonths() {
-    return [...new Set(this.SemaineStore.Semaines
+    return [...new Set(this.Lists.ListSemaine
         .filter((semaine: Semaine) => semaine.annee === this.CalendarStore.calendarModel.semaine.annee)
         .map((semaine: Semaine) => semaine.mois))];
   }
 
   get availableWeeks() {
-    return this.SemaineStore.Semaines
+    return this.Lists.ListSemaine
         .filter((semaine: Semaine) =>
             semaine.annee === this.CalendarStore.calendarModel.semaine.annee &&
             semaine.mois === this.CalendarStore.calendarModel.semaine.mois)
         .map((semaine: Semaine) => semaine.semaine);
   }
 
-  async setSemaine() {
-    const responseSemaine = await getSemaineByInfo(this.CalendarStore.calendarModel.semaine);
-    console.log(responseSemaine);
-    this.CalendarStore.calendarModel.semaine = responseSemaine;
-  }
-
   async setCabine() {
-    await this.CalendarStore.setDemandesCalendar();
-    await this.CalendarStore.setOfsCalendar(this.CalendarStore.calendarModel.semaine);
+    if (this.CalendarStore.calendarModel.cabine != '') {
+      this.CalendarStore.calendarModel.semaine = await getSemaineByInfo(this.CalendarStore.calendarModel.semaine);
+      await this.CalendarStore.setOfsCalendar(this.CalendarStore.calendarModel.semaine);
+    }
   }
 }
 </script>
@@ -52,6 +48,7 @@ export default class SelectSemaine extends Vue {
             outlined
             dense
             v-model="this.CalendarStore.calendarModel.semaine.annee"
+            @update:model-value="this.CalendarStore.calendarModel.semaine.mois = 0; this.CalendarStore.calendarModel.semaine.semaine = 0; this.CalendarStore.calendarModel.cabine = ''"
         ></v-select>
       </v-col>
       <v-col cols="1">
@@ -63,6 +60,7 @@ export default class SelectSemaine extends Vue {
             outlined
             dense
             v-model="this.CalendarStore.calendarModel.semaine.mois"
+            @update:model-value="this.CalendarStore.calendarModel.semaine.semaine = 0; this.CalendarStore.calendarModel.cabine = ''"
         ></v-select>
       </v-col>
       <v-col cols="1">
@@ -74,7 +72,7 @@ export default class SelectSemaine extends Vue {
             outlined
             dense
             v-model="this.CalendarStore.calendarModel.semaine.semaine"
-            @update:model-value="setSemaine"
+            @update:model-value="this.CalendarStore.calendarModel.cabine = ''"
         ></v-select>
       </v-col>
       <v-col cols="1">
@@ -85,7 +83,7 @@ export default class SelectSemaine extends Vue {
           density="compact"
           outlined
           dense
-          v-model="this.CalendarStore.calendarModel.cabines"
+          v-model="this.CalendarStore.calendarModel.cabine"
           @update:model-value="setCabine"
       ></v-select>
     </v-col>

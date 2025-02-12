@@ -18,7 +18,6 @@ import {createDefaultSelectArticles} from "@/models/forms/CreerCommande/SelectAr
 @Component({
   components: {ModifCommandeCouche: ModifCoucheForCommande, CreerCoucheForm}
 })
-//TODO: restock le prix mdr qui est dans tarif
 export default class CreerCommandeForm extends Vue {
   private Systemes: Systeme[] = [];
   private selectedSysteme: { title: string; value: number } | null = null;
@@ -65,7 +64,8 @@ export default class CreerCommandeForm extends Vue {
         this.CommandeFormStore.addModifCoucheCommande(createDefaultModifCommandeCoucheModel({
           id: i,
           articleCouche: createDefaultArticleCouche({
-            couche: couches[i]
+            couche: couches[i],
+            tarif: couches[i].tarif
           }),
           articles: [createDefaultSelectArticles()]
         }))

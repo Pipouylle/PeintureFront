@@ -1,7 +1,7 @@
 <script lang="ts">
 import {Component, Vue, Watch} from 'vue-facing-decorator';
 import CreerCoucheForm from "@/component/Form/CreerCoucheForm.vue";
-import {CoucheFormStore} from "@/stores";
+import {CoucheFormStore, SystemeFormStore} from "@/stores";
 import {createDefaultCoucheFormModel} from "@/models/forms/CreerCoucheFormModel";
 import {creerSystemeWithCouche} from "@/services/SystemesService";
 import {createDefaultSysteme} from "@/models/types/systeme";
@@ -13,41 +13,27 @@ import {getAllGrenaillage} from "@/services/GrenaillagesService";
   components: {CreerCoucheForm}
 })
 
+//TODO: il peut n'y aavooir aucun grenaillage
 export default class CreerSystemeForm extends Vue {
   private CoucheFormstore = CoucheFormStore();
-  private nbCouche = 1;
-
-  private nomSysteme: string = '';
-
-  private Grenaillages: Grenaillage[] = [];
-  private selectedGrenaillage: { title: string; value: number } | null = null;
-
-  private regieSFP = 0;
-  private regieFP = 0;
-
-  private fournisseur = '';
+  private SystemeFormstore = SystemeFormStore();
 
   public async mounted() {
-    this.Grenaillages = await getAllGrenaillage();
-    this.updateCouches();
+    this.SystemeFormstore.setCouche()
   }
 
-  @Watch('nbCouche', {deep: true, immediate: true})
   public updateCouches() {
-    if (this.CoucheFormstore.getnbCoucheForm < this.nbCouche) {
-      for (let i = this.CoucheFormstore.getnbCoucheForm; i < this.nbCouche; i++) {
-        const coucheFormModel = createDefaultCoucheFormModel({id: i + 1,});
-        this.CoucheFormstore.addCoucheFrom(coucheFormModel);
-      }
-    } else if (this.CoucheFormstore.getnbCoucheForm > this.nbCouche) {
-      for (let i = this.CoucheFormstore.getnbCoucheForm; i > this.nbCouche; i--) {
-        this.CoucheFormstore.deleteCoucheFrom(i - 1);
-      }
+    const nbToadd = this.SystemeFormstore.systemesForm.nbCouche - this.SystemeFormstore.nbCouches;
+    if (nbToadd > 0){
+      this.SystemeFormstore.addCouche(nbToadd);
+    }
+    if (nbToadd < 0){
+      this.SystemeFormstore.removeCouche(Math.abs(nbToadd));
     }
   }
 
   get formatedGrenaillages() {
-    return this.Grenaillages.map((grenaillage: Grenaillage) => {
+    return this.SystemeFormstore.grenaillages.map((grenaillage: Grenaillage) => {
       return {
         title:"" + grenaillage.nom + " - " + grenaillage.typeChantier,
         value: grenaillage.id
@@ -58,30 +44,10 @@ export default class CreerSystemeForm extends Vue {
 
 
   public async submitForm() {
-    if (!this.selectedGrenaillage) {
-      throw new Error('Veuillez selectionner un grenaillage');
-    }
     try {
-      const systeme = createDefaultSysteme({
-        nom: this.nomSysteme,
-        grenaillage: createDefaultGrenaillage({id: this.selectedGrenaillage.value}),
-        fournisseur: this.fournisseur,
-        refieSFP: this.regieSFP,
-        refieFP: this.regieFP,
-      });
-      for (const coucheFrom of this.CoucheFormstore.coucheFroms) {
-        const couche = createDefaultCouche({
-          nom: coucheFrom.couche.nom,
-          epaisseur: coucheFrom.couche.epaisseur,
-          tarif: coucheFrom.couche.tarif,
-          systeme: systeme,
-        })
-        systeme.couches.push(couche);
-      }
-      this.CoucheFormstore.coucheFroms = [];
-      this.nbCouche = 0;
-      this.nbCouche = 1;
-      await creerSystemeWithCouche(systeme);
+      this.SystemeFormstore.systemesForm.systeme.grenaillage = this.SystemeFormstore.systemesForm.selectedGrenaillage ? createDefaultGrenaillage({id: this.SystemeFormstore.systemesForm.selectedGrenaillage.value}) : null;
+      await this.SystemeFormstore.addSysteme(this.SystemeFormstore.systemesForm.systeme);
+      this.SystemeFormstore.clearAll();
     } catch (error) {
       console.error(error);
     }
@@ -100,14 +66,14 @@ export default class CreerSystemeForm extends Vue {
             <v-form>
               <v-text-field
                   label="Nom du systeme"
-                  v-model="nomSysteme"
+                  v-model="this.SystemeFormstore.systemesForm.systeme.nom"
                   outlined
                   dense
                   prepend-icon="mdi-briefcase-outline"
               ></v-text-field>
               <v-text-field
                   label="fournisseur"
-                  v-model="fournisseur"
+                  v-model="this.SystemeFormstore.systemesForm.systeme.fournisseur"
                   outlined
                   dense
               ></v-text-field>
@@ -117,18 +83,18 @@ export default class CreerSystemeForm extends Vue {
                   item-title="title"
                   item-value="value"
                   variant="outlined"
-                  v-model="selectedGrenaillage"
+                  v-model="this.SystemeFormstore.systemesForm.selectedGrenaillage"
               ></v-combobox>
               <v-text-field
                   label="tarif regieSFP"
-                  v-model="regieSFP"
+                  v-model="this.SystemeFormstore.systemesForm.systeme.refieSFP"
                   outlined
                   dense
                   type="number"
               ></v-text-field>
               <v-text-field
                   label="tarif regieFP"
-                  v-model="regieFP"
+                  v-model="this.SystemeFormstore.systemesForm.systeme.refieFP"
                   outlined
                   dense
                   type="number"
@@ -140,13 +106,14 @@ export default class CreerSystemeForm extends Vue {
                   :min="1"
                   controlVariant="split"
                   label="Nombre de couches"
-                  v-model="nbCouche"
-                  outlined
+                  v-model="this.SystemeFormstore.systemesForm.nbCouche"
+                  @update:model-value="updateCouches"
+                  variant="outlined"
                   dense
                   prepend-icon="mdi-briefcase-outline"
               ></v-number-input>
-              <div v-for="coucheFormModel in this.CoucheFormstore.coucheFroms" :key="coucheFormModel.id">
-                <CreerCoucheForm :coucheFromModel="coucheFormModel"/>
+              <div v-for="couche in this.SystemeFormstore.systemesForm.systeme.couches" :key="couche.id">
+                <CreerCoucheForm :couche="couche"/>
               </div>
 
               <v-btn
