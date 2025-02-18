@@ -4,8 +4,10 @@ import {ListStore} from "@/stores";
 import {useRouter} from "vue-router";
 import {deleteSysteme} from "@/services/SystemesService";
 import {Couche} from "@/models/types/couche";
+import {Systeme} from "@/models/types/systeme";
 
 @Component({})
+
 export default class ListSystemeComponent extends Vue {
   private listSystemeStore = ListStore();
   private selectedCouches: Record<number, Couche> = {};
@@ -13,6 +15,7 @@ export default class ListSystemeComponent extends Vue {
     {title: 'Nom', value: 'nom'},
     {title: 'Fournisseur', value: 'fournisseur'},
     {title: 'grenaillage', value: 'grenaillage.nom'},
+    {title: 'type', value: 'type'},
     {title: 'couche', value: 'couches'},
     {title: 'detail Couche', value: 'detailCouche'},
     {title: 'actions', value: 'actions', sortable: false, align: 'end'}
@@ -23,13 +26,13 @@ export default class ListSystemeComponent extends Vue {
   async deleteSysteme(item: any) {
     try {
       await deleteSysteme(item);
-      this.listSystemeStore.ListSysteme.systemes = this.listSystemeStore.ListSysteme.systemes.filter(systeme => systeme.id !== item.id);
+      await this.listSystemeStore.ListSysteme.delete(item);
+      //TODO: delet tout ce qu'il y a au dessous aussi
     } catch (error) {
       console.log(error);
     }
   }
 
-  //get formatedCouche(){}
 
   editSysteme(item: any) {
     this.listSystemeStore.ListSysteme.systemesModif = item;
@@ -49,14 +52,20 @@ export default class ListSystemeComponent extends Vue {
 
 <template>
   <v-card class="containerList">
-    <v-card-title class="d-flex justify-space-between align-center">
+    <v-card-title class="d-flex justify-space-between align-center titleList">
       <span> Liste des systemes </span>
-      <router-link to="/CreerSysteme" class="ml-auto"> Creer Systeme</router-link>
+      <router-link to="/CreerSysteme" class="ml-auto">
+        <v-btn>
+          Creer Systeme
+        </v-btn>
+      </router-link>
     </v-card-title>
     <v-card-text>
       <v-data-table
           :headers="header"
           :items="listSystemeStore.ListSysteme.systemes"
+          v-model:search="this.listSystemeStore.ListSysteme.filter"
+          :filter-keys="['nom', 'fournisseur', 'grenaillage.nom', 'type']"
           variant="outlined"
           class="tableList"
       >
@@ -86,24 +95,5 @@ export default class ListSystemeComponent extends Vue {
   </v-card>
 </template>
 
-<style scoped>
-.containerList {
-  position: absolute;
-  top: 0;
-  margin-top: 5vw;
-  width: 100vw;
-}
-
-.v-card-title {
-  justify-content: center;
-  height: 2vw;
-}
-
-.ml-auto {
-  margin-left: auto;
-}
-
-.tableList {
-  height: 51vw;
-}
+<style scoped src="@/assets/styles/list.css">
 </style>

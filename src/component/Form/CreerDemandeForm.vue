@@ -13,19 +13,18 @@ import {Systeme} from "@/models/types/systeme";
 import {Affaire} from "@/models/types/affaire";
 import {getArticlesByArticleCouche} from "@/services/ArticlesService";
 import {getCouchesBySysteme} from "@/services/CouchesService";
+import {Commande, createDefaultCommande} from "@/models/types/commande";
+import {useRouter} from "vue-router";
 
 @Component({
   components: {ModifDemandeCouche: ModifCoucheForDemande}
 })
 export default class CreerDemandeForm extends Vue {
   private demandeFormstore = DemandeFormStore();
-
-  mounted() {
-    this.demandeFormstore.initialiser();
-  }
+  private router = useRouter();
 
   get formatedSysteme() {
-    return this.demandeFormstore.demandeFrom.systemes.map((systeme: Systeme) => {
+    return this.demandeFormstore.listSysteme.systemes.map((systeme: Systeme) => {
       return {
         title: systeme.nom + " - " + systeme.fournisseur,
         value: systeme.id
@@ -34,7 +33,7 @@ export default class CreerDemandeForm extends Vue {
   }
 
   get formatedAffaire() {
-    return this.demandeFormstore.demandeFrom.affaires.map((affaire: Affaire) => {
+    return this.demandeFormstore.listAffaire.affaires.map((affaire: Affaire) => {
       return {
         title: affaire.numero + " - " + affaire.nom,
         value: affaire.id
@@ -43,25 +42,23 @@ export default class CreerDemandeForm extends Vue {
   }
 
   onSelectAffaire() {
-    const affaire = this.demandeFormstore.demandeFrom.affaires.find((affaire: Affaire) => affaire.id === this.demandeFormstore.demandeFrom.selectedAffaire?.value);
+    const affaire = this.demandeFormstore.listAffaire.affaires.find((affaire: Affaire) => affaire.id === this.demandeFormstore.demandeFrom.selectedAffaire?.value);
     if (affaire) {
-      //TODO : filtrer les systemes avec l'affaire
+      //TODO : filtrer les systemes avec l'affaire le faire  dasn le formated Systeme boloss
     }
   }
 
-  async onSelectSysteme(){
-    const systeme = this.demandeFormstore.demandeFrom.systemes.find((systeme: Systeme) => systeme.id === this.demandeFormstore.demandeFrom.selectedSysteme?.value);
-    const affaire = this.demandeFormstore.demandeFrom.affaires.find((affaire: Affaire) => affaire.id === this.demandeFormstore.demandeFrom.selectedAffaire?.value);
-    if (systeme && affaire){
-      this.demandeFormstore.demandeFrom.commandeDemande = await getCommandeByAffaireAndSysteme(affaire, systeme);
-      const ArticlesCouches = await getArticleCoucheForDemande(this.demandeFormstore.demandeFrom.commandeDemande);
+  async onSelectSysteme() {
+    const systeme = this.demandeFormstore.listSysteme.systemes.find((systeme: Systeme) => systeme.id === this.demandeFormstore.demandeFrom.selectedSysteme?.value);
+    const affaire = this.demandeFormstore.listAffaire.affaires.find((affaire: Affaire) => affaire.id === this.demandeFormstore.demandeFrom.selectedAffaire?.value);
+    if (systeme && affaire) {
+      this.demandeFormstore.demandeFrom.demandeDemande.commande = this.demandeFormstore.listCommande.commandes.find((commande: Commande) => commande.affaire.id === affaire.id && commande.systeme.id === systeme.id) ?? createDefaultCommande();
+      const ArticlesCouches = await getArticleCoucheForDemande(this.demandeFormstore.demandeFrom.demandeDemande.commande);
       for (const articleCouche of ArticlesCouches) {
-        this.demandeFormstore.addModifCoucheDemande(createDefaultModifDemandeCoucheModel({
-          id: this.demandeFormstore.modifCouchesDemande.length,
-          SurfaceCouche: createDefaultSurfaceCouche({
-            articleCouche: articleCouche
-          }),
-        }))
+        this.demandeFormstore.demandeFrom.demandeDemande.surfaceCouches.push(createDefaultSurfaceCouche({
+          id: this.demandeFormstore.demandeFrom.demandeDemande.surfaceCouches.length,
+          articleCouche: articleCouche
+        }));
       }
     }
     /*if (systeme && affaire) {
@@ -86,33 +83,25 @@ export default class CreerDemandeForm extends Vue {
   }
 
 
-  @Watch('demandeFormstore.demandeFrom.surfaceDemande', {deep: true, immediate: true})
+  @Watch('demandeFormstore.demandeFrom.demandeDemande.surface', {deep: true, immediate: true})
   public updateSurface(newValue: number, oldValue: number) {
-    for (const modifCouche of this.demandeFormstore.modifCouchesDemande) {
-      if (modifCouche.surface == oldValue) {
-        modifCouche.surface = newValue;
+    for (const surfaceCouche of this.demandeFormstore.demandeFrom.demandeDemande.surfaceCouches) {
+      if (surfaceCouche.surface == oldValue) {
+        surfaceCouche.surface = newValue;
       }
     }
   }
 
   async submitForm() {
     try {
-      const demande = createDefaultDemande({
-        id: 0,
-        numero: this.demandeFormstore.demandeFrom.numeroDemande,
-        surface: this.demandeFormstore.demandeFrom.surfaceDemande,
-        date: this.demandeFormstore.demandeFrom.dateDemande ? this.demandeFormstore.demandeFrom.dateDemande : String(new Date()),
-        nombrePiece: this.demandeFormstore.demandeFrom.nombrePieceDemande,
-        commande: this.demandeFormstore.demandeFrom.commandeDemande
-      });
-      const responseDemande = await creerDemande(demande);
-      const responseSurfacecouche: SurfaceCouche[] = [];
-      for (const modifCouche of this.demandeFormstore.modifCouchesDemande) {
-        modifCouche.SurfaceCouche.demande = responseDemande;
-        responseSurfacecouche.push(await creerSurfaceCouche(modifCouche.SurfaceCouche));
+      this.demandeFormstore.demandeFrom.demandeDemande.date = this.demandeFormstore.demandeFrom.dateDemande ? this.demandeFormstore.demandeFrom.dateDemande : String(new Date());
+      if (await this.demandeFormstore.listDemande.add(this.demandeFormstore.demandeFrom.demandeDemande)) {
+        alert('Demande créée avec succès !');
+        this.demandeFormstore.clearDemandeFrom();
+        this.router.push({name: 'listDemande'});
+      } else {
+        alert('Erreur lors de la création de la demande.');
       }
-      console.log(responseSurfacecouche);
-      this.demandeFormstore.clearDemandeFrom();
     } catch (error) {
       console.error(error);
     }
@@ -154,7 +143,7 @@ export default class CreerDemandeForm extends Vue {
                 <v-row align="center" justify="center">
                   <v-text-field
                       label="Numero de la demande"
-                      v-model="this.demandeFormstore.demandeFrom.numeroDemande"
+                      v-model="this.demandeFormstore.demandeFrom.demandeDemande.numero"
                       outlined
                       dense
                       prepend-icon="mdi-briefcase-outline"
@@ -167,21 +156,25 @@ export default class CreerDemandeForm extends Vue {
                     dense
                     prepend-icon="mdi-calendar"
                 ></v-date-picker>
+                 <v-checkbox
+                     label="reservation peinture"
+                     v-model="demandeFormstore.demandeFrom.demandeDemande.reservation"
+                 ></v-checkbox>
                 <v-number-input
-                    v-model="this.demandeFormstore.demandeFrom.surfaceDemande"
+                    v-model="this.demandeFormstore.demandeFrom.demandeDemande.surface"
                     label="surface"
                     outlined
                     dense
                 ></v-number-input>
                 <v-number-input
-                    v-model="this.demandeFormstore.demandeFrom.nombrePieceDemande"
+                    v-model="this.demandeFormstore.demandeFrom.demandeDemande.nombrePiece"
                     label="nombre de pièces"
                     variant="outlined"
                     dense
                 ></v-number-input>
-                <div v-for="ModifDemandeCoucheModel in this.demandeFormstore.modifCouchesDemande"
-                     :key="ModifDemandeCoucheModel.id">
-                  <ModifDemandeCouche :modifdemandeCouche="ModifDemandeCoucheModel"/>
+                <div v-for="surfaceCouche in this.demandeFormstore.demandeFrom.demandeDemande.surfaceCouches"
+                     :key="surfaceCouche.id">
+                  <ModifDemandeCouche :surface-couche="surfaceCouche"/>
                 </div>
                 <v-btn
                     color="primary"
@@ -191,7 +184,7 @@ export default class CreerDemandeForm extends Vue {
                     @click="submitForm"
                 >
                   <v-icon left>mdi-check-circle</v-icon>
-                  Créer affaire
+                  Créer Demande
                 </v-btn>
               </v-col>
             </v-form>

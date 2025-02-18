@@ -4,13 +4,8 @@ import {creerCouche} from "@/services/CouchesService";
 import {Systemes} from "@/models/objectsApi/Systemes";
 import Systememapper from "@/mappers/Systememapper";
 import {ApiResponseCollection} from "@/models/ApiResponseCollection";
+import {apiClient, apiClientPatch} from "@/stores/apiClient";
 
-const apiClient = axios.create({
-    baseURL: 'http://127.0.0.1:8000/api', // URL de votre API Symfony
-    headers: {
-        'Content-Type': 'application/ld+json',
-    },
-});
 
 export const getAllSystemes = async (): Promise<Systeme[]> => {
     try {
@@ -24,8 +19,11 @@ export const getAllSystemes = async (): Promise<Systeme[]> => {
 
 export const creerSysteme = async (systeme: Systeme) : Promise<Systeme> => {
     try {
+        console.log(systeme);
         const systemes = Systememapper.mapSystemes(systeme);
+        console.log(systemes);
         const response = await apiClient.post<Systemes>('/systemes', systemes);
+        console.log(response.data);
         return Systememapper.mapSysteme(response.data);
     } catch (error) {
         console.error('Erreur lors de la récupération des systemes:', error);

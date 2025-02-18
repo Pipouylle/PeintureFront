@@ -6,15 +6,17 @@ import {Commande} from "@/models/types/commande";
 import {deleteCommande} from "@/services/CommandesService";
 
 @Component({})
+
 export default class ListCommandeComponent extends Vue {
   private router = useRouter();
   private ListStore = ListStore();
   private header = [
-    {title: 'Nom', value: 'nom'},
     {title: 'Eureka', value: 'eureka'},
+    {title: 'affaire', value: 'affaire.nom'},
+    {title: 'systeme', value: 'systeme.nom'},
     {title: 'Commentaire', value: 'commentaire'},
     {title: 'Fiche H', value: 'ficheH'},
-    {title: 'PV Commande', value: 'pvCommande'},
+    {title: 'PV Peinture', value: 'pvPeinture'},
     {title: 'Actions', value: 'actions', sortable: false, align: 'end'}
   ]
 
@@ -29,16 +31,19 @@ export default class ListCommandeComponent extends Vue {
     } catch (error) {
       console.error(error);
     }
-
   }
 }
 </script>
 
 <template>
   <v-card class="containerList">
-    <v-card-title class="d-flex justify-space-between align-center">
+    <v-card-title class="d-flex justify-space-between align-center titleList">
       <span> Liste des Commande </span>
-      <router-link to="/CreerCommande" class="ml-auto"> Creer Commande</router-link>
+      <router-link to="/CreerCommande" class="ml-auto">
+        <v-btn>
+          Creer Commande
+        </v-btn>
+      </router-link>
     </v-card-title>
     <v-card-text>
       <v-data-table
@@ -47,6 +52,14 @@ export default class ListCommandeComponent extends Vue {
           variant="outlined"
           class="tableList"
       >
+        <template v-slot:[`item.ficheH`]="{ item }">
+          <v-icon v-if="item.ficheH" color="green">mdi-check</v-icon>
+          <v-icon v-else color="red">mdi-close</v-icon>
+        </template>
+        <template v-slot:[`item.pvPeinture`]="{ item }">
+          <v-icon v-if="item.pvPeinture" color="green">mdi-check</v-icon>
+          <v-icon v-else color="red">mdi-close</v-icon>
+        </template>
         <template v-slot:[`item.actions`]="{ item }">
           <v-btn color="primary" @click="editCommande(item)">Modifier</v-btn>
           <v-btn color="error" @click="deleteCommande(item)">Supprimer</v-btn>
@@ -57,24 +70,5 @@ export default class ListCommandeComponent extends Vue {
   </v-card>
 </template>
 
-<style scoped>
-.containerList {
-  position: absolute;
-  top: 0;
-  margin-top: 5vw;
-  width: 100vw;
-}
-
-.v-card-title {
-  justify-content: center;
-  height: 2vw;
-}
-
-.ml-auto {
-  margin-left: auto;
-}
-
-.tableList {
-  height: 51vw;
-}
+<style scoped src="@/assets/styles/list.css">
 </style>

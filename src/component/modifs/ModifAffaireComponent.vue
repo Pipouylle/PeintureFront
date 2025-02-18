@@ -9,9 +9,9 @@ export default class ModifAffaireComponent extends Vue {
   @Prop({required: true}) private affaire!: Affaire;
   private router = useRouter();
 
-  submitForm() {
+  async submitForm() {
     try {
-      updateAffaire(this.affaire);
+      await updateAffaire(this.affaire);
       this.router.push({name: 'listAffaire'});
     } catch (e) {
       console.error(e);

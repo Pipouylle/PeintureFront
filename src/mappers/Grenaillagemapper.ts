@@ -16,12 +16,12 @@ export class Grenaillagemapper {
         return dataArray.map(this.mapGrenaillage);
     }
 
-    static mapGrenaillages(data: Grenaillage): Grenaillages {
+    static mapGrenaillages(obj: Grenaillage): Grenaillages {
         return {
-            id: data.id,
-            nomGrenaillage: data.nom,
-            typeChantierGrenaillage: data.typeChantier,
-            tarifGrenaillage: String(data.tarif).replace(/,/g, '.'),
+            id: obj.id,
+            nomGrenaillage: Object.entries(NameGrenaillage).find(([key, value]) => value === obj.nom)?.[0] || '',
+            typeChantierGrenaillage: Object.entries(TypeGrenaillage).find(([key, value]) => value === obj.typeChantier)?.[0] || '',
+            tarifGrenaillage: String(obj.tarif).replace(/,/g, '.'),
         }
     }
 

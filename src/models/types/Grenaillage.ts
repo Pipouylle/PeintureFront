@@ -7,11 +7,11 @@ export interface Grenaillage {
     tarif: number;
 }
 
-export function createDefaultGrenaillage(override : Partial<Grenaillage>): Grenaillage {
+export function createDefaultGrenaillage(override : Partial<Grenaillage> = {}): Grenaillage {
     return {
         id: 0,
-        nom: NameGrenaillage.AUTRE,
-        typeChantier: TypeGrenaillage.AUTRE,
+        nom: NameGrenaillage.AUCUN,
+        typeChantier: TypeGrenaillage.AUCUN,
         tarif: 0,
         ...override
     };

@@ -14,6 +14,8 @@ import ListCommandeView from "@/views/lists/ListCommandeView.vue";
 import CalendarCabine1View from "@/views/calendars/CalendarCabine1View.vue";
 import CalendarCabine2View from "@/views/calendars/CalendarCabine2View.vue";
 import {useListStore} from "@/stores";
+import ListGrenaillageView from "@/views/lists/ListGrenaillageView.vue";
+import ListArticleView from "@/views/lists/ListArticleView.vue";
 
 const routes: Array<RouteRecordRaw> = [
     {
@@ -66,6 +68,16 @@ const routes: Array<RouteRecordRaw> = [
         path: "/CreerCommande",
         name: "CreerCommande",
         component: CreationCommandeView,
+    },
+    {
+      path: "/listArticle",
+      name: "listArticle",
+      component: ListArticleView,
+    },
+    {
+      path: "/listGrenaillage",
+      name: "listGrenaillage",
+      component: ListGrenaillageView,
     },
     {
         path: "/Calendar",

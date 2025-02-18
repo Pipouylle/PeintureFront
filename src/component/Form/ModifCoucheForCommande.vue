@@ -10,8 +10,8 @@ export default class ModifCoucheForCommande extends Vue {
   @Prop({required: true}) private modifCommandeCouche!: ModifCommandeCoucheModel;
   private CommandeFormStore = CommandeFormStore();
 
-  async onArticleSelected(id: number) {
-    const article = this.CommandeFormStore.commandeFrom.articles.find((article: Article) => article.id === this.modifCommandeCouche.articles[id].article?.value);
+  async onArticleSelected(id: any) {
+    const article = this.CommandeFormStore.listArticle.articles.find((article: Article) => article.id === this.modifCommandeCouche.articles[id].article?.value);
     if (article) {
       this.modifCommandeCouche.articleCouche.articles.push(article);
     }
@@ -22,21 +22,18 @@ export default class ModifCoucheForCommande extends Vue {
       id : this.modifCommandeCouche.articles.length,
     }))
   }
-
   removeArticle(articleSelect: SelectArticles) {
     const index = this.modifCommandeCouche.articles.findIndex(article => article.id === articleSelect.id);
     if (index !== -1) {
       this.modifCommandeCouche.articles.splice(index, 1);
-      // Update the IDs of the remaining items
       this.modifCommandeCouche.articles.forEach((article, idx) => {
         article.id = idx;
       });
     }
   }
-
   get formatedArticle() {
     //TODO: faire en sorte que ça propose pas deux fois
-    return this.CommandeFormStore.commandeFrom.articles.map((article: Article) => {
+    return this.CommandeFormStore.listArticle.articles.map((article: Article) => {
       return {
         title: article.descriptif,
         value: article.id
@@ -72,7 +69,7 @@ export default class ModifCoucheForCommande extends Vue {
                       label="code article"
                       outlined
                       dense
-                      v-model="articleSelect.article.value"
+                      :model-value="articleSelect.article ? articleSelect.article.value : ''"
                       readonly
                       disabled
                   ></v-text-field>

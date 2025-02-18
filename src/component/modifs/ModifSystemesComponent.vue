@@ -1,21 +1,22 @@
 <script lang="ts">
-import {Component, Vue, Watch} from 'vue-facing-decorator';
+import {Component, Prop, Vue, Watch} from 'vue-facing-decorator';
 import CreerCoucheForm from "@/component/Form/CreerCoucheForm.vue";
 import { SystemeFormStore} from "@/stores";
 import {createDefaultGrenaillage, Grenaillage} from "@/models/types/Grenaillage";
 import {getAllGrenaillage} from "@/services/GrenaillagesService";
-import {useRouter} from "vue-router";
 
 @Component({
   components: {CreerCoucheForm}
 })
 
-export default class CreerSystemeForm extends Vue {
+//TODO : changer le creer couche form car c'est un modif
+//TODO : juste le faire
+export default class ModifSystemesComponent extends Vue {
   private SystemeFormstore = SystemeFormStore();
-  private router = useRouter();
 
   public async mounted() {
     this.SystemeFormstore.clearCouche();
+    this.SystemeFormstore.systemesForm.systeme.couches =
   }
 
   public updateCouches() {
@@ -37,13 +38,14 @@ export default class CreerSystemeForm extends Vue {
     })
   }
 
+
+
   public async submitForm() {
     try {
       this.SystemeFormstore.systemesForm.systeme.grenaillage = this.SystemeFormstore.systemesForm.selectedGrenaillage ? createDefaultGrenaillage({id : this.SystemeFormstore.systemesForm.selectedGrenaillage.value}) : null;
       if (await this.SystemeFormstore.addSysteme(this.SystemeFormstore.systemesForm.systeme)){
         alert('Systeme créée avec succès !');
         this.SystemeFormstore.clearAll()
-        this.router.push({name: 'listSysteme'});
       } else {
         alert('Erreur lors de la création du systeme.');
       }
@@ -99,33 +101,6 @@ export default class CreerSystemeForm extends Vue {
                   dense
                   type="number"
               ></v-text-field>
-              <v-radio-group
-                  v-model="this.SystemeFormstore.systemesForm.systeme.type"
-                  row
-                  dense
-              >
-                <v-radio v-if="SystemeFormstore.nbCouches <= 1"
-                    label="Glycero"
-                    value="glycero"
-                ></v-radio>
-                <v-radio
-                    label="Complexe"
-                    value="complexe"
-                ></v-radio>
-              </v-radio-group>
-              <v-number-input
-                  :reverse="true"
-                  type="number"
-                  :max="4"
-                  :min="1"
-                  controlVariant="split"
-                  label="Nombre de couches"
-                  v-model="this.SystemeFormstore.systemesForm.nbCouche"
-                  @update:model-value="updateCouches"
-                  variant="outlined"
-                  dense
-                  prepend-icon="mdi-briefcase-outline"
-              ></v-number-input>
               <div v-for="couche in this.SystemeFormstore.systemesForm.systeme.couches" :key="couche.id">
                 <CreerCoucheForm :couche="couche"/>
               </div>
@@ -138,7 +113,7 @@ export default class CreerSystemeForm extends Vue {
                   @click="submitForm"
               >
                 <v-icon left>mdi-check-circle</v-icon>
-                Créer systeme
+                Créer affaire
               </v-btn>
             </v-form>
           </v-card-text>

@@ -9,6 +9,7 @@ export interface Systeme {
     refieSFP: number;
     refieFP: number;
     fournisseur: string;
+    type: string;
     commandes: Commande[];
     couches: Couche[];
 }
@@ -21,6 +22,7 @@ export function createDefaultSysteme(overrides: Partial<Systeme> = {}): Systeme 
         refieSFP: 0,
         refieFP: 0,
         fournisseur: "",
+        type: "glycero",
         commandes: [],
         couches: [],
         ...overrides

@@ -4,10 +4,10 @@ export enum NameGrenaillage {
     SA2 = "SA2",
     SA2_5 = "SA2.5",
     SA3 = "SA3",
-    AUTRE = "Autre",
+    AUCUN = "AUCUN",
 }
 
 export enum TypeGrenaillage {
-    Art = "Art",
-    AUTRE = "Autre",
+    OuvrageArt = "Ouvrage d'Art",
+    AUCUN = "AUCUN",
 }

@@ -9,11 +9,11 @@ export default class ListDemandeComponent extends Vue {
   private listeStore = ListStore();
   private header = [
     {title: 'numero', value: 'numero'},
-    {title: 'phase', value: 'numeroPhase'},
     {title: 'etat', value: 'etat'},
     {title: 'surface', value: 'surface'},
     {title: 'date', value: 'date'},
     {title: 'pièces', value: 'nombrePiece'},
+     {title: 'reservation peinturre', value: 'reservation'},
     {title: 'Action', value: 'actions', sortable: false, align: 'end'}
   ];
   async deleteDemande(item: Demande){
@@ -34,9 +34,9 @@ export default class ListDemandeComponent extends Vue {
 
 <template>
   <v-card class="containerList">
-    <v-card-title class="d-flex justify-space-between align-center">
-      <span> Liste des affaires </span>
-      <router-link to="/CreerDemande" class="ml-auto"> Creer Demande </router-link>
+    <v-card-title class="d-flex justify-space-between align-center titleList">
+      <span> Liste des Demande </span>
+      <router-link to="/CreerDemande" class="ml-auto"> <v-btn> Creer Demande </v-btn> </router-link>
     </v-card-title>
     <v-card-text>
       <v-data-table
@@ -45,6 +45,10 @@ export default class ListDemandeComponent extends Vue {
           variant="outlined"
           class="tableList"
       >
+         <template v-slot:[`item.reservation`]="{ item }">
+            <v-icon v-if="item.reservation" color="green">mdi-check</v-icon>
+            <v-icon v-else color="red">mdi-close</v-icon>
+         </template>
         <template v-slot:[`item.actions`]="{ item }">
           <v-btn color="primary" @click="editDemande(item)">Modifier</v-btn>
           <v-btn color="error" @click="deleteDemande(item)">Supprimer</v-btn>
@@ -55,23 +59,5 @@ export default class ListDemandeComponent extends Vue {
   </v-card>
 </template>
 
-<style scoped>
-.containerList {
-  position: absolute;
-  top: 0;
-  margin-top: 5vw;
-  width: 100vw;
-}
-
-.v-card-title {
-  justify-content: center;
-  height: 2vw;
-}
-
-.ml-auto {
-  margin-left: auto;
-}
-.tableList {
-  height: 51vw;
-}
+<style scoped src="@/assets/styles/list.css">
 </style>

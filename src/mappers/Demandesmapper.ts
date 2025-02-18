@@ -9,10 +9,12 @@ export default class Demandesmapper {
             numero: obj.numeroDemande,
             etat: obj.etatDemande,
             date: obj.dateDemande,
+            reservation: obj.reservationPeintureDemande,
             nombrePiece: obj.nombrePieceDemande,
             commande: createDefaultCommande({id: parseInt(obj.commandeDemande.split("/")[3])}),
             surface: parseFloat(obj.surfaceDemande),
-            ofs: []
+            ofs: [],
+            surfaceCouches: []
         }
     }
 
@@ -25,6 +27,7 @@ export default class Demandesmapper {
             id: obj.id,
             numeroDemande: obj.numero,
             commandeDemande: "/api/commandes/" + obj.commande.id,
+            reservationPeintureDemande: obj.reservation,
             dateDemande: obj.date,
             nombrePieceDemande: obj.nombrePiece,
             surfaceDemande: String(obj.surface).replace(/,/g, '.'),

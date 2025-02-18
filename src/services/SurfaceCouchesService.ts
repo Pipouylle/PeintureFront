@@ -17,7 +17,6 @@ export const getAllSurfaceCouches = async (): Promise<SurfaceCouche[]> => {
 export const creerSurfaceCouche = async (surfaceCouche: SurfaceCouche) : Promise<SurfaceCouche> => {
     try {
         const surfaceCouches = SurfaceCouchemapper.mapSurfaceCouches(surfaceCouche);
-        console.log(surfaceCouches);
         const response = await apiClient.post<SurfaceCouches>('/surface_couches', surfaceCouches);
         return SurfaceCouchemapper.mapSurfaceCouche(response.data);
     } catch (error) {

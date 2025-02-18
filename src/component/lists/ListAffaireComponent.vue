@@ -21,7 +21,7 @@ export default class ListAffaireComponent extends Vue {
   private async deleteAffaire(item: Affaire) {
     try {
       await deleteAffaire(item);
-      this.listStore.ListAffaire.affaires = this.listStore.ListAffaire.affaires.filter(affaire => affaire.id !== item.id);
+      await this.listStore.ListAffaire.delete(item)
       alert('Affaire supprimée avec succès');
     } catch (e) {
       console.error(e);
@@ -37,14 +37,27 @@ export default class ListAffaireComponent extends Vue {
 
 <template>
   <v-card class="containerList">
-    <v-card-title class="d-flex justify-space-between align-center">
+    <v-card-title class="d-flex justify-space-between align-center titleList">
       <span> Liste des affaires </span>
-      <router-link to="/CreerAffaire" class="ml-auto"> Creer Affaire</router-link>
+      <v-text-field
+          label="Rechercher"
+          density="compact"
+          v-model="this.listStore.ListAffaire.filter"
+          variant="outlined"
+          class="textFilter"
+      ></v-text-field>
+      <router-link to="/CreerAffaire" class="ml-auto">
+        <v-btn class="bntLink">
+          Creer Affaire
+        </v-btn>
+      </router-link>
     </v-card-title>
     <v-card-text>
       <v-data-table
           :headers="this.header"
           :items="this.listStore.ListAffaire.affaires"
+          v-model:search="this.listStore.ListAffaire.filter"
+          :filter-keys="['numero']"
           variant="outlined"
           class="tableList"
       >
@@ -58,23 +71,5 @@ export default class ListAffaireComponent extends Vue {
   </v-card>
 </template>
 
-<style scoped>
-.containerList {
-  position: absolute;
-  top: 0;
-  margin-top: 5vw;
-  width: 100vw;
-}
-
-.v-card-title {
-  justify-content: center;
-  height: 2vw;
-}
-
-.ml-auto {
-  margin-left: auto;
-}
-.tableList {
-  height: 41vw;
-}
+<style scoped src="@/assets/styles/list.css">
 </style>

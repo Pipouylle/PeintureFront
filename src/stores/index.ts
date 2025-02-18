@@ -32,8 +32,10 @@ import {Affaire, createDefaultAffaire} from "@/models/types/affaire";
 import {Grenaillage} from "@/models/types/Grenaillage";
 import {getAllGrenaillage} from "@/services/GrenaillagesService";
 import {createDefaultCreerSystemeFormModel} from "@/models/forms/CreerSysteme/CreerSystemeFormModel";
-import {Systeme} from "@/models/types/systeme";
+import {createDefaultSysteme, Systeme} from "@/models/types/systeme";
 import {createDefaultCouche} from "@/models/types/couche";
+import {createDefaultListGrenaillageModel} from "@/models/lists/ListGrenaillageModel";
+import {createDefaultListArticleModel} from "@/models/lists/ListArticleModel";
 
 export const useColorStore = defineStore('colorStore', {
     state: () => ({
@@ -64,33 +66,10 @@ export const AffaireFormStore = defineStore('AffaireFromStore', {
             this.affaire = createDefaultAffaire();
         },
         async addAffaire(affaire: Affaire) {
-            try {
-                await creerAffaire(affaire);
-                this.listAffaire.affaires.push(affaire);
-                return true;
-            } catch (error) {
-                console.error(error);
-                return false;
-            }
+            return await this.listAffaire.add(affaire);
         }
     }
 })
-export const CoucheFormStore = defineStore('coucheFromStore', {
-    state: () => ({
-        coucheFroms: [] as CreerCoucheFormModel[],
-    }),
-    getters: {
-        getnbCoucheForm: (state) => state.coucheFroms.length,
-    },
-    actions: {
-        addCoucheFrom(coucheFrom: CreerCoucheFormModel) {
-            this.coucheFroms.push(coucheFrom);
-        },
-        deleteCoucheFrom(index: number) {
-            this.coucheFroms.splice(index, 1);
-        },
-    },
-});
 export const DemandeFormStore = defineStore('demandeFromStore', {
     state: () => ({
         demandeFrom: createDefaultDemandeFormModel() as DemandeFormModel,
@@ -101,26 +80,29 @@ export const DemandeFormStore = defineStore('demandeFromStore', {
             const list = ListStore();
             return list.ListAffaire;
         },
+        listSysteme: (state) => {
+            const list = ListStore();
+            return list.ListSysteme;
+        },
+        listCommande: (state) => {
+            const list = ListStore();
+            return list.ListCommande;
+        },
+        listDemande: (state) => {
+            const list = ListStore();
+            return list.ListDemande;
+        }
     },
     actions: {
-        async initialiser() {
-            this.modifCouchesDemande = [];
-            this.demandeFrom.affaires = await getAllAffaires();
-            this.demandeFrom.systemes = await getAllSystemes()
-        },
         clearDemandeFrom() {
             this.demandeFrom = createDefaultDemandeFormModel();
             this.clearModifCoucheDemande();
-        },
-        addModifCoucheDemande(modifCouche: ModifDemandeCoucheModel) {
-            this.modifCouchesDemande.push(modifCouche);
         },
         clearModifCoucheDemande() {
             this.modifCouchesDemande = [];
         },
     },
 });
-
 export const CommandeFormStore = defineStore('commandeFromStore', {
     state: () => ({
         commandeFrom: createDefaultCreerCommandeFormModel() as CreerCommandeFormModel,
@@ -131,16 +113,30 @@ export const CommandeFormStore = defineStore('commandeFromStore', {
             const list = ListStore();
             return list.ListAffaire;
         },
+        listSysteme: (state) => {
+            const list = ListStore();
+            return list.ListSysteme;
+        },
+        listArticle: (state) => {
+            const list = ListStore();
+            return list.ListArticle;
+        },
+        listCommande: (state) => {
+            const list = ListStore();
+            return list.ListCommande;
+        },
+        listCommandeCalendar: (state) => {
+            const list = ListStore();
+            return list.ListDemandeCalendar;
+        },
     },
     actions: {
-        clearCommandeFrom() {
-            this.commandeFrom = createDefaultCreerCommandeFormModel({
-                articles: this.commandeFrom.articles
-            });
+        clearAll() {
+            this.clearCommandeFrom();
             this.clearModifCoucheCommande();
         },
-        async setAllArticle() {
-            this.commandeFrom.articles = await getAllArticles();
+        clearCommandeFrom() {
+            this.commandeFrom = createDefaultCreerCommandeFormModel();
         },
         addModifCoucheCommande(modifCouche: ModifCommandeCoucheModel) {
             this.modifCouchesCommande.push(modifCouche);
@@ -156,7 +152,7 @@ export const SystemeFormStore = defineStore('systemeFromStore', {
         systemesForm: createDefaultCreerSystemeFormModel(),
     }),
     getters: {
-        grenaillages: (state) => {
+        listgrenaillages: (state) => {
             const list = ListStore();
             return list.ListGrenaillage;
         },
@@ -176,15 +172,12 @@ export const SystemeFormStore = defineStore('systemeFromStore', {
         },
         clearCouche() {
             this.systemesForm.systeme.couches = [createDefaultCouche(
-                {id : 1}
+                {id: 1}
             )];
         },
-        setCouche(){
-            this.systemesForm.systeme.couches = [createDefaultCouche()];
-        },
-        addCouche(nb :number) {
+        addCouche(nb: number) {
             for (let i = 0; i < nb; i++) {
-                this.systemesForm.systeme.couches.push(createDefaultCouche({id : i + this.nbCouches}));
+                this.systemesForm.systeme.couches.push(createDefaultCouche({id: i + this.nbCouches}));
             }
         },
         removeCouche(nb: number) {
@@ -195,13 +188,14 @@ export const SystemeFormStore = defineStore('systemeFromStore', {
         async addSysteme(systeme: Systeme): Promise<boolean> {
             try {
                 const responseSysteme = await creerSysteme(systeme);
+                //TODO : refaire car c'est de la merde car ça peut créer des problme dans l'ordre des id
                 await Promise.all(systeme.couches.map(async (couche) => {
                     couche.systeme = responseSysteme;
                     responseSysteme.couches.push(await creerCouche(couche));
                 }))
                 this.listSystemes.systemes.push(responseSysteme);
                 return true;
-            } catch (error){
+            } catch (error) {
                 console.error(error);
                 return false;
             }
@@ -305,21 +299,23 @@ export const ListStore = defineStore('ListStore', {
         ListDemande: createDefaultListDemandeModel(),
         ListSysteme: createDefaultListSystemeModel(),
         ListCommande: createDefaultListCommandeModel(),
+        ListGrenaillage: createDefaultListGrenaillageModel(),
+        ListArticle: createDefaultListArticleModel(),
         ListDemandeCalendar: [] as DemandesCalendar[],
         ListSemaine: [] as Semaine[],
-        ListGrenaillage: [] as Grenaillage[],
         listloaded: false,
     }),
     actions: {
         async loadList() {
             if (!this.listloaded) {
                 await this.setListAffaire();
-                await this.setListDemande();
+                await this.setSemaines();
+                await this.setListGrenaillage();
+                await this.setListArticle();
                 await this.setListSysteme();
                 await this.setListCommande();
+                await this.setListDemande();
                 await this.setDemandesCalendar();
-                await this.setSemaines();
-                await this.setGrenaillage();
                 this.listloaded = true;
             }
         },
@@ -335,10 +331,23 @@ export const ListStore = defineStore('ListStore', {
             for (const systeme of this.ListSysteme.systemes) {
                 systeme.couches = responseCouche.filter(c => c.systeme.id === systeme.id);
             }
+            for (const systeme of this.ListSysteme.systemes) {
+                systeme.grenaillage = this.ListGrenaillage.grenaillages.find(g => g.id === systeme.grenaillage?.id) ?? systeme.grenaillage;
+            }
             console.log(this.ListSysteme.systemes);
         },
         async setListCommande() {
             this.ListCommande.commandes = await getAllCommandes();
+            for (const commande of this.ListCommande.commandes) {
+                commande.systeme = this.ListSysteme.systemes.find(s => s.id === commande.systeme.id) ?? commande.systeme;
+                commande.affaire = this.ListAffaire.affaires.find(a => a.id === commande.affaire.id) ?? commande.affaire;
+            }
+        },
+        async setListGrenaillage() {
+            this.ListGrenaillage.grenaillages = await getAllGrenaillage();
+        },
+        async setListArticle() {
+            this.ListArticle.articles = await getAllArticles();
         },
         async setDemandesCalendar() {
             const response = await getAllDemandeCalendar();
@@ -351,6 +360,8 @@ export const ListStore = defineStore('ListStore', {
         async setSemaines() {
             this.ListSemaine = await getAllSemaines();
         },
+
+
         getCurrentSemaine() {
             const currentDate = new Date();
             for (const semaine of this.ListSemaine) {
@@ -362,9 +373,6 @@ export const ListStore = defineStore('ListStore', {
             }
             return null;
         },
-        async setGrenaillage() {
-            this.ListGrenaillage = await getAllGrenaillage();
-        }
     }
 })
 

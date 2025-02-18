@@ -55,3 +55,25 @@ export const getArticlesByArticleCouche = async (articleCouche: ArticleCouche): 
         throw error;
     }
 }
+
+export const creerArticle = async (article: Article): Promise<Article> => {
+    try {
+        const articles = Articlemapper.mapArticles(article);
+        const response = await apiClient.post<Articles>('/articles', articles);
+        return Articlemapper.mapArticle(response.data);
+    } catch (error) {
+        console.error('Erreur lors de la récupération des articles:', error);
+        throw error;
+    }
+}
+
+export const updateArticle = async (article: Article): Promise<Article> => {
+    try {
+        const articles = Articlemapper.mapArticles(article);
+        const response = await apiClientPatch.patch(`/articles/${article.id}`, articles);
+        return Articlemapper.mapArticle(response.data);
+    } catch (e) {
+        console.error(e);
+        throw e;
+    }
+}

@@ -4,6 +4,7 @@ export interface Demandes {
     "commandeDemande": string, // Commandes.id
     "dateDemande": string,
     "etatDemande": string,
+    "reservationPeintureDemande": boolean,
     "surfaceDemande": string,
     "nombrePieceDemande": number,
 }

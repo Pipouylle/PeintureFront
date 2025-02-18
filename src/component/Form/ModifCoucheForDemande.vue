@@ -1,22 +1,23 @@
 <script lang="ts">
 import {Vue, Component, Prop} from 'vue-facing-decorator';
-import {ModifDemandeCoucheModel} from "@/models/forms/ModifDemandeCoucheModel";
+import {SurfaceCouche} from "@/models/types/surfaceCouche";
 
 @Component({})
 export default class ModifCoucheForDemande extends Vue {
-  @Prop({required: true}) private modifdemandeCouche!: ModifDemandeCoucheModel;
+  @Prop({required: true}) private surfaceCouche!: SurfaceCouche;
 }
 </script>
 
 <template>
   <v-container>
     <v-row align="center" justify="center" class="form-container">
-      <v-col cols="20" md="10" lg="14">
+      <v-col cols="20" md=" 10" lg="14">
         <v-card elevation="3">
-          <v-card-title class="form-title">Surface de la Couche : {{this.modifdemandeCouche.SurfaceCouche.articleCouche.couche.nom}}</v-card-title>
+          <v-card-title class="form-title">Surface de la Couche : {{ this.surfaceCouche.articleCouche.couche.nom }}
+          </v-card-title>
           <v-card-text>
             <v-row>
-              <v-col v-for="article in this.modifdemandeCouche.SurfaceCouche.articleCouche.articles" cols="20">
+              <v-col v-for="article in this.surfaceCouche.articleCouche.articles" cols="20">
                 <v-text-field
                     label="Article"
                     outlined
@@ -32,7 +33,7 @@ export default class ModifCoucheForDemande extends Vue {
                     label="surface"
                     outlined
                     dense
-                    v-model="this.modifdemandeCouche.surface"
+                    v-model="this.surfaceCouche.surface"
                 ></v-text-field>
               </v-col>
             </v-row>

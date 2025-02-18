@@ -1,0 +1,31 @@
+.containerList {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 84vw;
+    height: calc(100vh - 20px);
+}
+
+.v-card-title {
+    justify-content: center;
+    height: 2vw;
+}
+
+.ml-auto {
+    margin-left: auto;
+}
+.tableList {
+    height: 41vw;
+}
+.bntLink {
+    margin-top: 10px;
+}
+.titleList {
+    font-size: 1.5vw;
+    font-weight: bold;
+    height: 4vw;
+}
+.textFilter {
+    top : 20px;
+    width: 5vw;
+}
