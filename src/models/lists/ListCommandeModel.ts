@@ -8,6 +8,7 @@ import {useListStore} from "@/stores";
 export interface ListCommandeModel {
     commandes : Commande[],
     modifCommande: Commande,
+    filter: string,
     add: (commande: Commande) => Promise<boolean>,
     delete: (commande: Commande) => void,
     deleteByAffaire: (affaire: Affaire) => void,
@@ -17,6 +18,7 @@ export interface ListCommandeModel {
 export function createDefaultListCommandeModel(overrides : Partial<ListCommandeModel> = {}): ListCommandeModel {
     const listCommandeModel : ListCommandeModel = {
         commandes : [],
+        filter: "",
         modifCommande: createDefaultCommande(),
         add : async (commande: Commande): Promise<boolean> => {
             try {

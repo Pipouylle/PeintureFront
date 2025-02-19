@@ -8,6 +8,7 @@ import {DemandesCalendar} from "@/models/calendar/DemandesCalendar";
 export interface ListDemandeModel{
     demandes: Demande[];
     demandesModif: Demande;
+    filter: string;
     add: (demande: Demande) => Promise<boolean>;
     delete: (demande: Demande) => void;
     deleteByCommande: (commande: Commande) => void;
@@ -16,6 +17,7 @@ export interface ListDemandeModel{
 export function createDefaultListDemandeModel(overrides: Partial<ListDemandeModel> = {}): ListDemandeModel {
     const listDemandeModel : ListDemandeModel = {
         demandes: [],
+        filter: "",
         demandesModif: createDefaultDemande(),
         add: async (demande): Promise<boolean> => {
             try {

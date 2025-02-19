@@ -13,9 +13,10 @@ import ListSystemeView from "@/views/lists/ListSystemeView.vue";
 import ListCommandeView from "@/views/lists/ListCommandeView.vue";
 import CalendarCabine1View from "@/views/calendars/CalendarCabine1View.vue";
 import CalendarCabine2View from "@/views/calendars/CalendarCabine2View.vue";
-import {useListStore} from "@/stores";
+import {useAlert, useListStore} from "@/stores";
 import ListGrenaillageView from "@/views/lists/ListGrenaillageView.vue";
 import ListArticleView from "@/views/lists/ListArticleView.vue";
+import ModifSystemeView from "@/views/modifs/ModifSystemeView.vue";
 
 const routes: Array<RouteRecordRaw> = [
     {
@@ -60,6 +61,11 @@ const routes: Array<RouteRecordRaw> = [
         component: CreationSystemeView,
     },
     {
+        path: "/modifSysteme",
+        name: "modifSysteme",
+        component: ModifSystemeView,
+    },
+    {
         path: "/listCommande",
         name: "listCommande",
         component: ListCommandeView,
@@ -102,6 +108,7 @@ const router = createRouter({
 });
 
 router.beforeEach(async (to, from, next) => {
+    useAlert().alertPossible = false; // true = alert on, false = alert off
     await useListStore().loadList(); // Load lists only if not already loaded
     next();
 });

@@ -56,3 +56,14 @@ export const getCoucheById = async (id: number): Promise<Couche> => {
         throw error;
     }
 }
+
+export const updateCouche = async (couche: Couche): Promise<Couche> => {
+    try {
+        const couches = Couchemapper.mapCouches(couche);
+        const response = await apiClient.patch<Couches>(`/couches/${couche.id}`, couches);
+        return Couchemapper.mapCouche(response.data);
+    } catch (error) {
+        console.error('Erreur lors de la récupération des couches:', error);
+        throw error;
+    }
+}

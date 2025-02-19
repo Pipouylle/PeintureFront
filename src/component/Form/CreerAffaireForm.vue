@@ -44,7 +44,7 @@ import { Vue, Component } from 'vue-facing-decorator';
 import { creerAffaire } from '@/services/AffairesService';
 
 import { createDefaultAffaire} from "@/models/types/affaire";
-import {AffaireFormStore} from "@/stores";
+import {AffaireFormStore, useAlert} from "@/stores";
 import {useRouter} from "vue-router";
 
 @Component({})
@@ -55,11 +55,11 @@ export default class CreerAffaireForm extends Vue {
   public async submitForm() {
     try {
       await this.AffaireFormStore.addAffaire(this.AffaireFormStore.affaire);
-      alert('Affaire créée avec succès !');
+      useAlert().alert('Affaire créée avec succès !');
       this.AffaireFormStore.clear();
       this.router.push({name: 'listAffaire'});
     } catch (error) {
-      alert('Erreur lors de la création de l\'affaire.');
+      useAlert().alert('Erreur lors de la création de l\'affaire.');
     }
   };
 }

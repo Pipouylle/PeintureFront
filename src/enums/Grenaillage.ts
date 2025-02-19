@@ -9,5 +9,6 @@ export enum NameGrenaillage {
 
 export enum TypeGrenaillage {
     OuvrageArt = "Ouvrage d'Art",
+    Batiment = "Bâtiment",
     AUCUN = "AUCUN",
 }

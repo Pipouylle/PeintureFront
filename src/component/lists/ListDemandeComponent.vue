@@ -36,12 +36,21 @@ export default class ListDemandeComponent extends Vue {
   <v-card class="containerList">
     <v-card-title class="d-flex justify-space-between align-center titleList">
       <span> Liste des Demande </span>
+       <v-text-field
+           label="Rechercher"
+           density="compact"
+           v-model="this.listeStore.ListDemande.filter"
+           variant="outlined"
+           class="textFilter"
+       ></v-text-field>
       <router-link to="/CreerDemande" class="ml-auto"> <v-btn> Creer Demande </v-btn> </router-link>
     </v-card-title>
     <v-card-text>
       <v-data-table
           :headers="this.header"
           :items="this.listeStore.ListDemande.demandes"
+          v-model:search="this.listeStore.ListDemande.filter"
+          :filter-keys="['numero', 'etat', 'surface', 'date']"
           variant="outlined"
           class="tableList"
       >

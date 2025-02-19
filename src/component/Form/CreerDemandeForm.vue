@@ -2,7 +2,7 @@
 import {Component, Vue, Watch} from 'vue-facing-decorator';
 import ModifCoucheForDemande from "@/component/Form/ModifCoucheForDemande.vue";
 import {getCommandeByAffaireAndSysteme} from "@/services/CommandesService";
-import {DemandeFormStore} from "@/stores";
+import {DemandeFormStore, useAlert} from "@/stores";
 import {createDefaultDemande} from "@/models/types/demande";
 import {creerDemande} from "@/services/DemandesService";
 import {createDefaultModifDemandeCoucheModel} from "@/models/forms/ModifDemandeCoucheModel";
@@ -32,6 +32,15 @@ export default class CreerDemandeForm extends Vue {
     })
   }
 
+  get formatedCommande() {
+     return this.demandeFormstore.listCommande.commandes.filter((commande: Commande) => commande.affaire.id === this.demandeFormstore.demandeFrom.selectedAffaire?.value).map((commande: Commande) => {
+        return {
+           title: commande.eureka + " - " + this.demandeFormstore.listSysteme.systemes.find((systeme: Systeme) => systeme.id === commande.systeme.id)?.nom,
+           value: commande.id
+        }
+     });
+  }
+
   get formatedAffaire() {
     return this.demandeFormstore.listAffaire.affaires.map((affaire: Affaire) => {
       return {
@@ -41,45 +50,18 @@ export default class CreerDemandeForm extends Vue {
     });
   }
 
-  onSelectAffaire() {
-    const affaire = this.demandeFormstore.listAffaire.affaires.find((affaire: Affaire) => affaire.id === this.demandeFormstore.demandeFrom.selectedAffaire?.value);
-    if (affaire) {
-      //TODO : filtrer les systemes avec l'affaire le faire  dasn le formated Systeme boloss
-    }
-  }
-
-  async onSelectSysteme() {
-    const systeme = this.demandeFormstore.listSysteme.systemes.find((systeme: Systeme) => systeme.id === this.demandeFormstore.demandeFrom.selectedSysteme?.value);
-    const affaire = this.demandeFormstore.listAffaire.affaires.find((affaire: Affaire) => affaire.id === this.demandeFormstore.demandeFrom.selectedAffaire?.value);
-    if (systeme && affaire) {
-      this.demandeFormstore.demandeFrom.demandeDemande.commande = this.demandeFormstore.listCommande.commandes.find((commande: Commande) => commande.affaire.id === affaire.id && commande.systeme.id === systeme.id) ?? createDefaultCommande();
-      const ArticlesCouches = await getArticleCoucheForDemande(this.demandeFormstore.demandeFrom.demandeDemande.commande);
-      for (const articleCouche of ArticlesCouches) {
-        this.demandeFormstore.demandeFrom.demandeDemande.surfaceCouches.push(createDefaultSurfaceCouche({
-          id: this.demandeFormstore.demandeFrom.demandeDemande.surfaceCouches.length,
-          articleCouche: articleCouche
-        }));
-      }
-    }
-    /*if (systeme && affaire) {
-      this.demandeFormstore.demandeFrom.commandeDemande = await getCommandeByAffaireAndSysteme(affaire, systeme);
-      this.demandeFormstore.demandeFrom.commandeDemande.articles = await getArticleCoucheByCommande(this.demandeFormstore.demandeFrom.commandeDemande);
-      const responseCouches = await getCouchesBySysteme(systeme.id);
-      this.demandeFormstore.clearModifCoucheDemande();
-      for (let i = 0; i < this.demandeFormstore.demandeFrom.commandeDemande.articles.length; i++) {
-        this.demandeFormstore.demandeFrom.commandeDemande.articles[i].commande = this.demandeFormstore.demandeFrom.commandeDemande;
-        this.demandeFormstore.demandeFrom.commandeDemande.articles[i].articles = await getArticlesByArticleCouche(this.demandeFormstore.demandeFrom.commandeDemande.articles[i]);
-        //this.demandeFormstore.demandeFrom.commandeDemande.articles[i].couche = await getCoucheById(this.demandeFormstore.demandeFrom.commandeDemande.articles[i].couche.id);
-        const couches = responseCouches.find(c => c.id == this.demandeFormstore.demandeFrom.commandeDemande.articles[i].couche.id)
-        this.demandeFormstore.demandeFrom.commandeDemande.articles[i].couche = couches ? couches : this.demandeFormstore.demandeFrom.commandeDemande.articles[i].couche;
-        this.demandeFormstore.addModifCoucheDemande(createDefaultModifDemandeCoucheModel({
-          id: i,
-          SurfaceCouche: createDefaultSurfaceCouche({
-            articleCouche: this.demandeFormstore.demandeFrom.commandeDemande.articles[i]
-          })
-        }))
-      }
-    }*/
+  async onSelectCommande(){
+     const commande = this.demandeFormstore.listCommande.commandes.find((commande: Commande) => commande.id === this.demandeFormstore.demandeFrom.selectedCommande?.value);
+     if (commande) {
+        this.demandeFormstore.demandeFrom.demandeDemande.commande = commande;
+        const ArticlesCouches = await getArticleCoucheForDemande(this.demandeFormstore.demandeFrom.demandeDemande.commande);
+        for (const articleCouche of ArticlesCouches) {
+           this.demandeFormstore.demandeFrom.demandeDemande.surfaceCouches.push(createDefaultSurfaceCouche({
+              id: this.demandeFormstore.demandeFrom.demandeDemande.surfaceCouches.length,
+              articleCouche: articleCouche
+           }));
+        }
+     }
   }
 
 
@@ -96,11 +78,11 @@ export default class CreerDemandeForm extends Vue {
     try {
       this.demandeFormstore.demandeFrom.demandeDemande.date = this.demandeFormstore.demandeFrom.dateDemande ? this.demandeFormstore.demandeFrom.dateDemande : String(new Date());
       if (await this.demandeFormstore.listDemande.add(this.demandeFormstore.demandeFrom.demandeDemande)) {
-        alert('Demande créée avec succès !');
+        useAlert().alert('Demande créée avec succès !');
         this.demandeFormstore.clearDemandeFrom();
         this.router.push({name: 'listDemande'});
       } else {
-        alert('Erreur lors de la création de la demande.');
+        useAlert().alert('Erreur lors de la création de la demande.');
       }
     } catch (error) {
       console.error(error);
@@ -130,13 +112,13 @@ export default class CreerDemandeForm extends Vue {
               ></v-combobox>
               <v-combobox
                   v-if="this.demandeFormstore.demandeFrom.selectedAffaire"
-                  label="Systemes"
-                  :items="formatedSysteme"
+                  label="Commande"
+                  :items="formatedCommande"
                   item-title="title"
                   item-value="value"
                   variant="outlined"
-                  v-model="this.demandeFormstore.demandeFrom.selectedSysteme"
-                  @update:model-value="onSelectSysteme"
+                  v-model="this.demandeFormstore.demandeFrom.selectedCommande"
+                  @update:model-value="onSelectCommande"
                   return-object
               />
               <v-col align-self="center" justify="center">

@@ -2,7 +2,7 @@
 import {Vue, Component} from 'vue-facing-decorator';
 import {Affaire} from "@/models/types/affaire";
 import {deleteAffaire} from "@/services/AffairesService";
-import {ListStore} from "@/stores";
+import {ListStore, useAlert} from "@/stores";
 import {useRouter} from "vue-router";
 
 @Component({})
@@ -21,8 +21,8 @@ export default class ListAffaireComponent extends Vue {
   private async deleteAffaire(item: Affaire) {
     try {
       await deleteAffaire(item);
-      await this.listStore.ListAffaire.delete(item)
-      alert('Affaire supprimée avec succès');
+      await this.listStore.ListAffaire.delete(item);
+      useAlert().alert('Affaire supprimée avec succès');
     } catch (e) {
       console.error(e);
     }

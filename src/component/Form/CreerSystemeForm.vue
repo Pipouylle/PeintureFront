@@ -1,7 +1,7 @@
 <script lang="ts">
 import {Component, Vue, Watch} from 'vue-facing-decorator';
 import CreerCoucheForm from "@/component/Form/CreerCoucheForm.vue";
-import { SystemeFormStore} from "@/stores";
+import {SystemeFormStore, useAlert} from "@/stores";
 import {createDefaultGrenaillage, Grenaillage} from "@/models/types/Grenaillage";
 import {getAllGrenaillage} from "@/services/GrenaillagesService";
 import {useRouter} from "vue-router";
@@ -41,11 +41,11 @@ export default class CreerSystemeForm extends Vue {
     try {
       this.SystemeFormstore.systemesForm.systeme.grenaillage = this.SystemeFormstore.systemesForm.selectedGrenaillage ? createDefaultGrenaillage({id : this.SystemeFormstore.systemesForm.selectedGrenaillage.value}) : null;
       if (await this.SystemeFormstore.addSysteme(this.SystemeFormstore.systemesForm.systeme)){
-        alert('Systeme créée avec succès !');
+        useAlert().alert('Systeme créée avec succès !');
         this.SystemeFormstore.clearAll()
         this.router.push({name: 'listSysteme'});
       } else {
-        alert('Erreur lors de la création du systeme.');
+        useAlert().alert('Erreur lors de la création du systeme.');
       }
       this.SystemeFormstore.clearAll();
     } catch (error) {

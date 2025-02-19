@@ -1,9 +1,11 @@
 <script lang="ts">
 import {Component, Prop, Vue, Watch} from 'vue-facing-decorator';
 import CreerCoucheForm from "@/component/Form/CreerCoucheForm.vue";
-import { SystemeFormStore} from "@/stores";
+import {ModifSystemeStore, SystemeFormStore, useAlert} from "@/stores";
 import {createDefaultGrenaillage, Grenaillage} from "@/models/types/Grenaillage";
 import {getAllGrenaillage} from "@/services/GrenaillagesService";
+import {createDefaultSysteme} from "@/models/types/systeme";
+import {useRouter} from "vue-router";
 
 @Component({
   components: {CreerCoucheForm}
@@ -11,26 +13,14 @@ import {getAllGrenaillage} from "@/services/GrenaillagesService";
 
 //TODO : changer le creer couche form car c'est un modif
 //TODO : juste le faire
+//TODO : ne fait pas les couhe et ne marche pas pour le grenaillage
 export default class ModifSystemesComponent extends Vue {
-  private SystemeFormstore = SystemeFormStore();
+  private ModifSysteme = ModifSystemeStore();
+  private router = useRouter();
 
-  public async mounted() {
-    this.SystemeFormstore.clearCouche();
-    this.SystemeFormstore.systemesForm.systeme.couches =
-  }
-
-  public updateCouches() {
-    const nbToadd = this.SystemeFormstore.systemesForm.nbCouche - this.SystemeFormstore.nbCouches;
-    if (nbToadd > 0){
-      this.SystemeFormstore.addCouche(nbToadd);
-    }
-    if (nbToadd < 0){
-      this.SystemeFormstore.removeCouche(Math.abs(nbToadd));
-    }
-  }
 
   get formatedGrenaillages() {
-    return this.SystemeFormstore.listgrenaillages.grenaillages.map((grenaillage: Grenaillage) => {
+    return this.ModifSysteme.listgrenaillages.grenaillages.map((grenaillage: Grenaillage) => {
       return {
         title:"" + grenaillage.nom + " - " + grenaillage.typeChantier,
         value: grenaillage.id
@@ -42,14 +32,15 @@ export default class ModifSystemesComponent extends Vue {
 
   public async submitForm() {
     try {
-      this.SystemeFormstore.systemesForm.systeme.grenaillage = this.SystemeFormstore.systemesForm.selectedGrenaillage ? createDefaultGrenaillage({id : this.SystemeFormstore.systemesForm.selectedGrenaillage.value}) : null;
-      if (await this.SystemeFormstore.addSysteme(this.SystemeFormstore.systemesForm.systeme)){
-        alert('Systeme créée avec succès !');
-        this.SystemeFormstore.clearAll()
+       console.log(this.ModifSysteme.selectGrenaillage);
+      this.ModifSysteme.systeme.grenaillage = this.ModifSysteme.selectGrenaillage ? this.ModifSysteme.listgrenaillages.grenaillages.find((grenaillage: Grenaillage) => grenaillage.id === this.ModifSysteme.selectGrenaillage?.value) : null;
+      if (await this.ModifSysteme.listSystemes.modif(this.ModifSysteme.systeme)){
+         useAlert().alert('Systeme créée avec succès !');
       } else {
-        alert('Erreur lors de la création du systeme.');
+         useAlert().alert('Erreur lors de la création du systeme.');
       }
-      this.SystemeFormstore.clearAll();
+      this.ModifSysteme.systeme = createDefaultSysteme();
+      this.router.push({name: 'listSysteme'});
     } catch (error) {
       console.error(error);
     }
@@ -68,14 +59,14 @@ export default class ModifSystemesComponent extends Vue {
             <v-form>
               <v-text-field
                   label="Nom du systeme"
-                  v-model="this.SystemeFormstore.systemesForm.systeme.nom"
+                  v-model="this.ModifSysteme.systeme.nom"
                   outlined
                   dense
                   prepend-icon="mdi-briefcase-outline"
               ></v-text-field>
               <v-text-field
                   label="fournisseur"
-                  v-model="this.SystemeFormstore.systemesForm.systeme.fournisseur"
+                  v-model="this.ModifSysteme.systeme.fournisseur"
                   outlined
                   dense
               ></v-text-field>
@@ -85,23 +76,23 @@ export default class ModifSystemesComponent extends Vue {
                   item-title="title"
                   item-value="value"
                   variant="outlined"
-                  v-model="this.SystemeFormstore.systemesForm.selectedGrenaillage"
+                  v-model="this.ModifSysteme.selectedGrenaillage"
               ></v-combobox>
               <v-text-field
                   label="tarif regieSFP"
-                  v-model="this.SystemeFormstore.systemesForm.systeme.refieSFP"
+                  v-model="this.ModifSysteme.systeme.refieSFP"
                   outlined
                   dense
                   type="number"
               ></v-text-field>
               <v-text-field
                   label="tarif regieFP"
-                  v-model="this.SystemeFormstore.systemesForm.systeme.refieFP"
+                  v-model="this.ModifSysteme.systeme.refieFP"
                   outlined
                   dense
                   type="number"
               ></v-text-field>
-              <div v-for="couche in this.SystemeFormstore.systemesForm.systeme.couches" :key="couche.id">
+              <div v-for="couche in this.ModifSysteme.systeme.couches" :key="couche.id">
                 <CreerCoucheForm :couche="couche"/>
               </div>
 
@@ -113,7 +104,7 @@ export default class ModifSystemesComponent extends Vue {
                   @click="submitForm"
               >
                 <v-icon left>mdi-check-circle</v-icon>
-                Créer affaire
+                Modifier systeme
               </v-btn>
             </v-form>
           </v-card-text>

@@ -1,6 +1,6 @@
 <script lang="ts">
 import {Vue, Component} from 'vue-facing-decorator';
-import {ListStore} from "@/stores";
+import {ListStore, useAlert} from "@/stores";
 
 @Component({})
 export default class ListArticleComponent extends Vue {
@@ -14,12 +14,12 @@ export default class ListArticleComponent extends Vue {
   async editArticle(item: any) {
     try {
       if (await this.list.ListArticle.modif(item)) {
-        alert('Modification effectuée avec succès');
+        useAlert().alert('Modification effectuée avec succès');
       } else {
-        alert('Erreur lors de la modification');
+        useAlert().alert('Erreur lors de la modification');
       }
     } catch (e) {
-      alert('Erreur lors de la modification');
+      useAlert().alert('Erreur lors de la modification');
       console.error(e);
     }
   }

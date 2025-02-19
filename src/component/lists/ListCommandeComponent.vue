@@ -39,6 +39,13 @@ export default class ListCommandeComponent extends Vue {
   <v-card class="containerList">
     <v-card-title class="d-flex justify-space-between align-center titleList">
       <span> Liste des Commande </span>
+       <v-text-field
+           label="Rechercher"
+           density="compact"
+           v-model="this.ListStore.ListCommande.filter"
+           variant="outlined"
+           class="textFilter"
+       ></v-text-field>
       <router-link to="/CreerCommande" class="ml-auto">
         <v-btn>
           Creer Commande
@@ -49,6 +56,8 @@ export default class ListCommandeComponent extends Vue {
       <v-data-table
           :headers="this.header"
           :items="this.ListStore.ListCommande.commandes"
+          v-model:search="ListStore.ListCommande.filter"
+          :filter-keys="['eureka', 'affaire.nom', 'systeme.nom', 'commentaire']"
           variant="outlined"
           class="tableList"
       >

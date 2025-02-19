@@ -56,3 +56,13 @@ export const deleteSysteme = async (systeme : Systeme)=> {
     }
 }
 
+export const updateSysteme = async (systeme : Systeme): Promise<Systeme> => {
+    try {
+        const systemes = Systememapper.mapSystemes(systeme);
+        const response = await apiClientPatch.patch<Systemes>(`/systemes/${systeme.id}`, systemes);
+        return Systememapper.mapSysteme(response.data);
+    } catch (error) {
+        console.error('Erreur lors de l\'update des systemes:', error);
+        throw error;
+    }
+}

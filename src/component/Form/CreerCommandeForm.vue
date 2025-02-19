@@ -8,7 +8,7 @@ import {getAllAffaires} from "@/services/AffairesService";
 import {createDefaultCommande} from "@/models/types/commande";
 import {creerCommmande} from "@/services/CommandesService";
 import ModifCoucheForCommande from "@/component/Form/ModifCoucheForCommande.vue";
-import {CommandeFormStore} from "@/stores";
+import {CommandeFormStore, useAlert} from "@/stores";
 import {createDefaultModifCommandeCoucheModel} from "@/models/forms/CreerCommande/ModifCommandeCoucheModel";
 import {createDefaultArticleCouche} from "@/models/types/articleCouche";
 import {getCouchesBySysteme} from "@/services/CouchesService";
@@ -48,7 +48,7 @@ export default class CreerCommandeForm extends Vue {
       const systeme = this.CommandeFormStore.listSysteme.systemes.find((systeme: Systeme) => systeme.id === this.CommandeFormStore.commandeFrom.selectedSysteme?.value);
       const verifCommande = this.CommandeFormStore.listCommande.commandes.find((commande) => commande.affaire.id === this.CommandeFormStore.commandeFrom.selectedAffaire?.value && commande.systeme.id === this.CommandeFormStore.commandeFrom.selectedSysteme?.value);
       if (verifCommande) {
-         alert('Une commande existe déjà pour cette affaire et ce système.');
+         useAlert().alert('Une commande existe déjà pour cette affaire et ce système.');
          this.CommandeFormStore.commandeFrom.selectedSysteme = null;
          return;
       }
@@ -84,15 +84,15 @@ export default class CreerCommandeForm extends Vue {
          });
          //TODO : ajouter les commandeCalendar
          if (await this.CommandeFormStore.listCommande.add(this.CommandeFormStore.commandeFrom.commande)) {
-            alert('Commande créée avec succès !');
+            useAlert().alert('Commande créée avec succès !');
             this.CommandeFormStore.clearAll();
             this.router.push({name: 'listCommande'});
          } else {
-            alert('Erreur lors de la création de la commande.');
+            useAlert().alert('Erreur lors de la création de la commande.');
          }
       } catch (error) {
          console.error(error);
-         alert('Erreur lors de la création de la commande.');
+         useAlert().alert('Erreur lors de la création de la commande.');
       }
    }
 }

@@ -51,6 +51,19 @@ export const useColorStore = defineStore('colorStore', {
         },
     },
 });
+
+export const alertStore = defineStore('alertStore', {
+    state: () => ({
+        alertPossible: false as boolean,
+    }),
+    actions: {
+        alert: (message: String) => {
+            if (alertStore().alertPossible) {
+                alert(message)
+            }
+        },
+    },
+});
 export const AffaireFormStore = defineStore('AffaireFromStore', {
     state: () => ({
         affaire: createDefaultAffaire(),
@@ -202,6 +215,28 @@ export const SystemeFormStore = defineStore('systemeFromStore', {
         }
     }
 });
+
+export const ModifSystemeStore = defineStore('modifSystemeStore', {
+    state: () => ({
+        systeme: createDefaultSysteme() as Systeme,
+        selectGrenaillage: null as { title: string, value: number } | null,
+    }),
+    getters: {
+        listgrenaillages: (state) => {
+            const list = ListStore();
+            return list.ListGrenaillage;
+        },
+        listSystemes: (state) => {
+            const list = ListStore();
+            return list.ListSysteme;
+        },
+        clearAll() {
+            this.systeme = createDefaultSysteme();
+            this.selectGrenaillage = null;
+        }
+    },
+    actions: {},
+})
 
 export const CalendarStore = defineStore('calendarStore', {
     state: () => ({
@@ -378,4 +413,8 @@ export const ListStore = defineStore('ListStore', {
 
 export function useListStore() {
     return ListStore();
+}
+
+export function useAlert() {
+    return alertStore();
 }

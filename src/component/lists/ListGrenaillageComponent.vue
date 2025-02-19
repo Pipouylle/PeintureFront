@@ -1,6 +1,6 @@
 <script lang="ts">
 import {Vue, Component} from 'vue-facing-decorator';
-import {ListStore} from "@/stores";
+import {ListStore, useAlert} from "@/stores";
 
 @Component({})
 export default class ListGrenaillageComponent extends Vue {
@@ -15,13 +15,13 @@ export default class ListGrenaillageComponent extends Vue {
   async editGrenaillage(item: any) {
     try{
       if (await this.list.ListGrenaillage.modif(item)){
-        alert('Modification effectuée avec succès');
+        useAlert().alert('Modification effectuée avec succès');
       } else {
-        alert('Erreur lors de la modification');
+        useAlert().alert('Erreur lors de la modification');
       }
     } catch (e) {
       console.error(e);
-      alert('Erreur lors de la modification');
+      useAlert().alert('Erreur lors de la modification');
     }
   }
 }
