@@ -54,6 +54,9 @@ export default class ListDemandeComponent extends Vue {
           variant="outlined"
           class="tableList"
       >
+         <template v-slot:[`item.date`]="{ item }">
+            <span> {{ new Date(item.date).toLocaleDateString() }} </span>
+         </template>
          <template v-slot:[`item.reservation`]="{ item }">
             <v-icon v-if="item.reservation" color="green">mdi-check</v-icon>
             <v-icon v-else color="red">mdi-close</v-icon>

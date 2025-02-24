@@ -5,6 +5,7 @@ import {useRouter} from "vue-router";
 import {deleteSysteme} from "@/services/SystemesService";
 import {Couche} from "@/models/types/couche";
 import {Systeme} from "@/models/types/systeme";
+import {createDefaultGrenaillage, Grenaillage} from "@/models/types/Grenaillage";
 
 @Component({})
 
@@ -25,6 +26,12 @@ export default class ListSystemeComponent extends Vue {
    ]
 
    private router = useRouter();
+
+   mounted(){
+      for (const systeme of this.listSystemeStore.ListSysteme.systemes) {
+         systeme.grenaillage = this.listSystemeStore.ListGrenaillage.grenaillages.find((grenaillage : Grenaillage) => grenaillage.id === systeme.grenaillage?.id) ?? createDefaultGrenaillage();
+      }
+   }
 
    async deleteSysteme(item: any) {
       try {
@@ -69,7 +76,7 @@ export default class ListSystemeComponent extends Vue {
              :headers="header"
              :items="listSystemeStore.ListSysteme.systemes"
              v-model:search="this.listSystemeStore.ListSysteme.filter"
-             :filter-keys="['nom', 'fournisseur', 'grenaillage.nom', 'type']"
+             :filter-keys="['nom', 'fournisseur', 'grenaillage.id', 'type']"
              variant="outlined"
              class="tableList"
          >

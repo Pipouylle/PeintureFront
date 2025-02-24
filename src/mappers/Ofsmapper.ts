@@ -13,7 +13,9 @@ export default class Ofsmapper {
             semaine: createDefaultSemaine({id: parseInt(obj.semaineOf.split("/")[3])}),
             jour: Jour[parseInt(obj.jourOf.split("/")[3])],
             demande: createDefaultDemande({id: parseInt(obj.demandeOf.split("/")[3])}),
-            consommations: []
+            consommations: [],
+            avancements: [],
+            order: obj.orderOf
         }
     }
 
@@ -30,6 +32,7 @@ export default class Ofsmapper {
             avancementOf: obj.avancement,
             semaineOf: "/api/semaines/" + obj.semaine.id,
             demandeOf: "/api/demandes/" + obj.demande.id,
+            orderOf: obj.order
         }
     }
 

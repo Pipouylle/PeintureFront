@@ -14,6 +14,8 @@ import './assets/styles/global.css';
 
 import "@mdi/font/css/materialdesignicons.css";
 
+import Draggable from "vuedraggable";
+
 const vuetify = createVuetify({
     components: {
         ...components,
@@ -25,4 +27,4 @@ const vuetify = createVuetify({
 const pinia = createPinia();
 pinia.use(piniaPluginPersistedstate);
 
-createApp(App).use(router).use(pinia).use(vuetify).mount('#app')
+createApp(App).use(router).use(pinia).use(vuetify).component("Draggable", Draggable).mount('#app')

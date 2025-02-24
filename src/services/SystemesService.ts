@@ -19,11 +19,8 @@ export const getAllSystemes = async (): Promise<Systeme[]> => {
 
 export const creerSysteme = async (systeme: Systeme) : Promise<Systeme> => {
     try {
-        console.log(systeme);
         const systemes = Systememapper.mapSystemes(systeme);
-        console.log(systemes);
         const response = await apiClient.post<Systemes>('/systemes', systemes);
-        console.log(response.data);
         return Systememapper.mapSysteme(response.data);
     } catch (error) {
         console.error('Erreur lors de la récupération des systemes:', error);

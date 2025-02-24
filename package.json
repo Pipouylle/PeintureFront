@@ -17,6 +17,7 @@
     "luxon": "^3.5.0",
     "pinia": "^2.1.7",
     "pinia-plugin-persistedstate": "^4.1.2",
+    "vue-draggable-next": "^2.2.1",
     "vuedraggable": "^4.1.0"
   },
   "devDependencies": {

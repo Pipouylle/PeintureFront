@@ -5,7 +5,6 @@ import {Commandes} from "@/models/objectsApi/Commandes";
 
 export default class Commandemapper{
     static mapCommande(obj: Commandes): Commande {
-        console.log(obj);
         return {
             id: obj.id,
             eureka: obj.eurekaCommande,

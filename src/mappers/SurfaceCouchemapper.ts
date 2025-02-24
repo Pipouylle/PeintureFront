@@ -14,6 +14,7 @@ export class SurfaceCouchemapper {
     }
 
     static mapArraySurfaceCouche(dataArray: SurfaceCouches[]): SurfaceCouche[]{
+        console.log(dataArray);
         return dataArray.map(this.mapSurfaceCouche);
     }
 

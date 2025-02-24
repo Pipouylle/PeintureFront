@@ -80,6 +80,7 @@ export default class CreerSystemeForm extends Vue {
               <v-combobox
                   label="grenaillage"
                   :items="formatedGrenaillages"
+                  clearable
                   item-title="title"
                   item-value="value"
                   variant="outlined"

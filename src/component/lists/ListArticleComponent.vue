@@ -37,9 +37,9 @@ export default class ListArticleComponent extends Vue {
           variant="outlined"
           class="textFilter"
       ></v-text-field>
-      <router-link to="/CreerAffaire" class="ml-auto">
+      <router-link to="/CreerArticle" class="ml-auto">
         <v-btn class="bntLink">
-          Creer Affaire
+          Creer Article
         </v-btn>
       </router-link>
     </v-card-title>

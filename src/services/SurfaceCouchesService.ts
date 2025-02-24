@@ -24,3 +24,22 @@ export const creerSurfaceCouche = async (surfaceCouche: SurfaceCouche) : Promise
         throw error;
     }
 }
+
+export const deleteSurfaceCouche = async (surfaceCouche: SurfaceCouche) => {
+    try {
+        await apiClient.delete(`/surface_couches/${surfaceCouche.id}`);
+    } catch (error) {
+        console.error('Erreur lors de la récupération des surfaceCouches:', error);
+        throw error;
+    }
+}
+
+export const getSurfaceCoucheByDemande = async (id: number): Promise<SurfaceCouche[]> => {
+    try {
+        const response = await apiClient.get<ApiResponseCollection>(`/surface_couches?demande_surfaceCouche=/api/demandes/${id}`);
+        return SurfaceCouchemapper.mapArraySurfaceCouche(response.data.member);
+    } catch (error) {
+        console.error('Erreur lors de la récupération des surfaceCouches:', error);
+        throw error;
+    }
+}

@@ -17,6 +17,8 @@ import {useAlert, useListStore} from "@/stores";
 import ListGrenaillageView from "@/views/lists/ListGrenaillageView.vue";
 import ListArticleView from "@/views/lists/ListArticleView.vue";
 import ModifSystemeView from "@/views/modifs/ModifSystemeView.vue";
+import CalendarViewNew from "@/views/calendars2_0/CalendarViewNew.vue";
+import CreationArticleView from "@/views/forms/CreationArticleView.vue";
 
 const routes: Array<RouteRecordRaw> = [
     {
@@ -41,9 +43,9 @@ const routes: Array<RouteRecordRaw> = [
     },
 
     {
-      path: "/listDemande",
-      name: "listDemande",
-      component: ListDemandeView,
+        path: "/listDemande",
+        name: "listDemande",
+        component: ListDemandeView,
     },
     {
         path: "/CreerDemande",
@@ -76,14 +78,19 @@ const routes: Array<RouteRecordRaw> = [
         component: CreationCommandeView,
     },
     {
-      path: "/listArticle",
-      name: "listArticle",
-      component: ListArticleView,
+        path: "/listArticle",
+        name: "listArticle",
+        component: ListArticleView,
     },
     {
-      path: "/listGrenaillage",
-      name: "listGrenaillage",
-      component: ListGrenaillageView,
+        path: "/CreerArticle",
+        name: "CreerArticle",
+        component: CreationArticleView,
+    },
+    {
+        path: "/listGrenaillage",
+        name: "listGrenaillage",
+        component: ListGrenaillageView,
     },
     {
         path: "/Calendar",
@@ -99,7 +106,12 @@ const routes: Array<RouteRecordRaw> = [
         path: "/calendarUsineCabine2",
         name: "calendarUsineCabine2",
         component: CalendarCabine2View
-    }
+    },
+    {
+        path: "/calendar2",
+        name: "calendar2",
+        component: CalendarViewNew
+    },
 ];
 
 const router = createRouter({

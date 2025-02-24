@@ -19,18 +19,10 @@ import {useRouter} from "vue-router";
 @Component({
   components: {ModifDemandeCouche: ModifCoucheForDemande}
 })
+
 export default class CreerDemandeForm extends Vue {
   private demandeFormstore = DemandeFormStore();
   private router = useRouter();
-
-  get formatedSysteme() {
-    return this.demandeFormstore.listSysteme.systemes.map((systeme: Systeme) => {
-      return {
-        title: systeme.nom + " - " + systeme.fournisseur,
-        value: systeme.id
-      }
-    })
-  }
 
   get formatedCommande() {
      return this.demandeFormstore.listCommande.commandes.filter((commande: Commande) => commande.affaire.id === this.demandeFormstore.demandeFrom.selectedAffaire?.value).map((commande: Commande) => {
@@ -39,6 +31,11 @@ export default class CreerDemandeForm extends Vue {
            value: commande.id
         }
      });
+  }
+
+  onSelectedAffaire() {
+     this.demandeFormstore.demandeFrom.demandeDemande.surfaceCouches = [];
+     this.demandeFormstore.demandeFrom.selectedCommande = null;
   }
 
   get formatedAffaire() {
@@ -54,6 +51,7 @@ export default class CreerDemandeForm extends Vue {
      const commande = this.demandeFormstore.listCommande.commandes.find((commande: Commande) => commande.id === this.demandeFormstore.demandeFrom.selectedCommande?.value);
      if (commande) {
         this.demandeFormstore.demandeFrom.demandeDemande.commande = commande;
+        this.demandeFormstore.demandeFrom.demandeDemande.surfaceCouches = [];
         const ArticlesCouches = await getArticleCoucheForDemande(this.demandeFormstore.demandeFrom.demandeDemande.commande);
         for (const articleCouche of ArticlesCouches) {
            this.demandeFormstore.demandeFrom.demandeDemande.surfaceCouches.push(createDefaultSurfaceCouche({
@@ -108,6 +106,7 @@ export default class CreerDemandeForm extends Vue {
                   item-value="value"
                   variant="outlined"
                   v-model="this.demandeFormstore.demandeFrom.selectedAffaire"
+                  @update:model-value="onSelectedAffaire"
                   return-object
               ></v-combobox>
               <v-combobox
@@ -145,12 +144,14 @@ export default class CreerDemandeForm extends Vue {
                 <v-number-input
                     v-model="this.demandeFormstore.demandeFrom.demandeDemande.surface"
                     label="surface"
+                    :min="0"
                     outlined
                     dense
                 ></v-number-input>
                 <v-number-input
                     v-model="this.demandeFormstore.demandeFrom.demandeDemande.nombrePiece"
                     label="nombre de pièces"
+                    :min="0"
                     variant="outlined"
                     dense
                 ></v-number-input>

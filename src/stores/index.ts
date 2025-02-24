@@ -1,12 +1,11 @@
 import {defineStore} from "pinia";
-import {CreerCoucheFormModel} from "@/models/forms/CreerCoucheFormModel";
 import {createDefaultDemandeFormModel, DemandeFormModel} from "@/models/forms/DemandeFormModel";
 import {ModifDemandeCoucheModel} from "@/models/forms/ModifDemandeCoucheModel";
 import {getAllDemandeCalendar, getAllDemandes} from "@/services/DemandesService";
 import {createDefaultDemandesCalendar, DemandesCalendar} from "@/models/calendar/DemandesCalendar";
 import {CalendarModel, createDefaultCalendarModel} from "@/models/calendar/CalendarModel";
 import {createDefaultOf} from "@/models/types/of";
-import {creerOf, getAllOfbySemaine, updateOF} from "@/services/OfsService";
+import {creerOf, deleteOf, getAllOfbySemaine, updateOF, updateOfOrder} from "@/services/OfsService";
 import {Semaine} from "@/models/types/semaine";
 import {OfCalendar} from "@/models/calendar/OfCalendar";
 import {OfCalendarmapper} from "@/mappers/OfCalendarmapper";
@@ -36,6 +35,15 @@ import {createDefaultSysteme, Systeme} from "@/models/types/systeme";
 import {createDefaultCouche} from "@/models/types/couche";
 import {createDefaultListGrenaillageModel} from "@/models/lists/ListGrenaillageModel";
 import {createDefaultListArticleModel} from "@/models/lists/ListArticleModel";
+import {createDefaultArticle} from "@/models/types/article";
+import {CalendarViewModel, createDefaultCalendarViewModel} from "@/models/calendar2_0/CalendarViewModel";
+import {
+    creerAvancementSurfaceCouche,
+    getAllAvancementSurfaceCoucheBySemaine
+} from "@/services/AvancementSurfaceCoucheService";
+import {AvancementSurfaceCouche, createDefaultAvancementSurfaceCouche} from "@/models/types/avancementSurfaceCouche";
+import {getSurfaceCoucheByDemande} from "@/services/SurfaceCouchesService";
+import {createDefaultSurfaceCouche} from "@/models/types/surfaceCouche";
 
 export const useColorStore = defineStore('colorStore', {
     state: () => ({
@@ -187,9 +195,10 @@ export const SystemeFormStore = defineStore('systemeFromStore', {
             this.systemesForm.systeme.couches = [createDefaultCouche(
                 {id: 1}
             )];
+            this.systemesForm.nbCouche = 1;
         },
         addCouche(nb: number) {
-            for (let i = 0; i < nb; i++) {
+            for (let i = 1; i <= nb; i++) {
                 this.systemesForm.systeme.couches.push(createDefaultCouche({id: i + this.nbCouches}));
             }
         },
@@ -250,7 +259,6 @@ export const CalendarStore = defineStore('calendarStore', {
         }
     },
     actions: {
-
         addDemandeCalendar(demande: DemandesCalendar) {
             this.demandesCalendar.push(demande);
         },
@@ -267,7 +275,6 @@ export const CalendarStore = defineStore('calendarStore', {
                 ofCalendar.idDemandeOf = demande ? demande : ofCalendar.idDemandeOf;
                 ofCalendar.consommationOf = responseConsommation.filter(c => c.of.id === ofCalendar.id);
             }
-            console.log(this.ofsCalendar);
         },
 
         async updateOfCalendar(ofId: number, jour: string, cabine: string) {
@@ -396,7 +403,9 @@ export const ListStore = defineStore('ListStore', {
             this.ListSemaine = await getAllSemaines();
         },
 
-
+        updateListDemandeCalendar(list: any[]) {
+            this.ListDemandeCalendar = list;
+        },
         getCurrentSemaine() {
             const currentDate = new Date();
             for (const semaine of this.ListSemaine) {
@@ -409,7 +418,112 @@ export const ListStore = defineStore('ListStore', {
             return null;
         },
     }
-})
+});
+
+export const CalendarComponentStore = defineStore('calendarComponentStore', {
+    state: () => ({
+        calendarModel: createDefaultCalendarViewModel() as CalendarViewModel,
+        semaine: useListStore().getCurrentSemaine() as Semaine,
+        OfCalendar: [] as OfCalendar[],
+    }),
+    getters: {
+        listDemandeCalendar: (state) => {
+            const list = ListStore();
+            return list.ListDemandeCalendar;
+        },
+        listSemaine: (state) => {
+            const list = ListStore();
+            return list.ListSemaine;
+        }
+    },
+    actions: {
+        async setOfBySemaine() {
+            const responseOfsCalendar = await getAllOfbySemaine(this.semaine);
+            const responseAvancement = await getAllAvancementSurfaceCoucheBySemaine(this.semaine.id);
+            this.OfCalendar = OfCalendarmapper.mapArrayOfCalendar(responseOfsCalendar);
+            for (const ofCalendarElement of this.OfCalendar) {
+                ofCalendarElement.idDemandeOf = this.listDemandeCalendar.find((demande: DemandesCalendar) => demande.idDemande === ofCalendarElement.idDemandeOf.idDemande) ?? createDefaultDemandesCalendar();
+                ofCalendarElement.avancements = responseAvancement.filter((avancement: AvancementSurfaceCouche) => avancement.of.id === ofCalendarElement.id);
+            }
+        },
+        async creerOfCalendar(demandeId: number, jour: string) {
+            try {
+                const Of = createDefaultOf({
+                    demande: createDefaultDemande({
+                        id: demandeId,
+                    }),
+                    jour: jour,
+                    cabine: this.calendarModel.cabine,
+                    semaine: this.semaine,
+                });
+                const responseOf = await creerOf(Of);
+                const responseSurfaceCouches = await getSurfaceCoucheByDemande(demandeId);
+                for (const surfaceCouche of responseSurfaceCouches) {
+                    const avancement = createDefaultAvancementSurfaceCouche({
+                        of: responseOf,
+                        surfaceCouches: responseSurfaceCouches.find(s => s.id === surfaceCouche.id) ?? createDefaultSurfaceCouche({id: surfaceCouche.id}),
+                    })
+                    responseOf.avancements.push(await creerAvancementSurfaceCouche(avancement));
+                }
+                const ofmapper = OfCalendarmapper.mapOfCalendar(responseOf)
+                ofmapper.idDemandeOf = this.listDemandeCalendar.find(d => d.idDemande === demandeId) || createDefaultDemandesCalendar();
+                this.addOf(ofmapper);
+            } catch (e) {
+                console.error(e);
+            }
+        },
+        addOf(of: OfCalendar) {
+            this.OfCalendar.push(of);
+        },
+        async updateOfCalendar(ofId: number, jour: string) {
+            const of = this.OfCalendar.find((of: OfCalendar) => of.id === ofId);
+            if (of) {
+                of.jourOf = jour;
+                of.cabineOF = this.calendarModel.cabine;
+                try {
+                    await updateOF(OfCalendarmapper.mapOf(of));
+                } catch (e) {
+                    console.error(e);
+                }
+            }
+        },
+
+        async updateOrderOfCalendar(jour: string, list: OfCalendar[]) {
+            console.log(list);
+            for (const of of list) {
+                if (of.order !== list.indexOf(of) + 1) {
+                    of.order = list.indexOf(of) + 1;
+                    try {
+                        console.log(of);
+                        await updateOfOrder(OfCalendarmapper.mapOf(of));
+                        this.OfCalendar.find((ofCalendar: OfCalendar) => ofCalendar.id === of.id)!.order = of.order;
+                    } catch (e) {
+                        console.error(e);
+                    }
+                }
+            }
+        },
+        async deletOf(ofId: number) {
+            const index = this.OfCalendar.findIndex((of: OfCalendar) => of.id === ofId);
+            console.log(ofId);
+            console.log(this.OfCalendar)
+            if (index !== -1) {
+                try {
+                    await deleteOf(createDefaultOf({id: ofId}));
+                    this.OfCalendar.splice(index, 1);
+                } catch (e) {
+                    console.error('erreur lors de la suppression de l\'of', e);
+                }
+            } else {
+                console.error('of introuvable');
+            }
+        },
+        getOfByJour(jour: string): OfCalendar[] {
+            return this.OfCalendar.filter(of => of.jourOf === jour && of.cabineOF === this.calendarModel.cabine).sort((a, b) => a.order - b.order);
+        },
+    }
+});
+
 
 export function useListStore() {
     return ListStore();
@@ -417,4 +531,8 @@ export function useListStore() {
 
 export function useAlert() {
     return alertStore();
+}
+
+export function useCalendar() {
+    return CalendarComponentStore();
 }

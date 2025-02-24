@@ -4,6 +4,8 @@ import {useRouter} from "vue-router";
 import {ListStore} from "@/stores";
 import {Commande} from "@/models/types/commande";
 import {deleteCommande} from "@/services/CommandesService";
+import {createDefaultSysteme} from "@/models/types/systeme";
+import {createDefaultAffaire} from "@/models/types/affaire";
 
 @Component({})
 
@@ -12,19 +14,27 @@ export default class ListCommandeComponent extends Vue {
   private ListStore = ListStore();
   private header = [
     {title: 'Eureka', value: 'eureka'},
-    {title: 'affaire', value: 'affaire.nom'},
-    {title: 'systeme', value: 'systeme.nom'},
+    {title: 'affaire', value: 'affaire.id'},
+    {title: 'systeme', value: 'systeme.id'},
     {title: 'Commentaire', value: 'commentaire'},
     {title: 'Fiche H', value: 'ficheH'},
     {title: 'PV Peinture', value: 'pvPeinture'},
     {title: 'Actions', value: 'actions', sortable: false, align: 'end'}
   ]
 
+   mounted() {
+      for (const commande of this.ListStore.ListCommande.commandes) {
+         commande.affaire = this.ListStore.ListAffaire.affaires.find((affaire) => affaire.id === commande.affaire.id) ?? createDefaultAffaire();
+         commande.systeme = this.ListStore.ListSysteme.systemes.find((systeme) => systeme.id === commande.systeme.id) ?? createDefaultSysteme();
+      }
+   }
+
   editCommande(item: Commande) {
     //TODO: l'edit
   }
 
   async deleteCommande(item: Commande) {
+
     try {
       await deleteCommande(item)
       this.ListStore.ListCommande.commandes = this.ListStore.ListCommande.commandes.filter(commande => commande.id !== item.id);

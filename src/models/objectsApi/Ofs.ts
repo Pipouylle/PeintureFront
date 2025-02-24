@@ -5,4 +5,5 @@ export interface Ofs {
     demandeOf: string; //Demanade.id
     jourOf: string;
     semaineOf: string;
+    orderOf: number;
 }

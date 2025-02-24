@@ -14,7 +14,9 @@ export class OfCalendarmapper {
             consommationOf : obj.consommations,
             idDemandeOf : createDefaultDemandesCalendar({
                 idDemande : obj.demande.id
-            })
+            }),
+            avancements : obj.avancements,
+            order : obj.order
         }
     }
 
@@ -32,7 +34,9 @@ export class OfCalendarmapper {
             consommations : obj.consommationOf,
             demande : createDefaultDemande({
                 id : obj.idDemandeOf.idDemande
-            })
+            }),
+            avancements : [],
+            order : obj.order
         }
     }
 }
