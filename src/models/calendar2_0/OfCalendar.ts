@@ -1,6 +1,5 @@
 import {createDefaultSemaine, Semaine} from "@/models/types/semaine";
-import {Consommation} from "@/models/types/consommation";
-import {createDefaultDemandesCalendar, DemandesCalendar} from "@/models/calendar/DemandesCalendar";
+import {createDefaultDemandesCalendar, DemandesCalendar} from "@/models/calendar2_0/DemandesCalendar";
 import {AvancementSurfaceCouche} from "@/models/types/avancementSurfaceCouche";
 
 export interface OfCalendar {
@@ -8,9 +7,11 @@ export interface OfCalendar {
     cabineOF: string;
     avancementOf: string;
     jourOf: string;
+    regieFPOf: string;
+    regieSFPOf: string;
     semaineOf: Semaine;
+    tempOf: string;
     idDemandeOf: DemandesCalendar;
-    consommationOf: Consommation[];
     avancements: AvancementSurfaceCouche[];
     order: number;
 }
@@ -21,9 +22,11 @@ export function createDefaultOfCalendar(overrides: Partial<OfCalendar> = {}): Of
         cabineOF: "",
         jourOf: "",
         semaineOf: createDefaultSemaine(),
+        regieFPOf: "",
+        regieSFPOf: "",
         avancementOf: "",
+        tempOf: "",
         idDemandeOf: createDefaultDemandesCalendar(),
-        consommationOf: [],
         avancements: [],
         order: 1,
         ...overrides

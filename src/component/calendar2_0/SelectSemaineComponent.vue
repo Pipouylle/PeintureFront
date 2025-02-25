@@ -12,17 +12,10 @@ export default class SelectSemaineComponent extends Vue {
       return [...new Set(this.CalendarComponentStore.listSemaine.map((semaine: Semaine) => semaine.annee))];
    }
 
-   get availableMonths() {
-      return [...new Set(this.CalendarComponentStore.listSemaine
-          .filter((semaine: Semaine) => semaine.annee === this.CalendarComponentStore.semaine.annee)
-          .map((semaine: Semaine) => semaine.mois))];
-   }
-
    get availableWeeks() {
       return this.CalendarComponentStore.listSemaine
           .filter((semaine: Semaine) =>
-              semaine.annee === this.CalendarComponentStore.semaine.annee &&
-              semaine.mois === this.CalendarComponentStore.semaine.mois)
+              semaine.annee === this.CalendarComponentStore.semaine.annee)
           .map((semaine: Semaine) => semaine.semaine);
    }
 
@@ -53,18 +46,6 @@ export default class SelectSemaineComponent extends Vue {
          <v-col cols="1">
             <v-select
                 :disabled="!this.CalendarComponentStore.semaine.annee"
-                :items="availableMonths"
-                label="Mois"
-                density="compact"
-                outlined
-                dense
-                v-model="this.CalendarComponentStore.semaine.mois"
-                @update:model-value="this.CalendarComponentStore.semaine.semaine = 0; this.CalendarComponentStore.calendarModel.cabine = ''"
-            ></v-select>
-         </v-col>
-         <v-col cols="1">
-            <v-select
-                :disabled="!this.CalendarComponentStore.semaine.mois"
                 :items="availableWeeks"
                 label="Semaine"
                 density="compact"

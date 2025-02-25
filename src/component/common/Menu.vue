@@ -14,7 +14,7 @@ export default class Menu extends Vue {
       //{id: 8, path: "calendar", name: "Planing"},
       //{id: 9, path: "calendarUsineCabine1", name: "Planing Atelier Cabine 1"},
       //{id: 10, path: "calendarUsineCabine2", name: "Planing Atelier Cabine 2"},
-      {id: 11, path: "calendar2", name: "calendar"},
+      {id: 11, path: "calendar2", name: "Planing"},
    ]
 }
 </script>

@@ -10,10 +10,12 @@ export default class Ofsmapper {
             id: obj.id,
             cabine: obj.cabineOf,
             avancement: obj.avancementOf,
+            temp: obj.tempOf,
+            regieSFP: parseInt(obj.regieSFPOf),
+            regieFP: parseInt(obj.regieFPOf),
             semaine: createDefaultSemaine({id: parseInt(obj.semaineOf.split("/")[3])}),
             jour: Jour[parseInt(obj.jourOf.split("/")[3])],
             demande: createDefaultDemande({id: parseInt(obj.demandeOf.split("/")[3])}),
-            consommations: [],
             avancements: [],
             order: obj.orderOf
         }
@@ -30,6 +32,9 @@ export default class Ofsmapper {
             cabineOf: obj.cabine,
             jourOf: "/api/jours/" + jourEnumValue,
             avancementOf: obj.avancement,
+            regieSFPOf: String(obj.regieSFP).replace(/,/g, '.'),
+            regieFPOf: String(obj.regieFP).replace(/,/g, '.'),
+            tempOf: obj.temp,
             semaineOf: "/api/semaines/" + obj.semaine.id,
             demandeOf: "/api/demandes/" + obj.demande.id,
             orderOf: obj.order

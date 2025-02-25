@@ -25,7 +25,7 @@ export const getSemianesByAnnesAndMois = async (annee: number, mois: number): Pr
 
 export const getSemaineByInfo = async (semaine : Semaine): Promise<Semaine> => {
     try {
-        const response = await apiClient.get<ApiResponseCollection>(`/semaines?annees=${semaine.annee}&mois=${semaine.mois}&semaine=${semaine.semaine}`);
+        const response = await apiClient.get<ApiResponseCollection>(`/semaines?annees=${semaine.annee}&semaine=${semaine.semaine}`);
         return Semainemapper.mapArraySemaine(response.data.member)[0]
     } catch (error) {
         console.log('erreur lors de la récupération de la semaine:', error);

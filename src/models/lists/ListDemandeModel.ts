@@ -3,7 +3,7 @@ import {creerDemande} from "@/services/DemandesService";
 import {creerSurfaceCouche} from "@/services/SurfaceCouchesService";
 import {Commande} from "@/models/types/commande";
 import {useListStore} from "@/stores";
-import {DemandesCalendar} from "@/models/calendar/DemandesCalendar";
+import {DemandesCalendar} from "@/models/calendar2_0/DemandesCalendar";
 
 export interface ListDemandeModel{
     demandes: Demande[];

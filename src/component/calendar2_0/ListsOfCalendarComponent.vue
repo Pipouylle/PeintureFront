@@ -8,6 +8,10 @@ import {CalendarComponentStore} from "@/stores";
 })
 export default class ListsOfCalendarComponent extends Vue {
    private CalendarComponentStore = CalendarComponentStore();
+
+   mounted() {
+      this.CalendarComponentStore.setOfBySemaine();
+   }
 }
 </script>
 

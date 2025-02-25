@@ -6,8 +6,8 @@ import {ListStore, useAlert} from "@/stores";
 export default class ListArticleComponent extends Vue {
   private list = ListStore();
   private header  = [
-    { title : "code" , value : "id" },
-    { title : "description" , value : "descriptif" },
+    { title : "Code" , value : "id" },
+    { title : "Description" , value : "descriptif" },
     { title : "Action" , value : "actions" , sortable : false , align : "end" }
   ];
 
@@ -39,7 +39,7 @@ export default class ListArticleComponent extends Vue {
       ></v-text-field>
       <router-link to="/CreerArticle" class="ml-auto">
         <v-btn class="bntLink">
-          Creer Article
+          Creer un Article
         </v-btn>
       </router-link>
     </v-card-title>

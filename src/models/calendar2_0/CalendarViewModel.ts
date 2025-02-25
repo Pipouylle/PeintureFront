@@ -1,11 +1,12 @@
-import {createDefaultDemandesCalendar, DemandesCalendar} from "@/models/calendar/DemandesCalendar";
-import {createDefaultOfCalendar, OfCalendar} from "@/models/calendar/OfCalendar";
+import {createDefaultDemandesCalendar, DemandesCalendar} from "@/models/calendar2_0/DemandesCalendar";
+import {createDefaultOfCalendar, OfCalendar} from "@/models/calendar2_0/OfCalendar";
 
 export interface CalendarViewModel {
     headerListJour: {title: string, value: string}[];
     headerListDemande: {title: string, value: string}[];
     demandeClone: DemandesCalendar;
     ofClone: OfCalendar;
+    temp: string[];
     jour: string[];
     cabines: string[];
     cabine: string;
@@ -33,7 +34,8 @@ export function createDefaultCalendarViewModel(overrides: Partial<CalendarViewMo
         ],
         demandeClone: createDefaultDemandesCalendar(),
         ofClone: createDefaultOfCalendar(),
-        jour: ["lundi","mardi","mercredi","jeudi","vendredi"],
+        temp: ["matin","après-midi","nuit"],
+        jour: ["lundi","mardi","mercredi","jeudi","vendredi","samedi","dimanche"],
         cabines: ["cabine 1","cabine 2"],
         cabine: "",
     }

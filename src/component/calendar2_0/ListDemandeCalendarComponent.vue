@@ -1,24 +1,16 @@
 <script lang="ts">
 import {Vue, Component} from 'vue-facing-decorator';
-import {CalendarComponentStore, useListStore} from "@/stores";
-import {nextTick} from "vue";
-import {createDefaultDemandesCalendar, DemandesCalendar} from "@/models/calendar/DemandesCalendar";
-import DataTableRowHandler from "@/component/common/DataTableRowHandler.vue";
+import {CalendarComponentStore} from "@/stores";
 import {VueDraggableNext} from 'vue-draggable-next'
-import {logger} from "@nuxt/kit";
-import TableDraggableComponent from "@/component/common/tableDraggable/TableDraggableComponent.vue";
 import DemandeCalendarDraggableComponent from "@/component/calendar2_0/DemandeCalendarDraggableComponent.vue";
 
 @Component({
    components: {
       DemandeCalendarDraggableComponent,
-      TableDraggableComponent,
-      DataTableRowHandler,
       draggableNext: VueDraggableNext
    }
 })
 
-//TODO : mettre un ordre en BD
 export default class ListDemandeCalendarComponent extends Vue {
    private CalendarComponentStore = CalendarComponentStore();
 

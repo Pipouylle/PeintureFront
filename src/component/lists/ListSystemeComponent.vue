@@ -18,11 +18,11 @@ export default class ListSystemeComponent extends Vue {
    private header = [
       {title: 'Nom', value: 'nom'},
       {title: 'Fournisseur', value: 'fournisseur'},
-      {title: 'grenaillage', value: 'grenaillage.nom'},
-      {title: 'type', value: 'type'},
-      {title: 'couche', value: 'couches'},
-      {title: 'detail Couche', value: 'detailCouche'},
-      {title: 'actions', value: 'actions', sortable: false, align: 'end'}
+      {title: 'Grenaillage', value: 'grenaillage.nom'},
+      {title: 'Type', value: 'type'},
+      {title: 'Couche', value: 'couches'},
+      {title: 'Detail Couche', value: 'detailCouche'},
+      {title: 'Actions', value: 'actions', sortable: false, align: 'end'}
    ]
 
    private router = useRouter();
@@ -67,7 +67,7 @@ export default class ListSystemeComponent extends Vue {
          ></v-text-field>
          <router-link to="/CreerSysteme" class="ml-auto">
             <v-btn>
-               Creer Systeme
+               Creer un Systeme
             </v-btn>
          </router-link>
       </v-card-title>

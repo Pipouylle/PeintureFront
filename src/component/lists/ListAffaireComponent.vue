@@ -11,7 +11,6 @@ export default class ListAffaireComponent extends Vue {
   private listStore = ListStore();
   private router = useRouter();
   private header = [
-    {title: 'ID', value: 'id'},
     {title: 'Numero Affaire', value: 'numero'},
     {title: 'Nom Affaire', value: 'nom'},
     {title: 'Action', value: 'actions', sortable: false, align: 'end'},
@@ -48,7 +47,7 @@ export default class ListAffaireComponent extends Vue {
       ></v-text-field>
       <router-link to="/CreerAffaire" class="ml-auto">
         <v-btn class="bntLink">
-          Creer Affaire
+          Creer une Affaire
         </v-btn>
       </router-link>
     </v-card-title>

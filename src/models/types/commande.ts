@@ -8,8 +8,6 @@ export interface Commande {
     eureka: string;
     commentaire: string;
     surface: number;
-    regieSFP: number;
-    regieFP: number;
     ficheH: boolean;
     pvPeinture: boolean;
     affaire: Affaire;
@@ -24,8 +22,6 @@ export function createDefaultCommande(overrides: Partial<Commande> = {}): Comman
         eureka: "",
         commentaire: "",
         surface: 0,
-        regieSFP: 0,
-        regieFP: 0,
         ficheH: false,
         pvPeinture: false,
         affaire: createDefaultAffaire(),

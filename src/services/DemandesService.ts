@@ -5,7 +5,7 @@ import {ApiResponseCollection} from "@/models/ApiResponseCollection";
 import {Demandes} from "@/models/objectsApi/Demandes";
 import {Couche} from "@/models/types/couche";
 import Couchemapper from "@/mappers/Couchemapper";
-import {DemandesCalendar} from "@/models/calendar/DemandesCalendar";
+import {DemandesCalendar} from "@/models/calendar2_0/DemandesCalendar";
 
 export const getAllDemandes = async (): Promise<Demande[]> => {
     try {

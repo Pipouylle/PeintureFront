@@ -10,6 +10,7 @@ export interface Demande {
     surface: number;
     date: string;
     nombrePiece: number;
+    commentaire: string;
     reservation: boolean;
     commande: Commande;
     ofs: Of[];
@@ -20,10 +21,11 @@ export function createDefaultDemande(overrides: Partial<Demande> = {}): Demande 
     return {
         id: 0,
         numero: "",
-        etat: "pas commencer",
+        etat: "pas commencé",
         surface: 0,
         date: "",
         nombrePiece: 0,
+        commentaire: "",
         reservation: false,
         commande: createDefaultCommande(),
         ofs: [],

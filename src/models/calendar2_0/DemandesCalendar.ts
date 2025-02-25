@@ -11,6 +11,7 @@ export interface DemandesCalendar {
     "nomSysteme": string,
     "surfaceDemande": string,
     "nombrePieceDemande": number,
+    "commentaireDemande": string,
     "etatDemande": string,
     "avancementTotal": string
 }
@@ -28,6 +29,7 @@ export function createDefaultDemandesCalendar(override : Partial<DemandesCalenda
         "idSysteme": 0,
         "nomSysteme": "",
         "surfaceDemande": "",
+        "commentaireDemande": "",
         "nombrePieceDemande": 0,
         "etatDemande": "string",
         "avancementTotal": "",

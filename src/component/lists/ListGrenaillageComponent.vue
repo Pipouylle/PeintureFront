@@ -6,9 +6,9 @@ import {ListStore, useAlert} from "@/stores";
 export default class ListGrenaillageComponent extends Vue {
   private list = ListStore();
   private header  = [
-    { title : "nom" , value : "nom" },
-    { title : "type Chantier" , value : "typeChantier"  },
-    { title : "tarif" , value : "tarif" },
+    { title : "Nom" , value : "nom" },
+    { title : "Type de tarif" , value : "typeChantier"  },
+    { title : "Tarif" , value : "tarif" },
     { title : "Action" , value : "actions" , sortable : false , align : "end" }
   ];
 

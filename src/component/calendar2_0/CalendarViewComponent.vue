@@ -1,6 +1,5 @@
 <script lang="ts">
 import {Vue, Component} from 'vue-facing-decorator';
-import SelectSemaine from "@/component/calendar/SelectSemaine.vue";
 import SelectSemaineComponent from "@/component/calendar2_0/SelectSemaineComponent.vue";
 import ListCommandeComponent from "@/component/lists/ListCommandeComponent.vue";
 import ListsOfCalendarComponent from "@/component/calendar2_0/ListsOfCalendarComponent.vue";
@@ -10,7 +9,7 @@ import {CalendarComponentStore, useListStore} from "@/stores";
 @Component({
    components: {
       ListCommandeCalendarComponent: ListDemandeCalendarComponent,
-      ListsOfCalendarComponent, ListCommandeComponent, SelectSemaineComponent, SelectSemaine}
+      ListsOfCalendarComponent, ListCommandeComponent, SelectSemaineComponent}
 })
 //TODO : verif qu'il ai pas deux of le même jour
 //TODO : if pour l'affcihage du bas par apport a la semaine

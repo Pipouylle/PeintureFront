@@ -5,8 +5,6 @@ export interface Commandes {
     "eurekaCommande": string,
     "commentaireCommande": string,
     "surfaceCommande": string,
-    "regieSFPCommande": string,
-    "regieFPCommande": string,
     "ficheHCommande": boolean,
     "pvPeintureCommande": boolean,
 }

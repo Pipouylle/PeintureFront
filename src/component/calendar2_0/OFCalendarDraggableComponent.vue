@@ -11,13 +11,14 @@ export default class OFCalendarDraggableComponent extends Vue {
    @Prop({required: true}) private header!: {title: string, value: string}[];
    private dialog = false;
 
+   private deleteOfCalendar() {
+      useCalendar().deletOf(this.item.id);
+   }
+
 }
 </script>
 
 <template>
-   <v-dialog v-if="dialog">
-      <MoreInfoOfCalendarComponent :item="item"/>
-   </v-dialog>
    <v-card class="card">
       <v-row class="row" justify="space-around" align="center">
          <v-col v-for="(head, index) in header" :key="index" class="col">
@@ -25,7 +26,7 @@ export default class OFCalendarDraggableComponent extends Vue {
             <span v-else>{{head.value == "idDemandeOf.dateDemande" ? new Date(item[head.value.split('.')[0]][head.value.split('.')[1]]).toLocaleDateString() : item[head.value.split('.')[0]][head.value.split('.')[1]] }}</span>
          </v-col>
          <v-col>
-            <v-btn color="blue" @click="dialog = !dialog">
+            <v-btn color="error" @click="deleteOfCalendar">
                <v-icon >mdi-information-box</v-icon>
             </v-btn>
          </v-col>

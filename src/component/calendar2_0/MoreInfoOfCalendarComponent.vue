@@ -1,6 +1,6 @@
 <script lang="ts">
 import {Vue, Component, Prop} from 'vue-facing-decorator';
-import {OfCalendar} from "@/models/calendar/OfCalendar";
+import {OfCalendar} from "@/models/calendar2_0/OfCalendar";
 import {useCalendar} from "@/stores";
 
 @Component({})
@@ -16,7 +16,6 @@ export default class MoreInfoOfCalendarComponent extends Vue {
 
 <template>
    <v-card class="card">
-
       <v-btn @click="deleteOf" color="erreur">
          <v-icon>mdi-delete</v-icon>
       </v-btn>

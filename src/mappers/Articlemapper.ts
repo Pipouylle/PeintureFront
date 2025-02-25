@@ -6,7 +6,6 @@ export default class Articlemapper {
         return {
             id: obj.id,
             descriptif: obj.designationArticle,
-            consommations: [],
             couches: []
         }
     }
