@@ -1,6 +1,8 @@
+import {Selected} from "@/models/common/Selected";
+
 export interface SelectArticles {
     id: number;
-    article: {"title" : string, "value" : number} | null;
+    article: Selected | null;
 }
 
 export function createDefaultSelectArticles(override: Partial<SelectArticles> = {}): SelectArticles {

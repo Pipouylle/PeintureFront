@@ -1,7 +1,7 @@
 <script lang="ts">
 import {Vue, Component} from 'vue-facing-decorator';
 import {useRouter} from "vue-router";
-import {ListStore} from "@/stores";
+import {ListStore, ModifCommandeStore} from "@/stores";
 import {Commande} from "@/models/types/commande";
 import {deleteCommande} from "@/services/CommandesService";
 import {createDefaultSysteme} from "@/models/types/systeme";
@@ -12,6 +12,7 @@ import {createDefaultAffaire} from "@/models/types/affaire";
 export default class ListCommandeComponent extends Vue {
    private router = useRouter();
    private ListStore = ListStore();
+   private modifStore = ModifCommandeStore();
    private header = [
       {title: 'Eureka', value: 'eureka'},
       {title: 'Numéro affaire', value: 'numAffaire'},
@@ -31,7 +32,11 @@ export default class ListCommandeComponent extends Vue {
    }
 
    editCommande(item: Commande) {
-      //TODO: l'edit
+      return;
+      console.log(item);
+      this.modifStore.commande = item;
+      this.router.push({name: 'modifCommande'});
+      //TODO: l'edit, il arrive pas a générer la page
    }
 
    async deleteCommande(item: Commande) {

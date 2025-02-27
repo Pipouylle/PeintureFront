@@ -1,7 +1,7 @@
 import {apiClient} from "@/stores/apiClient";
 import {Demande} from "@/models/types/demande";
 import Demandesmapper from "@/mappers/Demandesmapper";
-import {ApiResponseCollection} from "@/models/ApiResponseCollection";
+import {ApiResponseCollection} from "@/models/common/ApiResponseCollection";
 import {Demandes} from "@/models/objectsApi/Demandes";
 import {Couche} from "@/models/types/couche";
 import Couchemapper from "@/mappers/Couchemapper";
@@ -64,6 +64,28 @@ export const deleteDemande = async (demande: Demande) => {
         await apiClient.delete(`/demandes/${demande.id}`)
     } catch (error) {
         console.log('Erreur lors de la suppression de la demande:', error)
+        throw error;
+    }
+}
+
+export const updateDemande = async (demande: Demande): Promise<Demande> => {
+    try {
+        const demandes = Demandesmapper.mapDemandes(demande);
+        const response = await apiClient.patch<Demandes>(`/demandes/${demande.id}`, demandes)
+        return Demandesmapper.mapDemande(response.data);
+    } catch (error) {
+        console.log('Erreur lors de la modification de la demande:', error)
+        throw error;
+    }
+}
+
+export const updateEtatDemande = async (demande: Demande): Promise<Demande> => {
+    try {
+        const demandes = Demandesmapper.mapDemandes(demande);
+        const response = await apiClient.patch<Demandes>(`/demandesEtat/${demande.id}`, demandes)
+        return Demandesmapper.mapDemande(response.data);
+    } catch (error) {
+        console.log('Erreur lors de la modification de la demande:', error)
         throw error;
     }
 }

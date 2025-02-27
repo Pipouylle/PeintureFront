@@ -3,7 +3,7 @@ import {Systeme} from "@/models/types/systeme";
 import {creerCouche} from "@/services/CouchesService";
 import {Systemes} from "@/models/objectsApi/Systemes";
 import Systememapper from "@/mappers/Systememapper";
-import {ApiResponseCollection} from "@/models/ApiResponseCollection";
+import {ApiResponseCollection} from "@/models/common/ApiResponseCollection";
 import {apiClient, apiClientPatch} from "@/stores/apiClient";
 
 

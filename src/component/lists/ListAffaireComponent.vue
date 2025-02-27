@@ -38,13 +38,17 @@ export default class ListAffaireComponent extends Vue {
   <v-card class="containerList">
     <v-card-title class="d-flex justify-space-between align-center titleList">
       <span> Liste des affaires </span>
+
+       <v-spacer></v-spacer>
       <v-text-field
           label="Rechercher"
           density="compact"
+          prepend-inner-icon="mdi-magnify"
           v-model="this.listStore.ListAffaire.filter"
           variant="outlined"
           class="textFilter"
       ></v-text-field>
+       <v-spacer></v-spacer>
       <router-link to="/CreerAffaire" class="ml-auto">
         <v-btn class="bntLink">
           Creer une Affaire

@@ -1,6 +1,6 @@
 import {createDefaultDemande, Demande} from "@/models/types/demande";
-import {creerDemande} from "@/services/DemandesService";
-import {creerSurfaceCouche} from "@/services/SurfaceCouchesService";
+import {creerDemande, updateDemande} from "@/services/DemandesService";
+import {creerSurfaceCouche, updateSurfaceCouche} from "@/services/SurfaceCouchesService";
 import {Commande} from "@/models/types/commande";
 import {useListStore} from "@/stores";
 import {DemandesCalendar} from "@/models/calendar2_0/DemandesCalendar";
@@ -12,6 +12,7 @@ export interface ListDemandeModel{
     add: (demande: Demande) => Promise<boolean>;
     delete: (demande: Demande) => void;
     deleteByCommande: (commande: Commande) => void;
+    modif: (demande: Demande) => Promise<boolean>;
 }
 
 export function createDefaultListDemandeModel(overrides: Partial<ListDemandeModel> = {}): ListDemandeModel {
@@ -46,6 +47,24 @@ export function createDefaultListDemandeModel(overrides: Partial<ListDemandeMode
             await Promise.all(demandes.map(async (demande) => {
                 listDemandeModel.delete(demande);
             }));
+        },
+        modif: async (demande): Promise<boolean> => {
+            try {
+                const index = listDemandeModel.demandes.findIndex(d => d.id === demande.id);
+                //TODO: update couche and demande
+                if (index !== -1) {
+                    await updateDemande(demande);
+                    for (const surfaceCouche of demande.surfaceCouches) {
+                        await updateSurfaceCouche(surfaceCouche);
+                    }
+                    listDemandeModel.demandes[index] = demande;
+                    return true;
+                }
+                return false;
+            } catch (error) {
+                console.error(error);
+                return false;
+            }
         },
         ...overrides
     }

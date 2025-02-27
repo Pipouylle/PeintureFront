@@ -2,7 +2,7 @@ import {apiClient, apiClientPatch} from "@/stores/apiClient";
 import {ArticleCouche} from "@/models/types/articleCouche";
 import {ArticleCouches} from "@/models/objectsApi/ArticleCouches";
 import {ArticleCouchemapper} from "@/mappers/ArticleCouchemapper";
-import {ApiResponseCollection} from "@/models/ApiResponseCollection";
+import {ApiResponseCollection} from "@/models/common/ApiResponseCollection";
 import {Commande} from "@/models/types/commande";
 import {ArticlesArticleCouche} from "@/models/objectsApi/articlesArticleCouche";
 import {Demande} from "@/models/types/demande";
@@ -78,6 +78,32 @@ export const getArticleCoucheForDemande = async (commande : Commande): Promise<A
             ArticleCouches[i].couche = Couchemapper.mapCouche(response.data[i].coucheArticleCouche);
         }
         return ArticleCouches;
+    } catch (error) {
+        console.error(error);
+        throw error;
+    }
+}
+
+export const getArticleCoucheBySystemeAndCommande = async (systemeId: number, commandeId: number): Promise<ArticleCouche[]> => {
+    try {
+        const response = await apiClient.get<any>(`/articleCoucheBySystemeAndCommande/${systemeId}/${commandeId}`);
+        const ArticleCouches = ArticleCouchemapper.mapArrayArticleCouche(response.data);
+        for (let i = 0; i < ArticleCouches.length; i++) {
+            ArticleCouches[i].articles = Articlemapper.mapArrayArticle(response.data[i].articlesArticleCouche);
+        }
+        return ArticleCouches;
+    } catch (error) {
+        console.error(error);
+        throw error;
+    }
+}
+
+export const updateArticleArticleCouche = async (articleCouche: ArticleCouche): Promise<ArticleCouche> => {
+    try {
+        //TODO: check for api wath  nead to be updated because the structure of update only article
+        const listArticle = Articlemapper.mapArrayArticles(articleCouche.articles);
+        const response = await apiClientPatch.patch<ArticleCouches>(`/articlesArticleCouche/${articleCouche.id}`, {articlesArticleCouche : listArticle});
+        return ArticleCouchemapper.mapArticleCouche(response.data);
     } catch (error) {
         console.error(error);
         throw error;

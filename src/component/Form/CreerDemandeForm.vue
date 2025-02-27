@@ -1,19 +1,12 @@
 <script lang="ts">
 import {Component, Vue, Watch} from 'vue-facing-decorator';
 import ModifCoucheForDemande from "@/component/Form/ModifCoucheForDemande.vue";
-import {getCommandeByAffaireAndSysteme} from "@/services/CommandesService";
 import {DemandeFormStore, useAlert} from "@/stores";
-import {createDefaultDemande} from "@/models/types/demande";
-import {creerDemande} from "@/services/DemandesService";
-import {createDefaultModifDemandeCoucheModel} from "@/models/forms/ModifDemandeCoucheModel";
-import {createDefaultSurfaceCouche, SurfaceCouche} from "@/models/types/surfaceCouche";
-import {creerSurfaceCouche} from "@/services/SurfaceCouchesService";
-import {getArticleCoucheByCommande, getArticleCoucheForDemande} from "@/services/ArticleCoucheService";
+import {createDefaultSurfaceCouche} from "@/models/types/surfaceCouche";
+import {getArticleCoucheForDemande} from "@/services/ArticleCoucheService";
 import {Systeme} from "@/models/types/systeme";
 import {Affaire} from "@/models/types/affaire";
-import {getArticlesByArticleCouche} from "@/services/ArticlesService";
-import {getCouchesBySysteme} from "@/services/CouchesService";
-import {Commande, createDefaultCommande} from "@/models/types/commande";
+import {Commande} from "@/models/types/commande";
 import {useRouter} from "vue-router";
 
 @Component({

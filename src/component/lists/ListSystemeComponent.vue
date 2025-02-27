@@ -10,14 +10,14 @@ import {createDefaultGrenaillage, Grenaillage} from "@/models/types/Grenaillage"
 @Component({})
 
 
-//TODO : le granillage ne marche pas
+//TODO: modification des fournisseur
 export default class ListSystemeComponent extends Vue {
    private listSystemeStore = ListStore();
    private modifSystemeStore = ModifSystemeStore();
    private selectedCouches: Record<number, Couche> = {};
    private header = [
       {title: 'Nom', value: 'nom'},
-      {title: 'Fournisseur', value: 'fournisseur'},
+      {title: 'Fournisseur', value: 'nomFournisseur'},
       {title: 'Grenaillage', value: 'grenaillage.nom'},
       {title: 'Type', value: 'type'},
       {title: 'Couche', value: 'couches'},
@@ -27,9 +27,9 @@ export default class ListSystemeComponent extends Vue {
 
    private router = useRouter();
 
-   mounted(){
+   mounted() {
       for (const systeme of this.listSystemeStore.ListSysteme.systemes) {
-         systeme.grenaillage = this.listSystemeStore.ListGrenaillage.grenaillages.find((grenaillage : Grenaillage) => grenaillage.id === systeme.grenaillage?.id) ?? createDefaultGrenaillage();
+         systeme.grenaillage = this.listSystemeStore.ListGrenaillage.grenaillages.find((grenaillage: Grenaillage) => grenaillage.id === systeme.grenaillage?.id) ?? createDefaultGrenaillage();
       }
    }
 
@@ -80,6 +80,11 @@ export default class ListSystemeComponent extends Vue {
              variant="outlined"
              class="tableList"
          >
+            <template v-slot:[`item.nomFournisseur`]="{ item }">
+               <span> {{
+                     listSystemeStore.ListFournisseur.fournisseurs.find(fournisseur => fournisseur.id === item.fournisseur.id)?.nom
+                  }} </span>
+            </template>
             <template v-slot:[`item.couches`]="{ item }">
                <v-select
                    :items="item.couches"

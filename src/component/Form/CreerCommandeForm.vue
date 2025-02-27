@@ -1,18 +1,13 @@
 <script lang="ts">
 import {Vue, Component} from 'vue-facing-decorator';
 import CreerCoucheForm from "@/component/Form/CreerCoucheForm.vue";
-import {createDefaultSysteme, Systeme} from "@/models/types/systeme";
-import {getAllSystemes} from "@/services/SystemesService";
-import {Affaire, createDefaultAffaire} from "@/models/types/affaire";
-import {getAllAffaires} from "@/services/AffairesService";
-import {createDefaultCommande} from "@/models/types/commande";
-import {creerCommmande} from "@/services/CommandesService";
+import {Systeme} from "@/models/types/systeme";
+import {Affaire} from "@/models/types/affaire";
 import ModifCoucheForCommande from "@/component/Form/ModifCoucheForCommande.vue";
 import {CommandeFormStore, useAlert} from "@/stores";
 import {createDefaultModifCommandeCoucheModel} from "@/models/forms/CreerCommande/ModifCommandeCoucheModel";
 import {createDefaultArticleCouche} from "@/models/types/articleCouche";
 import {getCouchesBySysteme} from "@/services/CouchesService";
-import {creerArticleCouche} from "@/services/ArticleCoucheService";
 import {createDefaultSelectArticles} from "@/models/forms/CreerCommande/SelectArticles";
 import {useRouter} from "vue-router";
 
@@ -28,7 +23,7 @@ export default class CreerCommandeForm extends Vue {
    get formatedSysteme() {
       return this.CommandeFormStore.listSysteme.systemes.map((systeme: Systeme) => {
          return {
-            title: systeme.nom + " - " + systeme.fournisseur,
+            title: systeme.nom + " - " + this.CommandeFormStore.listFournisseur.fournisseurs.find(fournisseur => fournisseur.id === systeme.fournisseur.id)?.nom,
             value: systeme.id
          }
       })
@@ -133,10 +128,17 @@ export default class CreerCommandeForm extends Vue {
                      <v-divider class="mt-4"></v-divider>
                      <v-text-field
                          clearable
-                         label="eureka"
+                         label="Eureka"
                          variant="outlined"
                          v-model="this.CommandeFormStore.commandeFrom.commande.eureka"
                      ></v-text-field>
+                     <v-number-input
+                        v-model="this.CommandeFormStore.commandeFrom.commande.surface"
+                        label="Surface"
+                        :min="0"
+                        variant="outlined"
+                        dense
+                     ></v-number-input>
                      <v-textarea
                          clearable
                          label="commentaire"

@@ -1,12 +1,12 @@
 import {Commande} from "@/models/types/commande";
 import {Commandes} from "@/models/objectsApi/Commandes";
 import Commandemapper from "@/mappers/Commandemapper";
-import {ApiResponseCollection} from "@/models/ApiResponseCollection";
+import {ApiResponseCollection} from "@/models/common/ApiResponseCollection";
 import {CommandesAffairesSystemes} from "@/models/objectsApi/CommandesAffairesSystemes";
 import {CommandeAffairesSystemesmapper} from "@/mappers/CommandeAffairesSystemesmapper";
 import {Affaire} from "@/models/types/affaire";
 import {Systeme} from "@/models/types/systeme";
-import {apiClient} from "@/stores/apiClient";
+import {apiClient, apiClientPatch} from "@/stores/apiClient";
 
 
 
@@ -57,6 +57,17 @@ export const deleteCommande = async (commande: Commande) => {
         await apiClient.delete(`/commandes/${commande.id}`);
     } catch (error) {
         console.error('Erreur lors de la suppression de la commande:', error);
+        throw error;
+    }
+}
+
+export const updateCommande = async (commande : Commande): Promise<Commande> => {
+    try {
+        const commandes = Commandemapper.mapCommandes(commande);
+        const reponse = await apiClientPatch.patch('/commandes/'+commandes.id, commandes);
+        return Commandemapper.mapCommande(reponse.data);
+    } catch (error) {
+        console.error('Erreur lors de la modif du commande:', error);
         throw error;
     }
 }

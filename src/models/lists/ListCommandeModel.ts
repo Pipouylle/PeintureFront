@@ -1,6 +1,6 @@
 import {Commande, createDefaultCommande} from "@/models/types/commande";
-import {creerCommmande} from "@/services/CommandesService";
-import {creerArticleCouche} from "@/services/ArticleCoucheService";
+import {creerCommmande, updateCommande} from "@/services/CommandesService";
+import {creerArticleCouche, updateArticleArticleCouche} from "@/services/ArticleCoucheService";
 import {Affaire} from "@/models/types/affaire";
 import {Systeme} from "@/models/types/systeme";
 import {useListStore} from "@/stores";
@@ -13,6 +13,7 @@ export interface ListCommandeModel {
     delete: (commande: Commande) => void,
     deleteByAffaire: (affaire: Affaire) => void,
     deleteBySysteme: (systeme: Systeme) => void,
+    modif: (commande: Commande) => Promise<boolean>
 }
 
 export function createDefaultListCommandeModel(overrides : Partial<ListCommandeModel> = {}): ListCommandeModel {
@@ -54,6 +55,24 @@ export function createDefaultListCommandeModel(overrides : Partial<ListCommandeM
             await Promise.all(commandes.map(async (commande) => {
                 listCommandeModel.delete(commande);
             }));
+        },
+        modif: async (commande: Commande): Promise<boolean> => {
+            const index = listCommandeModel.commandes.findIndex(c => c.id === commande.id);
+            if (index !== -1) {
+                try {
+                    await updateCommande(commande);
+                    for (const articleCouche of commande.articles) {
+                        await updateArticleArticleCouche(articleCouche);
+                    }
+                    listCommandeModel.commandes[index] = commande;
+                    return true;
+                } catch (e) {
+                    console.error(e);
+                    return false;
+                }
+            }
+            console.log('commande non trouvé');
+            return false;
         },
         ...overrides
     }

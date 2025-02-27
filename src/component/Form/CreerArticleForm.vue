@@ -3,13 +3,29 @@ import {Vue, Component} from 'vue-facing-decorator';
 import {createDefaultArticle} from "@/models/types/article";
 import {useAlert, useListStore} from "@/stores";
 import {useRouter} from "vue-router";
+import {Selected} from "@/models/common/Selected";
+import {createDefaultFournisseur} from "@/models/types/fournisseur";
 
 @Component({})
+
+//TODO :mettre les nouveaux champs
+//TODO: mettre en store flemme ca pas le temp
 export default class CreerArticleForm extends Vue {
    private article = createDefaultArticle();
+   private selectFournisseur = null as Selected | null;
    private router = useRouter();
 
+   get formatedFournisseur() {
+      return useListStore().ListFournisseur.fournisseurs.map((fournisseur) => {
+         return {
+            title: fournisseur.nom,
+            value: fournisseur.id
+         }
+      })
+   }
+
    async submitForm(){
+      this.article.fournisseur = this.selectFournisseur ? useListStore().ListFournisseur.fournisseurs.find((fournisseur) => fournisseur.id === this.selectFournisseur?.value) ?? createDefaultFournisseur() : createDefaultFournisseur();
       if (await useListStore().ListArticle.add(this.article)){
          this.router.push({name: 'listArticle'});
       } else {
@@ -34,7 +50,6 @@ export default class CreerArticleForm extends Vue {
                          outlined
                          dense
                          required
-                         prepend-icon="mdi-briefcase-outline"
                      ></v-text-field>
                      <v-text-field
                          label="descriptif de l'article"
@@ -42,8 +57,22 @@ export default class CreerArticleForm extends Vue {
                          outlined
                          dense
                          required
-                         prepend-icon="mdi-briefcase-outline"
                      ></v-text-field>
+                     <v-text-field
+                         label="ral de l'article"
+                         v-model="this.article.ral"
+                         outlined
+                         dense
+                         required
+                     ></v-text-field>
+                     <v-combobox
+                         label="Fournisseur"
+                         :items="formatedFournisseur"
+                         item-title="title"
+                         item-value="value"
+                         variant="outlined"
+                         v-model="this.selectFournisseur"
+                     ></v-combobox>
                      <v-btn
                          color="primary"
                          class="mt-4"

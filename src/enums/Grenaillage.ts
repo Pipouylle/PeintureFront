@@ -3,7 +3,7 @@ export enum NameGrenaillage {
     SA1 = "SA1",
     SA2 = "SA2",
     SA2_5 = "SA2.5",
-    SA2_BIS = "SA2 BIS",
+    SA2_5_CORTEN = "SA2.5 Corten",
     SA3 = "SA3",
     AUCUN = "AUCUN",
 }

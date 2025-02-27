@@ -2,13 +2,17 @@
 import {Vue, Component, Prop} from 'vue-facing-decorator';
 import {ModifCommandeCoucheModel} from "@/models/forms/CreerCommande/ModifCommandeCoucheModel";
 import {Article} from "@/models/types/article";
-import {CommandeFormStore} from "@/stores";
+import {CommandeFormStore, ListStore, useListStore} from "@/stores";
 import {createDefaultSelectArticles, SelectArticles} from "@/models/forms/CreerCommande/SelectArticles";
+import {Fournisseur} from "@/models/types/fournisseur";
 
-@Component({})
+@Component({
+   methods: {useListStore}
+})
 export default class ModifCoucheForCommande extends Vue {
   @Prop({required: true}) private modifCommandeCouche!: ModifCommandeCoucheModel;
   private CommandeFormStore = CommandeFormStore();
+  private listStore = ListStore();
 
   async onArticleSelected(id: any) {
     const article = this.CommandeFormStore.listArticle.articles.find((article: Article) => article.id === this.modifCommandeCouche.articles[id].article?.value);
@@ -66,13 +70,21 @@ export default class ModifCoucheForCommande extends Vue {
                       @update:model-value="onArticleSelected(articleSelect.id)"
                   ></v-combobox>
                   <v-text-field
-                      label="code article"
+                      label="RAL"
                       outlined
                       dense
-                      :model-value="articleSelect.article ? articleSelect.article.value : ''"
+                      :model-value="articleSelect.article ? listStore.ListArticle.articles.find((article :Article) => article.id === articleSelect.article?.value)?.ral : ''"
                       readonly
                       disabled
                   ></v-text-field>
+                   <v-text-field
+                       label="Fournisseur"
+                       outlined
+                       dense
+                       :model-value="articleSelect.article ? listStore.ListFournisseur.fournisseurs.find((fournisseur: Fournisseur) => fournisseur.id === listStore.ListArticle.articles.find((article :Article) => article.id === articleSelect.article?.value)?.fournisseur.id)?.nom : ''"
+                       readonly
+                       disabled
+                   ></v-text-field>
                   <v-btn
                       v-if="articleSelect.id == this.modifCommandeCouche.articles.length - 1"
                       @click="addMoreArticle">

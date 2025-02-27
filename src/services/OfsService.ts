@@ -1,7 +1,7 @@
 import {apiClient, apiClientPatch} from "@/stores/apiClient";
 import Ofsmapper from "@/mappers/Ofsmapper";
 import {Of} from "@/models/types/of";
-import {ApiResponseCollection} from "@/models/ApiResponseCollection";
+import {ApiResponseCollection} from "@/models/common/ApiResponseCollection";
 import {Ofs} from "@/models/objectsApi/Ofs";
 import {Semaine} from "@/models/types/semaine";
 

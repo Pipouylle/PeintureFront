@@ -29,7 +29,6 @@ export function createDefaultListAffaireModel(overrides: Partial<ListAffaireMode
         },
         delete: async(affaire) => {
             const index = listAffaireModel.affaires.findIndex(a => a.id === affaire.id);
-            console.log(index);
             if (index !== -1) {
                 await useListStore().ListCommande.deleteByAffaire(affaire);
                 listAffaireModel.affaires.splice(index, 1);

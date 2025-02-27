@@ -1,11 +1,8 @@
 <script lang="ts">
 import {Vue, Component, Prop} from 'vue-facing-decorator';
 import {useCalendar} from "@/stores";
-import MoreInfoOfCalendarComponent from "@/component/calendar2_0/MoreInfoOfCalendarComponent.vue";
 
-@Component({
-   components: {MoreInfoOfCalendarComponent}
-})
+@Component({})
 export default class OFCalendarDraggableComponent extends Vue {
    @Prop({required: true}) private item!: any;
    @Prop({required: true}) private header!: {title: string, value: string}[];

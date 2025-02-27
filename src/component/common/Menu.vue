@@ -2,19 +2,24 @@
 import {Vue, Component} from 'vue-facing-decorator';
 
 @Component({})
+
+//TODO: modif les lien pour mettre des / a la place des majuscule
 export default class Menu extends Vue {
-   private list: { id: number, path: string, name: string }[] = [
-      {id: 1, path: "", name: "Home"},
-      {id: 2, path: "listAffaire", name: "Affaires"},
-      {id: 3, path: "listSysteme", name: "Systemes"},
-      {id: 4, path: "listCommande", name: "Commandes"},
-      {id: 5, path: "listDemande", name: "Demandes"},
-      {id: 6, path: "listArticle", name: "Articles"},
-      {id: 7, path: "listGrenaillage", name: "Grenaillages"},
+   private list: {path: string, name: string }[] = [
+      {path: "", name: "Home"},
+      {path: "listAffaire", name: "Affaires"},
+      {path: "listSysteme", name: "Systemes"},
+      {path: "listCommande", name: "Commandes"},
+      {path: "listDemande", name: "Demandes"},
+      {path: "listArticle", name: "Articles"},
+      {path: "list/fournisseur", name: "Fournisseurs"},
+      {path: "listGrenaillage", name: "Grenaillages"},
+      {path: "listSemaine", name: "Semaines"},
       //{id: 8, path: "calendar", name: "Planing"},
       //{id: 9, path: "calendarUsineCabine1", name: "Planing Atelier Cabine 1"},
       //{id: 10, path: "calendarUsineCabine2", name: "Planing Atelier Cabine 2"},
-      {id: 11, path: "calendar2", name: "Planing"},
+      {path: "calendar2", name: "Planning"},
+      {path: "usineView", name: "Cabine"},
    ]
 }
 </script>
@@ -22,7 +27,7 @@ export default class Menu extends Vue {
 <template>
    <v-container class="menu">
       <v-list
-          v-for="item in list" :key="item.id"
+          v-for="(item, index) in list" :key="index"
       >
          <v-list-item>
             <v-card>

@@ -2,7 +2,7 @@ import {apiClient, apiClientPatch} from "@/stores/apiClient";
 import {AvancementSurfaceCouchemapper} from "@/mappers/AvancementSurfaceCouchemapper";
 import {AvancementSurfaceCouches} from "@/models/objectsApi/AvancementSurfaceCouches";
 import {AvancementSurfaceCouche} from "@/models/types/avancementSurfaceCouche";
-import {ApiResponseCollection} from "@/models/ApiResponseCollection";
+import {ApiResponseCollection} from "@/models/common/ApiResponseCollection";
 
 export const getAllAvancementSurfaceCouches = async (): Promise<AvancementSurfaceCouche[]> => {
     try {
@@ -51,6 +51,16 @@ export const getAllAvancementSurfaceCoucheBySemaine = async (id: number): Promis
     try {
         const response = await apiClient.get<AvancementSurfaceCouches[]>(`/allAvancementSemaine/${id}`);
         return AvancementSurfaceCouchemapper.mapArrayAvancementSurfaceCouche(response.data);
+    } catch (error) {
+        console.error('Erreur lors de la récupération des avancement surface couches:', error);
+        throw error;
+    }
+}
+
+export const getAvancementSurfaceCoucheByOf = async (ofId: number): Promise<AvancementSurfaceCouche[]> => {
+    try {
+        const response = await apiClient.get<ApiResponseCollection>(`/avancement_surface_couches?of_avancement=${ofId}`);
+        return AvancementSurfaceCouchemapper.mapArrayAvancementSurfaceCouche(response.data.member);
     } catch (error) {
         console.error('Erreur lors de la récupération des avancement surface couches:', error);
         throw error;

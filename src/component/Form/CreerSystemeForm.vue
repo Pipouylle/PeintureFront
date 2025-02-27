@@ -5,11 +5,13 @@ import {SystemeFormStore, useAlert} from "@/stores";
 import {createDefaultGrenaillage, Grenaillage} from "@/models/types/Grenaillage";
 import {getAllGrenaillage} from "@/services/GrenaillagesService";
 import {useRouter} from "vue-router";
+import {createDefaultFournisseur} from "@/models/types/fournisseur";
 
 @Component({
   components: {CreerCoucheForm}
 })
 
+//TODO: modification des fournisseur
 export default class CreerSystemeForm extends Vue {
   private SystemeFormstore = SystemeFormStore();
   private router = useRouter();
@@ -37,9 +39,19 @@ export default class CreerSystemeForm extends Vue {
     })
   }
 
+  get formatedFournisseur (){
+     return this.SystemeFormstore.listFournisseur.fournisseurs.map((fournisseur) => {
+        return {
+           title: fournisseur.nom,
+           value: fournisseur.id
+        }
+     })
+  }
+
   public async submitForm() {
     try {
-      this.SystemeFormstore.systemesForm.systeme.grenaillage = this.SystemeFormstore.systemesForm.selectedGrenaillage ? createDefaultGrenaillage({id : this.SystemeFormstore.systemesForm.selectedGrenaillage.value}) : null;
+      this.SystemeFormstore.systemesForm.systeme.grenaillage = this.SystemeFormstore.systemesForm.selectGrenaillage ? createDefaultGrenaillage({id : this.SystemeFormstore.systemesForm.selectGrenaillage.value}) : null;
+      this.SystemeFormstore.systemesForm.systeme.fournisseur = this.SystemeFormstore.systemesForm.selectFournisseur ? this.SystemeFormstore.listFournisseur.fournisseurs.find((fournisseur) => fournisseur.id === this.SystemeFormstore.systemesForm.selectFournisseur?.value) ?? createDefaultFournisseur() : createDefaultFournisseur();
       if (await this.SystemeFormstore.addSysteme(this.SystemeFormstore.systemesForm.systeme)){
         useAlert().alert('Systeme créée avec succès !');
         this.SystemeFormstore.clearAll()
@@ -71,12 +83,14 @@ export default class CreerSystemeForm extends Vue {
                   dense
                   prepend-icon="mdi-briefcase-outline"
               ></v-text-field>
-              <v-text-field
-                  label="fournisseur"
-                  v-model="this.SystemeFormstore.systemesForm.systeme.fournisseur"
-                  outlined
-                  dense
-              ></v-text-field>
+               <v-combobox
+                     label="Fournisseur"
+                     :items="formatedFournisseur"
+                     item-title="title"
+                     item-value="value"
+                     variant="outlined"
+                     v-model="this.SystemeFormstore.systemesForm.selectFournisseur"
+               ></v-combobox>
               <v-combobox
                   label="grenaillage"
                   :items="formatedGrenaillages"
@@ -84,7 +98,7 @@ export default class CreerSystemeForm extends Vue {
                   item-title="title"
                   item-value="value"
                   variant="outlined"
-                  v-model="this.SystemeFormstore.systemesForm.selectedGrenaillage"
+                  v-model="this.SystemeFormstore.systemesForm.selectGrenaillage"
               ></v-combobox>
               <v-text-field
                   label="tarif regieSFP"

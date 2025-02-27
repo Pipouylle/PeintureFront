@@ -1,7 +1,7 @@
 import {Affaire} from "@/models/types/affaire";
 import {Affaires} from "@/models/objectsApi/Affaires";
 import Affairemappers from "@/mappers/Affairemappers";
-import {ApiResponseCollection} from "@/models/ApiResponseCollection";
+import {ApiResponseCollection} from "@/models/common/ApiResponseCollection";
 import {apiClient, apiClientPatch} from "@/stores/apiClient";
 
 

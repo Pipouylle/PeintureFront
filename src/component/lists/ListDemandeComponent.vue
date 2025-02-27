@@ -1,12 +1,15 @@
 <script lang="ts">
 import {Vue, Component} from 'vue-facing-decorator';
-import {ListStore} from "@/stores";
+import {ListStore, ModifDemandeStore} from "@/stores";
 import {deleteDemande} from "@/services/DemandesService";
 import {Demande} from "@/models/types/demande";
+import {useRouter} from "vue-router";
 
 @Component({})
 export default class ListDemandeComponent extends Vue {
    private listeStore = ListStore();
+   private modifStore = ModifDemandeStore();
+   private router = useRouter();
    private header = [
       {title: 'Numéro affaire', value: 'numAffaire'},
       {title: 'Nom affaire', value: 'nomAffaire'},
@@ -30,7 +33,12 @@ export default class ListDemandeComponent extends Vue {
    }
 
    editDemande(item: Demande) {
-      //TODO: editDemande
+      return;
+      const index = this.listeStore.ListDemande.demandes.findIndex(demande => demande.id === item.id);
+      if (index !== -1) {
+         this.modifStore.demande = this.listeStore.ListDemande.demandes[index];
+         this.router.push({name: 'modifDemande'});
+      }
    }
 
 }

@@ -9,11 +9,11 @@ export default class SelectSemaineComponent extends Vue {
    private CalendarComponentStore = CalendarComponentStore();
 
    get availableYears() {
-      return [...new Set(this.CalendarComponentStore.listSemaine.map((semaine: Semaine) => semaine.annee))];
+      return [...new Set(this.CalendarComponentStore.listSemaine.semaines.map((semaine: Semaine) => semaine.annee))];
    }
 
    get availableWeeks() {
-      return this.CalendarComponentStore.listSemaine
+      return this.CalendarComponentStore.listSemaine.semaines
           .filter((semaine: Semaine) =>
               semaine.annee === this.CalendarComponentStore.semaine.annee)
           .map((semaine: Semaine) => semaine.semaine);

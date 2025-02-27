@@ -1,6 +1,7 @@
 import {Commande} from "@/models/types/commande";
 import {Couche} from "@/models/types/couche";
 import {Grenaillage} from "@/models/types/Grenaillage";
+import {createDefaultFournisseur, Fournisseur} from "@/models/types/fournisseur";
 
 export interface Systeme {
     id: number;
@@ -8,7 +9,7 @@ export interface Systeme {
     grenaillage: Grenaillage | null;
     refieSFP: number;
     refieFP: number;
-    fournisseur: string;
+    fournisseur: Fournisseur;
     type: string;
     commandes: Commande[];
     couches: Couche[];
@@ -21,7 +22,7 @@ export function createDefaultSysteme(overrides: Partial<Systeme> = {}): Systeme 
         grenaillage: null,
         refieSFP: 0,
         refieFP: 0,
-        fournisseur: "",
+        fournisseur: createDefaultFournisseur(),
         type: "glycero",
         commandes: [],
         couches: [],

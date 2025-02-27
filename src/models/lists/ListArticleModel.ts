@@ -1,11 +1,12 @@
 import {Article} from "@/models/types/article";
-import {creerArticle, updateArticle} from "@/services/ArticlesService";
+import {creerArticle, deleteArticle, updateArticle} from "@/services/ArticlesService";
 
 export interface ListArticleModel {
     articles: Article[];
     filter: string;
     modif: (article: Article) => Promise<boolean>;
     add: (article: Article) => Promise<boolean>;
+    remove: (article: Article) => void;
 }
 
 export function createDefaultListArticleModel(overrides: Partial<ListArticleModel> = {}): ListArticleModel {
@@ -30,6 +31,13 @@ export function createDefaultListArticleModel(overrides: Partial<ListArticleMode
                 console.error(e);
                 return false;
           }
+        },
+        remove: async (article: Article) => {
+            const index = listArticle.articles.findIndex(a => a.id === article.id);
+            if (index !== -1) {
+                await deleteArticle(article);
+                listArticle.articles.splice(index, 1);
+            }
         },
         ...overrides
     }

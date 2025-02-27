@@ -1,7 +1,7 @@
-import {apiClient} from "@/stores/apiClient";
+import {apiClient, apiClientPatch} from "@/stores/apiClient";
 import {Couche} from "@/models/types/couche";
 import {Couches} from "@/models/objectsApi/Couches";
-import {ApiResponseCollection} from "@/models/ApiResponseCollection";
+import {ApiResponseCollection} from "@/models/common/ApiResponseCollection";
 import Couchemapper from "@/mappers/Couchemapper";
 
 export const getAllCouches = async (): Promise<Couche[]> => {
@@ -60,7 +60,7 @@ export const getCoucheById = async (id: number): Promise<Couche> => {
 export const updateCouche = async (couche: Couche): Promise<Couche> => {
     try {
         const couches = Couchemapper.mapCouches(couche);
-        const response = await apiClient.patch<Couches>(`/couches/${couche.id}`, couches);
+        const response = await apiClientPatch.patch<Couches>(`/couches/${couche.id}`, couches);
         return Couchemapper.mapCouche(response.data);
     } catch (error) {
         console.error('Erreur lors de la récupération des couches:', error);

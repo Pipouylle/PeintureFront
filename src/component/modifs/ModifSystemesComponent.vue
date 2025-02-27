@@ -6,16 +6,31 @@ import {createDefaultGrenaillage, Grenaillage} from "@/models/types/Grenaillage"
 import {getAllGrenaillage} from "@/services/GrenaillagesService";
 import {createDefaultSysteme} from "@/models/types/systeme";
 import {useRouter} from "vue-router";
+import {createDefaultFournisseur} from "@/models/types/fournisseur";
 
 @Component({
    components: {CreerCoucheForm}
 })
 
-//TODO : ne fait pas les couhe et ne marche pas pour le grenaillage
+//TODO: il y a pas le clasement, faut voire api
+//TODO : le granillage ne marche pas
 export default class ModifSystemesComponent extends Vue {
    private ModifSysteme = ModifSystemeStore();
    private router = useRouter();
 
+
+   mounted() {
+      this.ModifSysteme.selectGrenaillage = this.ModifSysteme.systeme.grenaillage ? {
+         title: "" + this.ModifSysteme.systeme.grenaillage.nom + " - " + this.ModifSysteme.systeme.grenaillage.typeChantier,
+         value: this.ModifSysteme.systeme.grenaillage.id
+      } : null;
+      this.ModifSysteme.selectFournisseur = this.ModifSysteme.listFournisseur.fournisseurs.find(fournisseur => fournisseur.id === this.ModifSysteme.systeme.fournisseur.id) ? {
+         title: this.ModifSysteme.listFournisseur.fournisseurs.find(fournisseur => fournisseur.id === this.ModifSysteme.systeme.fournisseur.id)?.nom ?? "",
+         value: this.ModifSysteme.listFournisseur.fournisseurs.find(fournisseur => fournisseur.id === this.ModifSysteme.systeme.fournisseur.id)?.id ?? 0,
+      } : null
+      console.log(this.ModifSysteme.selectFournisseur);
+      console.log(this.ModifSysteme.systeme);
+   }
 
    get formatedGrenaillages() {
       return this.ModifSysteme.listgrenaillages.grenaillages.map((grenaillage: Grenaillage) => {
@@ -26,10 +41,19 @@ export default class ModifSystemesComponent extends Vue {
       })
    }
 
+   get formatedFournisseur() {
+      return this.ModifSysteme.listFournisseur.fournisseurs.map((fournisseur) => {
+         return {
+            title: fournisseur.nom,
+            value: fournisseur.id
+         }
+      })
+   }
+
 
    public async submitForm() {
       try {
-         console.log(this.ModifSysteme.selectGrenaillage);
+         this.ModifSysteme.systeme.fournisseur = this.ModifSysteme.selectFournisseur ? this.ModifSysteme.listFournisseur.fournisseurs.find((fournisseur) => fournisseur.id === this.ModifSysteme.selectFournisseur?.value) ?? createDefaultFournisseur() : createDefaultFournisseur();
          this.ModifSysteme.systeme.grenaillage = this.ModifSysteme.selectGrenaillage ? this.ModifSysteme.listgrenaillages.grenaillages.find((grenaillage: Grenaillage) => grenaillage.id === this.ModifSysteme.selectGrenaillage?.value) ?? null : null;
          if (await this.ModifSysteme.listSystemes.modif(this.ModifSysteme.systeme)) {
             useAlert().alert('Systeme créée avec succès !');
@@ -61,12 +85,14 @@ export default class ModifSystemesComponent extends Vue {
                          dense
                          prepend-icon="mdi-briefcase-outline"
                      ></v-text-field>
-                     <v-text-field
-                         label="fournisseur"
-                         v-model="this.ModifSysteme.systeme.fournisseur"
-                         outlined
-                         dense
-                     ></v-text-field>
+                     <v-combobox
+                        label="Fournisseur"
+                        :items="formatedFournisseur"
+                        item-title="title"
+                        item-value="value"
+                        variant="outlined"
+                        v-model="this.ModifSysteme.selectFournisseur"
+                     ></v-combobox>
                      <v-combobox
                          label="grenaillage"
                          :items="formatedGrenaillages"
@@ -74,6 +100,7 @@ export default class ModifSystemesComponent extends Vue {
                          item-value="value"
                          variant="outlined"
                          v-model="this.ModifSysteme.selectGrenaillage"
+                         clearable
                      ></v-combobox>
                      <v-text-field
                          label="tarif regieSFP"
@@ -89,10 +116,23 @@ export default class ModifSystemesComponent extends Vue {
                          dense
                          type="number"
                      ></v-text-field>
+                     <v-radio-group
+                         v-model="this.ModifSysteme.systeme.type"
+                         row
+                         dense
+                     >
+                        <v-radio v-if="ModifSysteme.systeme.couches.length <= 1"
+                                 label="Glycero"
+                                 value="glycero"
+                        ></v-radio>
+                        <v-radio
+                            label="Complexe"
+                            value="complexe"
+                        ></v-radio>
+                     </v-radio-group>
                      <div v-for="couche in this.ModifSysteme.systeme.couches" :key="couche.id">
                         <CreerCoucheForm :couche="couche"/>
                      </div>
-
                      <v-btn
                          color="primary"
                          class="mt-4"

@@ -1,5 +1,5 @@
 import {Article} from "@/models/types/article";
-import {ApiResponseCollection} from "@/models/ApiResponseCollection";
+import {ApiResponseCollection} from "@/models/common/ApiResponseCollection";
 import {Articles} from "@/models/objectsApi/Articles";
 import Articlemapper from "@/mappers/Articlemapper";
 import {getArticlesByIdArticleCouche} from "@/services/ArticleCoucheService";
@@ -70,10 +70,20 @@ export const creerArticle = async (article: Article): Promise<Article> => {
 export const updateArticle = async (article: Article): Promise<Article> => {
     try {
         const articles = Articlemapper.mapArticles(article);
+        console.log(articles);
         const response = await apiClientPatch.patch(`/articles/${article.id}`, articles);
         return Articlemapper.mapArticle(response.data);
     } catch (e) {
         console.error(e);
         throw e;
+    }
+}
+
+export const deleteArticle = async (article: Article) => {
+    try {
+        await apiClient.delete(`/articles/${article.id}`);
+    } catch (error) {
+        console.error('Erreur lors de la suppression de l\'article:', error);
+        throw error;
     }
 }
