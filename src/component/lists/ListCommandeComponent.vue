@@ -18,6 +18,7 @@ export default class ListCommandeComponent extends Vue {
       {title: 'Numéro affaire', value: 'numAffaire'},
       {title: 'Nom affaire', value: 'nomAffaire'},
       {title: 'Nom du systeme', value: 'nomSysteme'},
+      {title: 'Surface', value: 'surface'},
       {title: 'Commentaire', value: 'commentaire'},
       {title: 'Fiche H', value: 'ficheH'},
       {title: 'PV Peinture', value: 'pvPeinture'},
@@ -32,8 +33,6 @@ export default class ListCommandeComponent extends Vue {
    }
 
    editCommande(item: Commande) {
-      return;
-      console.log(item);
       this.modifStore.commande = item;
       this.router.push({name: 'modifCommande'});
       //TODO: l'edit, il arrive pas a générer la page

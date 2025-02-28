@@ -1,22 +1,25 @@
 import {ArticleCouches} from "@/models/objectsApi/ArticleCouches";
 import {ArticleCouche} from "@/models/types/articleCouche";
 import {Couche, createDefaultCouche} from "@/models/types/couche";
-import {createDefaultCommande} from "@/models/types/commande";
+import {Commande, createDefaultCommande} from "@/models/types/commande";
 import Articlemapper from "@/mappers/Articlemapper";
 
 export class ArticleCouchemapper {
     static mapArticleCouche(obj: ArticleCouches): ArticleCouche {
         let couche: Couche;
+        let commande: Commande;
         try {
             couche = createDefaultCouche({ id : parseInt(obj.coucheArticleCouche.split("/")[3])});
+            commande = createDefaultCommande({ id : parseInt(obj.commandeArticleCouche.split("/")[3])});
         } catch (error) {
             couche = createDefaultCouche();
+            commande = createDefaultCommande();
         }
         return {
             id: obj.id,
             tarif: parseFloat(obj.tarifArticleCouche),
             couche: couche,
-            commande: createDefaultCommande({ id : parseInt(obj.commandeArticleCouche.split("/")[3])}),
+            commande: commande,
             articles: [],
             surfaces: [],
         }

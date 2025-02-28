@@ -1,4 +1,4 @@
-import {Couche, createDefaultCouche} from "@/models/types/couche";
+    import {Couche, createDefaultCouche} from "@/models/types/couche";
 import {Commande, createDefaultCommande} from "@/models/types/commande";
 import {SurfaceCouche} from "@/models/types/surfaceCouche";
 import {Article} from "@/models/types/article";

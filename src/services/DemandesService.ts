@@ -1,4 +1,4 @@
-import {apiClient} from "@/stores/apiClient";
+import {apiClient, apiClientPatch} from "@/stores/apiClient";
 import {Demande} from "@/models/types/demande";
 import Demandesmapper from "@/mappers/Demandesmapper";
 import {ApiResponseCollection} from "@/models/common/ApiResponseCollection";
@@ -71,7 +71,7 @@ export const deleteDemande = async (demande: Demande) => {
 export const updateDemande = async (demande: Demande): Promise<Demande> => {
     try {
         const demandes = Demandesmapper.mapDemandes(demande);
-        const response = await apiClient.patch<Demandes>(`/demandes/${demande.id}`, demandes)
+        const response = await apiClientPatch.patch<Demandes>(`/demandes/${demande.id}`, demandes)
         return Demandesmapper.mapDemande(response.data);
     } catch (error) {
         console.log('Erreur lors de la modification de la demande:', error)

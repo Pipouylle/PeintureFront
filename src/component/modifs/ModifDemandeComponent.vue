@@ -44,9 +44,9 @@ export default class ModifDemandeComponent extends Vue {
 
    @Watch('modifStore.demande.surface', {deep: true, immediate: true})
    public updateSurface(newValue: number, oldValue: number) {
-      for (const modifCouche of this.modifStore.modifCouches) {
-         if (modifCouche.SurfaceCouche.surface == oldValue) {
-            modifCouche.SurfaceCouche.surface = newValue;
+      for (const surfaceCouche of this.modifStore.demande.surfaceCouches) {
+         if (surfaceCouche.surface == oldValue) {
+            surfaceCouche.surface = newValue;
          }
       }
    }

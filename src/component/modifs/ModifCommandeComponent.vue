@@ -27,8 +27,9 @@ export default class ModifCommandeComponent extends Vue {
          title: this.modifStore.commande.affaire.numero + " - " + this.modifStore.commande.affaire.nom,
          value: this.modifStore.commande.affaire.id
       } : null;
+      //TODO: mettre bien le fournisseur
       this.modifStore.selectSysteme = this.modifStore.commande.systeme ? {
-         title: this.modifStore.commande.systeme.nom + " - " + this.modifStore.commande.systeme.fournisseur,
+         title: this.modifStore.commande.systeme.nom + " - " + this.modifStore.listFournisseur.fournisseurs.find(fournisseur => fournisseur.id === this.modifStore.commande.systeme.fournisseur.id)?.nom,
          value: this.modifStore.commande.systeme.id
       } : null;
       const systeme = this.modifStore.listSysteme.systemes.find((systeme: Systeme) => systeme.id === this.modifStore.selectSysteme?.value);
@@ -125,6 +126,13 @@ export default class ModifCommandeComponent extends Vue {
                          variant="outlined"
                          v-model="this.modifStore.commande.eureka"
                      ></v-text-field>
+                     <v-number-input
+                         v-model="this.modifStore.commande.surface"
+                         label="Surface"
+                         :min="0"
+                         variant="outlined"
+                         dense
+                     ></v-number-input>
                      <v-textarea
                          clearable
                          label="commentaire"

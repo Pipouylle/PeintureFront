@@ -11,7 +11,7 @@ export default class ModifCoucheForDemande extends Vue {
 <template>
   <v-container>
     <v-row align="center" justify="center" class="form-container">
-      <v-col cols="20" md=" 10" lg="14">
+      <v-col cols="40" md="10" lg="14">
         <v-card elevation="3">
           <v-card-title class="form-title">Surface de la Couche : {{ this.surfaceCouche.articleCouche.couche.nom }}
           </v-card-title>
@@ -22,7 +22,7 @@ export default class ModifCoucheForDemande extends Vue {
                     label="Article"
                     outlined
                     dense
-                    v-model="article.id"
+                    v-model="article.descriptif"
                     readonly
                 ></v-text-field>
               </v-col>

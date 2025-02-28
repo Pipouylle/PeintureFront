@@ -64,6 +64,7 @@ export const deleteCommande = async (commande: Commande) => {
 export const updateCommande = async (commande : Commande): Promise<Commande> => {
     try {
         const commandes = Commandemapper.mapCommandes(commande);
+        console.log(commandes);
         const reponse = await apiClientPatch.patch('/commandes/'+commandes.id, commandes);
         return Commandemapper.mapCommande(reponse.data);
     } catch (error) {

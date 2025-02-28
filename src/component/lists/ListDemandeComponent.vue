@@ -33,7 +33,6 @@ export default class ListDemandeComponent extends Vue {
    }
 
    editDemande(item: Demande) {
-      return;
       const index = this.listeStore.ListDemande.demandes.findIndex(demande => demande.id === item.id);
       if (index !== -1) {
          this.modifStore.demande = this.listeStore.ListDemande.demandes[index];
