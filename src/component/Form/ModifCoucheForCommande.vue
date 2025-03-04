@@ -1,6 +1,6 @@
 <script lang="ts">
 import {Vue, Component, Prop} from 'vue-facing-decorator';
-import {ModifCommandeCoucheModel} from "@/models/forms/CreerCommande/ModifCommandeCoucheModel";
+import {ModifCoucheCommandeModel} from "@/models/forms/CreerCommande/ModifCoucheCommandeModel";
 import {Article} from "@/models/types/article";
 import {CommandeFormStore, ListStore, useListStore} from "@/stores";
 import {createDefaultSelectArticles, SelectArticles} from "@/models/forms/CreerCommande/SelectArticles";
@@ -10,7 +10,7 @@ import {Fournisseur} from "@/models/types/fournisseur";
    methods: {useListStore}
 })
 export default class ModifCoucheForCommande extends Vue {
-   @Prop({required: true}) private modifCommandeCouche!: ModifCommandeCoucheModel;
+   @Prop({required: true}) private modifCommandeCouche!: ModifCoucheCommandeModel;
    private CommandeFormStore = CommandeFormStore();
    private listStore = ListStore();
 

@@ -1,3 +1,27 @@
+<script lang="ts">
+import { Vue, Component } from 'vue-facing-decorator';
+import {AffaireFormStore, useAlert} from "@/stores";
+import {useRouter} from "vue-router";
+import NotificationHandler from "@/services/NotificationHandler";
+
+@Component({})
+export default class CreerAffaireForm extends Vue {
+  private AffaireFormStore = AffaireFormStore();
+  private router = useRouter();
+
+  private async submitForm() {
+    try {
+      await this.AffaireFormStore.addAffaire(this.AffaireFormStore.affaire);
+      NotificationHandler.showNewNotification('Affaire créée avec succès !');
+      this.AffaireFormStore.clear();
+      this.router.push({name: 'listAffaire'});
+    } catch (error) {
+      NotificationHandler.showNewNotification('Erreur lors de la création de l\'affaire.', true);
+    }
+  };
+}
+</script>
+
 <template>
   <v-container>
     <v-row align="center" justify="center" class="form-container">
@@ -38,32 +62,6 @@
     </v-row>
   </v-container>
 </template>
-
-<script lang="ts">
-import { Vue, Component } from 'vue-facing-decorator';
-import { creerAffaire } from '@/services/AffairesService';
-
-import { createDefaultAffaire} from "@/models/types/affaire";
-import {AffaireFormStore, useAlert} from "@/stores";
-import {useRouter} from "vue-router";
-
-@Component({})
-export default class CreerAffaireForm extends Vue {
-  private AffaireFormStore = AffaireFormStore();
-  private router = useRouter();
-
-  private async submitForm() {
-    try {
-      await this.AffaireFormStore.addAffaire(this.AffaireFormStore.affaire);
-      useAlert().alert('Affaire créée avec succès !');
-      this.AffaireFormStore.clear();
-      this.router.push({name: 'listAffaire'});
-    } catch (error) {
-      useAlert().alert('Erreur lors de la création de l\'affaire.');
-    }
-  };
-}
-</script>
 
 <style scoped>
 .form-container {

@@ -12,10 +12,10 @@ import {getAllSemaines} from "@/services/SemainesService";
 import {createDefaultDemande, Demande} from "@/models/types/demande";
 import {creerCouche, getAllCouches} from "@/services/CouchesService";
 import {
-    createDefaultCreerCommandeFormModel,
-    CreerCommandeFormModel
-} from "@/models/forms/CreerCommande/creerCommandeFormModel";
-import {ModifCommandeCoucheModel} from "@/models/forms/CreerCommande/ModifCommandeCoucheModel";
+    createDefaultCommandeFormModel,
+    CommandeFormModel
+} from "@/models/forms/CreerCommande/commandeFormModel";
+import {ModifCoucheCommandeModel} from "@/models/forms/CreerCommande/ModifCoucheCommandeModel";
 import {getAllArticles} from "@/services/ArticlesService";
 import {createDefaultListAffaireModel} from "@/models/lists/ListAffaireModel";
 import {getAllAffaires} from "@/services/AffairesService";
@@ -26,7 +26,7 @@ import {createDefaultListCommandeModel} from "@/models/lists/ListCommandeModel";
 import {getAllCommandes} from "@/services/CommandesService";
 import {Affaire, createDefaultAffaire} from "@/models/types/affaire";
 import {getAllGrenaillage} from "@/services/GrenaillagesService";
-import {createDefaultCreerSystemeFormModel} from "@/models/forms/CreerSysteme/CreerSystemeFormModel";
+import {createDefaultSystemeFormModel} from "@/models/forms/CreerSysteme/SystemeFormModel";
 import {createDefaultSysteme, Systeme} from "@/models/types/systeme";
 import {createDefaultCouche} from "@/models/types/couche";
 import {createDefaultListGrenaillageModel} from "@/models/lists/ListGrenaillageModel";
@@ -54,6 +54,7 @@ import {createDefaultListFournisseurModel} from "@/models/lists/ListFournisseurM
 import {getAllFournisseurs} from "@/services/FournisseurService";
 import {createDefaultArticle} from "@/models/types/article";
 import {listUserStore, useUserStore} from "@/stores/UserStore";
+import NotificationModel from "@/models/common/NotificationModel";
 
 export const useColorStore = defineStore('colorStore', {
     state: () => ({
@@ -94,6 +95,13 @@ export const alertStore = defineStore('alertStore', {
         }
     },
 });
+
+export const useNotificationStore = defineStore('notificationStore', {
+    state: () => ({
+        notifications: [] as NotificationModel[],
+    })
+});
+
 export const AffaireFormStore = defineStore('AffaireFromStore', {
     state: () => ({
         affaire: createDefaultAffaire(),
@@ -116,7 +124,7 @@ export const AffaireFormStore = defineStore('AffaireFromStore', {
 
 export const SystemeFormStore = defineStore('systemeFromStore', {
     state: () => ({
-        systemesForm: createDefaultCreerSystemeFormModel(),
+        systemesForm: createDefaultSystemeFormModel(),
     }),
     getters: {
         listgrenaillages: (state) => {
@@ -139,7 +147,7 @@ export const SystemeFormStore = defineStore('systemeFromStore', {
             this.clearCouche();
         },
         clearForm() {
-            this.systemesForm = createDefaultCreerSystemeFormModel()
+            this.systemesForm = createDefaultSystemeFormModel()
         },
         clearCouche() {
             this.systemesForm.systeme.couches = [createDefaultCouche(
@@ -205,8 +213,8 @@ export const ModifSystemeStore = defineStore('modifSystemeStore', {
 
 export const CommandeFormStore = defineStore('commandeFromStore', {
     state: () => ({
-        commandeFrom: createDefaultCreerCommandeFormModel() as CreerCommandeFormModel,
-        modifCouchesCommande: [] as ModifCommandeCoucheModel[],
+        commandeFrom: createDefaultCommandeFormModel() as CommandeFormModel,
+        modifCouchesCommande: [] as ModifCoucheCommandeModel[],
     }),
     getters: {
         listAffaire: (state) => {
@@ -244,9 +252,9 @@ export const CommandeFormStore = defineStore('commandeFromStore', {
             this.clearModifCoucheCommande();
         },
         clearCommandeFrom() {
-            this.commandeFrom = createDefaultCreerCommandeFormModel();
+            this.commandeFrom = createDefaultCommandeFormModel();
         },
-        addModifCoucheCommande(modifCouche: ModifCommandeCoucheModel) {
+        addModifCoucheCommande(modifCouche: ModifCoucheCommandeModel) {
             this.modifCouchesCommande.push(modifCouche);
         },
         clearModifCoucheCommande() {
@@ -260,7 +268,7 @@ export const ModifCommandeStore = defineStore('modifCommandeStore', {
         commande: createDefaultCommande() as Commande,
         selectAffaire: null as { title: string, value: number } | null,
         selectSysteme: null as { title: string, value: number } | null,
-        modifCouchesCommande: [] as ModifCommandeCoucheModel[],
+        modifCouchesCommande: [] as ModifCoucheCommandeModel[],
     }),
     getters: {
         listAffaire: (state) => {
@@ -294,7 +302,7 @@ export const ModifCommandeStore = defineStore('modifCommandeStore', {
         clearModifCoucheCommande() {
             this.modifCouchesCommande = [];
         },
-        addModifCouche(couche: ModifCommandeCoucheModel) {
+        addModifCouche(couche: ModifCoucheCommandeModel) {
             this.modifCouchesCommande.push(couche);
         }
     },

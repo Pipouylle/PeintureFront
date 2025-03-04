@@ -1,14 +1,14 @@
-import {createDefaultSysteme, Systeme} from "@/models/types/systeme";
+import {Systeme, createDefaultSysteme} from "@/models/types/systeme";
 import {Selected} from "@/models/common/Selected";
 
-export interface CreerSystemeFormModel {
+export interface SystemeModifModel {
     systeme: Systeme;
     nbCouche: number;
     selectGrenaillage: Selected | null;
     selectFournisseur: Selected | null;
 }
 
-export function createDefaultCreerSystemeFormModel(overrides : Partial<CreerSystemeFormModel> = {}) : CreerSystemeFormModel {
+export function createDefaultSystemeModifModel(overrides : Partial<SystemeModifModel> = {}) : SystemeModifModel {
     return {
         systeme: createDefaultSysteme(),
         nbCouche: 1,

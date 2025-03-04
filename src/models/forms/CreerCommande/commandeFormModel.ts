@@ -1,13 +1,14 @@
 import {Article} from "@/models/types/article";
 import {Commande, createDefaultCommande} from "@/models/types/commande";
+import {Selected} from "@/models/common/Selected";
 
-export interface CreerCommandeFormModel {
-    selectedSysteme: { title: string; value: number } | null;
-    selectedAffaire: { title: string; value: number } | null;
+export interface CommandeFormModel {
+    selectedSysteme: Selected | null;
+    selectedAffaire: Selected | null;
     commande: Commande,
 }
 
-export function createDefaultCreerCommandeFormModel(override: Partial<CreerCommandeFormModel> = {}): CreerCommandeFormModel {
+export function createDefaultCommandeFormModel(override: Partial<CommandeFormModel> = {}): CommandeFormModel {
     return {
         selectedSysteme: null,
         selectedAffaire: null,

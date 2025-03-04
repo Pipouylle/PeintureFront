@@ -5,7 +5,7 @@ import {Systeme} from "@/models/types/systeme";
 import {Affaire} from "@/models/types/affaire";
 import ModifCoucheForCommande from "@/component/Form/ModifCoucheForCommande.vue";
 import {CommandeFormStore, useAlert} from "@/stores";
-import {createDefaultModifCommandeCoucheModel} from "@/models/forms/CreerCommande/ModifCommandeCoucheModel";
+import {createDefaultModifCoucheCommandeModel} from "@/models/forms/CreerCommande/ModifCoucheCommandeModel";
 import {createDefaultArticleCouche} from "@/models/types/articleCouche";
 import {getCouchesBySysteme} from "@/services/CouchesService";
 import {createDefaultSelectArticles} from "@/models/forms/CreerCommande/SelectArticles";
@@ -55,7 +55,7 @@ export default class CreerCommandeForm extends Vue {
          this.CommandeFormStore.clearModifCoucheCommande();
          const couches = (await getCouchesBySysteme(systeme.id)).sort((a, b) => a.id - b.id);
          for (let i = 0; i < couches.length; i++) {
-            this.CommandeFormStore.addModifCoucheCommande(createDefaultModifCommandeCoucheModel({
+            this.CommandeFormStore.addModifCoucheCommande(createDefaultModifCoucheCommandeModel({
                id: i,
                articleCouche: createDefaultArticleCouche({
                   couche: couches[i],

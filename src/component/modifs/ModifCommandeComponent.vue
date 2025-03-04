@@ -6,7 +6,7 @@ import {createDefaultSysteme, Systeme} from "@/models/types/systeme";
 import {Affaire, createDefaultAffaire} from "@/models/types/affaire";
 import {createDefaultArticle} from "@/models/types/article";
 import ModifCoucheForCommande from "@/component/Form/ModifCoucheForCommande.vue";
-import {createDefaultModifCommandeCoucheModel} from "@/models/forms/CreerCommande/ModifCommandeCoucheModel";
+import {createDefaultModifCoucheCommandeModel} from "@/models/forms/CreerCommande/ModifCoucheCommandeModel";
 import {createDefaultSelectArticles} from "@/models/forms/CreerCommande/SelectArticles";
 import {getArticlesCoucheByDemande} from "@/services/CouchesService";
 import {getArticleCoucheBySystemeAndCommande} from "@/services/ArticleCoucheService";
@@ -37,7 +37,7 @@ export default class ModifCommandeComponent extends Vue {
          this.modifStore.clearModifCoucheCommande();
          const responseSelectArticles = await getArticleCoucheBySystemeAndCommande(systeme.id, this.modifStore.commande.id);
          for (const responseSelectArticle of responseSelectArticles) {
-            this.modifStore.addModifCouche(createDefaultModifCommandeCoucheModel({
+            this.modifStore.addModifCouche(createDefaultModifCoucheCommandeModel({
                id : this.modifStore.modifCouchesCommande.length,
                articleCouche: responseSelectArticle,
             }));

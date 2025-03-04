@@ -8,7 +8,6 @@ export interface ListSystemeModel {
     systemes: Systeme[];
     selectCouche: Couche;
     filter: string;
-    systemesModif: Systeme;
     add: (systeme: Systeme) => Promise<boolean>;
     delete: (systeme: Systeme) => void;
     modif: (systeme: Systeme) => Promise<boolean>;
@@ -19,7 +18,6 @@ export function createDefaultListSystemeModel(overrides: Partial<ListSystemeMode
         systemes: [],
         selectCouche: createDefaultCouche(),
         filter: "",
-        systemesModif: createDefaultSysteme(),
         add: async (systeme: Systeme): Promise<boolean> => {
             try {
                 //TODO: a mettre les couches et a creer le systeme

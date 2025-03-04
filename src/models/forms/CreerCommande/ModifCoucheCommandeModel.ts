@@ -1,13 +1,13 @@
 import {ArticleCouche, createDefaultArticleCouche} from "@/models/types/articleCouche";
 import {SelectArticles} from "@/models/forms/CreerCommande/SelectArticles";
 
-export interface ModifCommandeCoucheModel {
+export interface ModifCoucheCommandeModel {
     id: number;
     articleCouche: ArticleCouche;
     articles: SelectArticles[];
 }
 
-export function createDefaultModifCommandeCoucheModel(override: Partial<ModifCommandeCoucheModel> = {}): ModifCommandeCoucheModel {
+export function createDefaultModifCoucheCommandeModel(override: Partial<ModifCoucheCommandeModel> = {}): ModifCoucheCommandeModel {
     return {
         id: 0,
         articles: [],
