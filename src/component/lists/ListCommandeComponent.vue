@@ -19,6 +19,7 @@ export default class ListCommandeComponent extends Vue {
       {title: 'Nom affaire', value: 'nomAffaire'},
       {title: 'Nom du systeme', value: 'nomSysteme'},
       {title: 'Surface', value: 'surface'},
+      {title: 'Ral', value: 'ral'},
       {title: 'Commentaire', value: 'commentaire'},
       {title: 'Fiche H', value: 'ficheH'},
       {title: 'PV Peinture', value: 'pvPeinture'},
@@ -33,9 +34,8 @@ export default class ListCommandeComponent extends Vue {
    }
 
    editCommande(item: Commande) {
-      this.modifStore.commande = item;
+      this.modifStore.commande = JSON.parse(JSON.stringify(item));
       this.router.push({name: 'modifCommande'});
-      //TODO: l'edit, il arrive pas a générer la page
    }
 
    async deleteCommande(item: Commande) {
@@ -54,14 +54,18 @@ export default class ListCommandeComponent extends Vue {
    <v-card class="containerList">
       <v-card-title class="d-flex justify-space-between align-center titleList">
          <span> Liste des Commandes </span>
+         <v-spacer></v-spacer>
          <v-text-field
              label="Rechercher"
              density="compact"
+             prepend-inner-icon="mdi-magnify"
              v-model="this.ListStore.ListCommande.filter"
              variant="outlined"
              class="textFilter"
+             :fixed-header="true"
          ></v-text-field>
-         <router-link to="/CreerCommande" class="ml-auto">
+         <v-spacer></v-spacer>
+         <router-link to="/creer/commande" class="ml-auto">
             <v-btn>
                Creer une Commande
             </v-btn>

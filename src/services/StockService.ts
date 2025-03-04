@@ -3,6 +3,8 @@ import Stockmapper from "@/mappers/StockMapper";
 import {Stock} from "@/models/types/stock";
 import {Stocks} from "@/models/objectsApi/Stocks";
 import {ApiResponseCollection} from "@/models/common/ApiResponseCollection";
+import {Article} from "@/models/types/article";
+import {ArticleCouche} from "@/models/types/articleCouche"
 
 /**
  * permet de recuperer tout les stocks
@@ -51,6 +53,42 @@ export const SortieStock = async (stock: Stock): Promise<Stock> => {
         const stocks = Stockmapper.mapStocks(stock);
         const response = await apiClientPatch.patch(`/stockSortie/${stock.id}`, stocks);
         return Stockmapper.mapStock(response.data);
+    } catch (error) {
+        console.error(error);
+        throw error;
+    }
+}
+
+export const entreeStock = async (article: Article, nombre: number): Promise<Stock[]> => {
+    try {
+        const response = await apiClient.post<Stocks[]>('/stockCreate/' + article.id + '/' + nombre);
+        return Stockmapper.mapArrayStock(response.data);
+    } catch (error) {
+        console.error(error);
+        throw error;
+    }
+}
+
+export const getStockForSortieByArticle = async (articleCouche: ArticleCouche): Promise<Stock[]> => {
+    try {
+        const stocks: Stocks[] = [];
+        for (const article of articleCouche.articles) {
+            const response = await apiClient.get<ApiResponseCollection>(`/stocks?article_stock=${article.id}&dateSortie_stock=null`);
+            for (const stock of response.data.member) {
+                stocks.push(stock);
+            }
+        }
+        return Stockmapper.mapArrayStock(stocks);
+    } catch (error) {
+        console.error(error);
+        throw error;
+    }
+}
+
+export const getStockForSortie = async (): Promise<Stock[]> => {
+    try {
+        const response = await apiClient.get<ApiResponseCollection>(`/stocks?&dateSortie_stock=null`);
+        return Stockmapper.mapArrayStock(response.data.member);
     } catch (error) {
         console.error(error);
         throw error;

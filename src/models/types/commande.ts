@@ -10,6 +10,10 @@ export interface Commande {
     surface: number;
     ficheH: boolean;
     pvPeinture: boolean;
+    regieSFP: number;
+    regieFP: number;
+    grenaillage: number;
+    ral: number;
     affaire: Affaire;
     systeme: Systeme;
     demandes: Demande[];
@@ -24,6 +28,10 @@ export function createDefaultCommande(overrides: Partial<Commande> = {}): Comman
         surface: 0,
         ficheH: false,
         pvPeinture: false,
+        regieSFP: 0,
+        regieFP: 0,
+        grenaillage: 0,
+        ral: 0,
         affaire: createDefaultAffaire(),
         systeme: createDefaultSysteme(),
         demandes: [],

@@ -4,8 +4,6 @@ import Affairemappers from "@/mappers/Affairemappers";
 import {ApiResponseCollection} from "@/models/common/ApiResponseCollection";
 import {apiClient, apiClientPatch} from "@/stores/apiClient";
 
-
-
 export const getAllAffaires = async (): Promise<Affaire[]> => {
     try {
         const response = await apiClient.get<ApiResponseCollection>('/affaires');
@@ -25,7 +23,8 @@ export const creerAffaire = async (affaire : Affaire): Promise<Affaire> => {
         console.error('Erreur lors de la récupération des affaires:', error);
         throw error;
     }
-}
+};
+
 export const updateAffaire = async (affaire : Affaire): Promise<Affaire> => {
     try {
         const affaires = Affairemappers.mapAffaires(affaire);
@@ -35,7 +34,7 @@ export const updateAffaire = async (affaire : Affaire): Promise<Affaire> => {
         console.error('Erreur lors de la récupération des affaires:', error);
         throw error;
     }
-}
+};
 
 export const deleteAffaire = async (affaire : Affaire)=> {
     try {

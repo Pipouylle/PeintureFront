@@ -14,11 +14,14 @@ export default class ListDemandeComponent extends Vue {
       {title: 'Numéro affaire', value: 'numAffaire'},
       {title: 'Nom affaire', value: 'nomAffaire'},
       {title: 'Numero', value: 'numero'},
+      {title: 'Nom Systeme', value: 'nomSysteme'},
+      {title: 'RAL', value: 'ral'},
       {title: 'Etat', value: 'etat'},
       {title: 'Surface', value: 'surface'},
       {title: 'Date', value: 'date'},
       {title: 'Pièces', value: 'nombrePiece'},
-      {title: 'Reservation peinturre', value: 'reservation'},
+      {title: 'Réservation peinturre', value: 'reservation', align: 'center'},
+      {title: 'Commentaire', value: 'commentaire'},
       {title: 'Action', value: 'actions', sortable: false, align: 'end'}
    ];
 
@@ -35,7 +38,7 @@ export default class ListDemandeComponent extends Vue {
    editDemande(item: Demande) {
       const index = this.listeStore.ListDemande.demandes.findIndex(demande => demande.id === item.id);
       if (index !== -1) {
-         this.modifStore.demande = this.listeStore.ListDemande.demandes[index];
+         this.modifStore.demande = JSON.parse(JSON.stringify(this.listeStore.ListDemande.demandes[index]));
          this.router.push({name: 'modifDemande'});
       }
    }
@@ -47,35 +50,49 @@ export default class ListDemandeComponent extends Vue {
    <v-card class="containerList">
       <v-card-title class="d-flex justify-space-between align-center titleList">
          <span> Liste des Demandes </span>
+         <v-spacer></v-spacer>
          <v-text-field
              label="Rechercher"
              density="compact"
+             prepend-inner-icon="mdi-magnify"
              v-model="this.listeStore.ListDemande.filter"
              variant="outlined"
              class="textFilter"
          ></v-text-field>
-         <router-link to="/CreerDemande" class="ml-auto">
+         <v-spacer></v-spacer>
+         <router-link to="/creer/demande" class="ml-auto">
             <v-btn> Creer une Demande</v-btn>
          </router-link>
       </v-card-title>
       <v-card-text>
-         <v-data-table
+         <v-data-table-virtual
              :headers="this.header"
              :items="this.listeStore.ListDemande.demandes"
              v-model:search="this.listeStore.ListDemande.filter"
              :filter-keys="['numero', 'etat', 'surface', 'date']"
              variant="outlined"
              class="tableList"
+             :fixed-header="true"
          >
             <template v-slot:[`item.numAffaire`]="{ item }">
                <span> {{
-                     listeStore.ListAffaire.affaires.find(affaire => affaire.id === listeStore.ListCommande.commandes.find(commande => commande.id === item.commande.id)?.affaire.id).numero
+                     listeStore.ListAffaire.affaires.find(affaire => affaire.id === listeStore.ListCommande.commandes.find(commande => commande.id === item.commande.id)?.affaire.id)?.numero
                   }} </span>
             </template>
             <template v-slot:[`item.nomAffaire`]="{ item }">
                <span> {{
-                     listeStore.ListAffaire.affaires.find(affaire => affaire.id === listeStore.ListCommande.commandes.find(commande => commande.id === item.commande.id)?.affaire.id).nom
+                     listeStore.ListAffaire.affaires.find(affaire => affaire.id === listeStore.ListCommande.commandes.find(commande => commande.id === item.commande.id)?.affaire.id)?.nom
                   }} </span>
+            </template>
+            <template v-slot:[`item.nomSysteme`]="{ item }">
+               <span> {{
+                    listeStore.ListSysteme.systemes.find(systeme => systeme.id === listeStore.ListCommande.commandes.find(commande => commande.id === item.commande.id)?.systeme.id)?.nom
+                  }} </span>
+            </template>
+            <template v-slot:[`item.ral`]="{ item }">
+            <span> {{
+                  listeStore.ListCommande.commandes.find(commande => commande.id === item.commande.id)?.ral
+               }} </span>
             </template>
             <template v-slot:[`item.date`]="{ item }">
                <span> {{ new Date(item.date).toLocaleDateString() }} </span>
@@ -85,11 +102,11 @@ export default class ListDemandeComponent extends Vue {
                <v-icon v-else color="red">mdi-close</v-icon>
             </template>
             <template v-slot:[`item.actions`]="{ item }">
-               <v-btn color="primary" @click="editDemande(item)">Modifier</v-btn>
-               <v-btn color="error" @click="deleteDemande(item)">Supprimer</v-btn>
+               <v-icon size="x-large" color="primary" @click="editDemande(item)">mdi-pencil</v-icon>
+               <v-icon size="x-large" color="error" @click="deleteDemande(item)">mdi-delete</v-icon>
             </template>
 
-         </v-data-table>
+         </v-data-table-virtual>
       </v-card-text>
    </v-card>
 </template>

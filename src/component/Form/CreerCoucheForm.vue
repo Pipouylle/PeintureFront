@@ -4,6 +4,8 @@ import {CreerCoucheFormModel} from "@/models/forms/CreerCoucheFormModel";
 import {Couche} from "@/models/types/couche";
 
 @Component({})
+
+//TODO: vraiment régler le probleme
 export default class CreerCoucheForm extends Vue {
   @Prop({required: true}) private couche!: Couche;
 }

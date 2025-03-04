@@ -23,6 +23,7 @@ import ModifDemandeView from "@/views/modifs/ModifDemandeView.vue";
 import ListFournisseurView from "@/views/lists/ListFournisseurView.vue";
 import CreationFounisseurView from "@/views/forms/CreationFounisseurView.vue";
 import ModifArticleView from "@/views/modifs/ModifArticleView.vue";
+import ListUserView from "@/views/lists/ListUserView.vue"
 
 const routes: Array<RouteRecordRaw> = [
     {
@@ -31,57 +32,57 @@ const routes: Array<RouteRecordRaw> = [
         component: HomeView,
     },
     {
-        path: "/listAffaire",
+        path: "/list/affaire",
         name: "listAffaire",
         component: ListAffaireView,
     },
     {
-        path: "/CreerAffaire",
+        path: "/creer/affaire",
         name: "CreerAffaire",
         component: CreationAffaireView,
     },
     {
-        path: "/modifAffaire",
+        path: "/modif/affaire",
         name: "modifAffaire",
         component: ModifAffaireView,
     },
     {
-        path: "/listSysteme",
+        path: "/list/systeme",
         name: "listSysteme",
         component: ListSystemeView,
     },
     {
-        path: "/CreerSysteme",
+        path: "/creer/systeme",
         name: "CreerSysteme",
         component: CreationSystemeView,
     },
     {
-        path: "/modifSysteme",
+        path: "/modif/systeme",
         name: "modifSysteme",
         component: ModifSystemeView,
     },
     {
-        path: "/listCommande",
+        path: "/list/commande",
         name: "listCommande",
         component: ListCommandeView,
     },
     {
-        path: "/CreerCommande",
+        path: "/creer/commande",
         name: "CreerCommande",
         component: CreationCommandeView,
     },
     {
-        path: "/modifCommande",
+        path: "/modif/commande",
         name: "modifCommande",
         component: ModifCommandeView,
     },
     {
-        path: "/listDemande",
+        path: "/list/demande",
         name: "listDemande",
         component: ListDemandeView,
     },
     {
-        path: "/CreerDemande",
+        path: "/creer/demande",
         name: "CreerDemande",
         component: CreationDemandeView,
     },
@@ -91,12 +92,12 @@ const routes: Array<RouteRecordRaw> = [
         component: ModifDemandeView,
     },
     {
-        path: "/listArticle",
+        path: "/list/article",
         name: "listArticle",
         component: ListArticleView,
     },
     {
-        path: "/CreerArticle",
+        path: "/creer/article",
         name: "CreerArticle",
         component: CreationArticleView,
     },
@@ -104,6 +105,11 @@ const routes: Array<RouteRecordRaw> = [
         path: "/modif/article",
         name: "modifArticle",
         component: ModifArticleView,
+    },
+    {
+       path: "/list/user",
+       name: "listUser",
+       component: ListUserView,
     },
     {
         path: "/list/fournisseur",
@@ -116,12 +122,12 @@ const routes: Array<RouteRecordRaw> = [
         component: CreationFounisseurView,
     },
     {
-        path: "/listGrenaillage",
+        path: "/list/grenaillage",
         name: "listGrenaillage",
         component: ListGrenaillageView,
     },
     {
-        path: "/listSemaine",
+        path: "/list/semaine",
         name: "listSemaine",
         component: ListSemaineView,
     },
@@ -143,7 +149,9 @@ const router = createRouter({
 });
 
 router.beforeEach(async (to, from, next) => {
-    useAlert().alertPossible = false; // true = alert on, false = alert off
+    useAlert().alertPossible = true; // true = alert on, false = alert off
+    useAlert().logPossible = true;
+    useAlert().errorPossible = true;
     await useListStore().loadList(); // Load lists only if not already loaded
     next();
 });

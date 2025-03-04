@@ -52,7 +52,7 @@ export default class CreerAffaireForm extends Vue {
   private AffaireFormStore = AffaireFormStore();
   private router = useRouter();
 
-  public async submitForm() {
+  private async submitForm() {
     try {
       await this.AffaireFormStore.addAffaire(this.AffaireFormStore.affaire);
       useAlert().alert('Affaire créée avec succès !');

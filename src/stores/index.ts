@@ -72,6 +72,8 @@ export const useColorStore = defineStore('colorStore', {
 export const alertStore = defineStore('alertStore', {
     state: () => ({
         alertPossible: false as boolean,
+        logPossible: false as boolean,
+        errorPossible: false as boolean,
     }),
     actions: {
         alert: (message: String) => {
@@ -79,6 +81,16 @@ export const alertStore = defineStore('alertStore', {
                 alert(message)
             }
         },
+        log(message: any) {
+            if (this.logPossible) {
+                console.log(message)
+            }
+        },
+        error(message: any) {
+            if (this.errorPossible) {
+                console.error(message)
+            }
+        }
     },
 });
 export const AffaireFormStore = defineStore('AffaireFromStore', {
@@ -147,12 +159,12 @@ export const SystemeFormStore = defineStore('systemeFromStore', {
         async addSysteme(systeme: Systeme): Promise<boolean> {
             try {
                 const responseSysteme = await creerSysteme(systeme);
-                //TODO : refaire car c'est de la merde car ça peut créer des problme dans l'ordre des id
-                await Promise.all(systeme.couches.map(async (couche) => {
+                for (const couche of systeme.couches) {
                     couche.systeme = responseSysteme;
                     responseSysteme.couches.push(await creerCouche(couche));
-                }))
+                }
                 this.listSystemes.systemes.push(responseSysteme);
+                this.listSystemes.systemes = this.listSystemes.systemes.sort((a, b) => a.id - b.id);
                 return true;
             } catch (error) {
                 console.error(error);
@@ -220,6 +232,10 @@ export const CommandeFormStore = defineStore('commandeFromStore', {
             const list = ListStore();
             return list.ListFournisseur;
         },
+        listGrenaillage: (state) => {
+            const list = ListStore();
+            return list.ListGrenaillage;
+        }
     },
     actions: {
         clearAll() {
@@ -431,7 +447,7 @@ export const ListStore = defineStore('ListStore', {
             for (const systeme of this.ListSysteme.systemes) {
                 systeme.grenaillage = this.ListGrenaillage.grenaillages.find(g => g.id === systeme.grenaillage?.id) ?? systeme.grenaillage;
             }
-            console.log(this.ListSysteme.systemes);
+            this.ListSysteme.systemes = this.ListSysteme.systemes.sort((a, b) => a.id - b.id);
         },
         async setListCommande() {
             this.ListCommande.commandes = await getAllCommandes();
@@ -445,6 +461,7 @@ export const ListStore = defineStore('ListStore', {
         },
         async setListArticle() {
             this.ListArticle.articles = await getAllArticles();
+            this.ListArticle.articles = this.ListArticle.articles.sort((a, b) => a.descriptif.localeCompare(b.descriptif));
         },
         async setDemandesCalendar() {
             const response = await getAllDemandeCalendar();
@@ -470,7 +487,6 @@ export const ListStore = defineStore('ListStore', {
         updateListDemandeCalendar(list: any[]) {
             this.ListDemandeCalendar = list;
         },
-
         getCurrentSemaine() {
             const currentDate = new Date();
             return this.getSemaines(currentDate.toISOString());
@@ -486,7 +502,7 @@ export const ListStore = defineStore('ListStore', {
             }
             return null;
         },
-    }
+    },
 });
 
 

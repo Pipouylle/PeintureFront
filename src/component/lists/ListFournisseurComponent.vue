@@ -32,6 +32,7 @@ export default class ListFournisseurComponent extends Vue {
          <v-text-field
              label="Rechercher"
              density="compact"
+             prepend-inner-icon="mdi-magnify"
              v-model="this.listStore.ListFournisseur.filter"
              variant="outlined"
              class="textFilter"
@@ -44,18 +45,20 @@ export default class ListFournisseurComponent extends Vue {
          </router-link>
       </v-card-title>
       <v-card-text>
-         <v-data-table
+         <v-data-table-virtual
              :headers="this.header"
              :items="this.listStore.ListFournisseur.fournisseurs"
              v-model:search="this.listStore.ListFournisseur.filter"
              :filter-keys="['nom']"
              variant="outlined"
              class="tableList"
+             :fixed-header="true"
          >
             <template v-slot:[`item.nom`]="{ item }">
                <v-text-field
                    v-model="item.nom"
                    variant="outlined"
+                   density="comfortable"
                ></v-text-field>
             </template>
             <template v-slot:[`item.actions`]="{ item }">
@@ -63,7 +66,7 @@ export default class ListFournisseurComponent extends Vue {
                <v-btn color="error" @click="deleteFournisseur(item)">Supprimer</v-btn>
             </template>
 
-         </v-data-table>
+         </v-data-table-virtual>
       </v-card-text>
    </v-card>
 </template>

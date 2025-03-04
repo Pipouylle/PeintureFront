@@ -4,7 +4,6 @@ import {ListStore, ModifSystemeStore} from "@/stores";
 import {useRouter} from "vue-router";
 import {deleteSysteme} from "@/services/SystemesService";
 import {Couche} from "@/models/types/couche";
-import {Systeme} from "@/models/types/systeme";
 import {createDefaultGrenaillage, Grenaillage} from "@/models/types/Grenaillage";
 
 @Component({})
@@ -44,7 +43,7 @@ export default class ListSystemeComponent extends Vue {
 
 
    editSysteme(item: any) {
-      this.modifSystemeStore.systeme = item;
+      this.modifSystemeStore.systeme = JSON.parse(JSON.stringify(item));
       this.router.push({name: 'modifSysteme'});
    }
 
@@ -58,27 +57,31 @@ export default class ListSystemeComponent extends Vue {
    <v-card class="containerList">
       <v-card-title class="d-flex justify-space-between align-center titleList">
          <span> Liste des systemes </span>
+         <v-spacer></v-spacer>
          <v-text-field
              label="Rechercher"
              density="compact"
+             prepend-inner-icon="mdi-magnify"
              v-model="this.listSystemeStore.ListSysteme.filter"
              variant="outlined"
              class="textFilter"
          ></v-text-field>
-         <router-link to="/CreerSysteme" class="ml-auto">
+         <v-spacer></v-spacer>
+         <router-link to="/creer/systeme" class="ml-auto">
             <v-btn>
                Creer un Systeme
             </v-btn>
          </router-link>
       </v-card-title>
       <v-card-text>
-         <v-data-table
+         <v-data-table-virtual
              :headers="header"
              :items="listSystemeStore.ListSysteme.systemes"
              v-model:search="this.listSystemeStore.ListSysteme.filter"
              :filter-keys="['nom', 'fournisseur', 'grenaillage.id', 'type']"
              variant="outlined"
              class="tableList"
+             :fixed-header="true"
          >
             <template v-slot:[`item.nomFournisseur`]="{ item }">
                <span> {{
@@ -106,7 +109,7 @@ export default class ListSystemeComponent extends Vue {
                <v-btn color="primary" @click="editSysteme(item)">Modifier</v-btn>
                <v-btn color="error" @click="deleteSysteme(item)">Supprimer</v-btn>
             </template>
-         </v-data-table>
+         </v-data-table-virtual>
       </v-card-text>
    </v-card>
 </template>

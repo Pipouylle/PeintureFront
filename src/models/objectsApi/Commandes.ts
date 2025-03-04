@@ -7,4 +7,8 @@ export interface Commandes {
     "surfaceCommande": string,
     "ficheHCommande": boolean,
     "pvPeintureCommande": boolean,
+    "regieSFPCommande": string,
+    "regieFPCommande": string,
+    "grenaillageCommande": string,
+    "ralCommande": number,
 }

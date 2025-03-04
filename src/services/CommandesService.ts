@@ -8,10 +8,6 @@ import {Affaire} from "@/models/types/affaire";
 import {Systeme} from "@/models/types/systeme";
 import {apiClient, apiClientPatch} from "@/stores/apiClient";
 
-
-
-
-
 export const getAllCommandes = async (): Promise<Commande[]> => {
     try {
         const response = await apiClient.get<ApiResponseCollection>('/commandes')

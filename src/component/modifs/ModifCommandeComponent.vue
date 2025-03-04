@@ -16,7 +16,7 @@ import {getArticleCoucheBySystemeAndCommande} from "@/services/ArticleCoucheServ
    components:{ModifCommandeCouche: ModifCoucheForCommande}
 })
 
-//TODO: faire la modif de des articels de couche
+//TODO : gérer le cas sans article dasn une couche
 export default class ModifCommandeComponent extends Vue {
    private modifStore = ModifCommandeStore();
    private router = useRouter();
@@ -41,11 +41,17 @@ export default class ModifCommandeComponent extends Vue {
                id : this.modifStore.modifCouchesCommande.length,
                articleCouche: responseSelectArticle,
             }));
-            for (const article of responseSelectArticle.articles) {
-               this.modifStore.modifCouchesCommande[this.modifStore.modifCouchesCommande.length -1].articles.push({
-                  id: this.modifStore.modifCouchesCommande[this.modifStore.modifCouchesCommande.length -1].articles.length,
-                  article : {title : article.descriptif, value : article.id},
-               })
+            if (responseSelectArticle.articles.length === 0){
+               this.modifStore.modifCouchesCommande[this.modifStore.modifCouchesCommande.length -1].articles.push(createDefaultSelectArticles(
+                   {id: this.modifStore.modifCouchesCommande[this.modifStore.modifCouchesCommande.length -1].articles.length}
+               ));
+            } else {
+               for (const article of responseSelectArticle.articles) {
+                  this.modifStore.modifCouchesCommande[this.modifStore.modifCouchesCommande.length -1].articles.push({
+                     id: this.modifStore.modifCouchesCommande[this.modifStore.modifCouchesCommande.length -1].articles.length,
+                     article : {title : article.descriptif, value : article.id},
+                  })
+               }
             }
          }
       }
@@ -132,6 +138,12 @@ export default class ModifCommandeComponent extends Vue {
                          :min="0"
                          variant="outlined"
                          dense
+                     ></v-number-input>
+                     <v-number-input
+                         variant="outlined"
+                         label="RAL de le commande"
+                         type="number"
+                         v-model="this.modifStore.commande.ral"
                      ></v-number-input>
                      <v-textarea
                          clearable

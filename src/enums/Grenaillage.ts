@@ -1,4 +1,5 @@
 export enum NameGrenaillage {
+    Degraissage = "Défraissage et brossage à la brosse métallique",
     Ballayage = "Ballayage",
     SA1 = "SA1",
     SA2 = "SA2",

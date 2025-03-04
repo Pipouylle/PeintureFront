@@ -25,23 +25,26 @@ export default class ListSemaineComponent extends Vue {
 <template>
    <v-card class="containerList">
       <v-card-title class="d-flex justify-space-between align-center titleList">
-         <span> Liste des systemes </span>
+         <span> Liste des semaine </span>
+         <v-spacer></v-spacer>
          <v-text-field
              label="Rechercher"
              density="compact"
+             prepend-inner-icon="mdi-magnify"
              v-model="this.listStore.ListSemaine.filter"
              variant="outlined"
              class="textFilter"
          ></v-text-field>
       </v-card-title>
       <v-card-text>
-         <v-data-table
+         <v-data-table-virtual
              :headers="this.header"
              :items="this.listStore.ListSemaine.semaines"
              v-model:search="this.listStore.ListSemaine.filter"
              :filter-keys="['annee', 'mois', 'semaine']"
              variant="outlined"
              class="tableList"
+             :fixed-header="true"
          >
             <template v-slot:[`item.annee`]="{ item }">
                <v-text-field
@@ -64,7 +67,7 @@ export default class ListSemaineComponent extends Vue {
             <template v-slot:[`item.actions`]="{ item }">
                <v-btn color="primary" @click="editSemaine(item)">Modifier</v-btn>
             </template>
-         </v-data-table>
+         </v-data-table-virtual>
       </v-card-text>
    </v-card>
 </template>

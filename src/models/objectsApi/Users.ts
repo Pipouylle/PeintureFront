@@ -1,4 +1,5 @@
 export interface Users {
     id: number;
-    nameUsers: string;
+    nameUser: string;
+    archiveUser: boolean;
 }

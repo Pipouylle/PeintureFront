@@ -19,16 +19,17 @@ export default class ListAffaireComponent extends Vue {
 
   private async deleteAffaire(item: Affaire) {
     try {
-      await deleteAffaire(item);
       await this.listStore.ListAffaire.delete(item);
       useAlert().alert('Affaire supprimée avec succès');
+      //TODO: verif et faire en sorte et le mettre sur toute les pages
+      //location.reload();
     } catch (e) {
       console.error(e);
     }
   }
 
   private editAffaire(item: Affaire) {
-    this.listStore.ListAffaire.affairesModif = item;
+    this.listStore.ListAffaire.affairesModif = JSON.parse(JSON.stringify(item));
     this.router.push({name: 'modifAffaire'});
   }
 }
@@ -38,7 +39,6 @@ export default class ListAffaireComponent extends Vue {
   <v-card class="containerList">
     <v-card-title class="d-flex justify-space-between align-center titleList">
       <span> Liste des affaires </span>
-
        <v-spacer></v-spacer>
       <v-text-field
           label="Rechercher"
@@ -49,27 +49,27 @@ export default class ListAffaireComponent extends Vue {
           class="textFilter"
       ></v-text-field>
        <v-spacer></v-spacer>
-      <router-link to="/CreerAffaire" class="ml-auto">
+      <router-link to="/creer/affaire" class="ml-auto">
         <v-btn class="bntLink">
           Creer une Affaire
         </v-btn>
       </router-link>
     </v-card-title>
     <v-card-text>
-      <v-data-table
+      <v-data-table-virtual
           :headers="this.header"
           :items="this.listStore.ListAffaire.affaires"
           v-model:search="this.listStore.ListAffaire.filter"
           :filter-keys="['numero']"
           variant="outlined"
           class="tableList"
+          :fixed-header="true"
       >
         <template v-slot:[`item.actions`]="{ item }">
-          <v-btn color="primary" @click="editAffaire(item)">Modifier</v-btn>
-          <v-btn color="error" @click="deleteAffaire(item)">Supprimer</v-btn>
+          <v-icon size="x-large" color="primary" @click="editAffaire(item)">mdi-pencil</v-icon>
+          <v-icon size="x-large" color="error" @click="deleteAffaire(item)">mdi-delete</v-icon>
         </template>
-
-      </v-data-table>
+      </v-data-table-virtual>
     </v-card-text>
   </v-card>
 </template>

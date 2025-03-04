@@ -15,7 +15,6 @@ import {useRouter} from "vue-router";
    components: {ModifCommandeCouche: ModifCoucheForCommande, CreerCoucheForm}
 })
 
-//TODO : faire en sorte d'afficher un message d'erreur si une commande existe déjà pour cette affaire et ce systeme ou juste ne pas l'aficher avec un filtre
 export default class CreerCommandeForm extends Vue {
    private CommandeFormStore = CommandeFormStore();
    private router = useRouter();
@@ -36,6 +35,11 @@ export default class CreerCommandeForm extends Vue {
             value: affaire.id
          }
       });
+   }
+
+   get formatedRAl() {
+      //TODO : récupére tou les ral de la bd ent les mettre là
+      return true;
    }
 
 
@@ -60,7 +64,6 @@ export default class CreerCommandeForm extends Vue {
                articles: [createDefaultSelectArticles()],
             }))
          }
-         console.log('il est correcte');
       }
    }
 
@@ -73,11 +76,13 @@ export default class CreerCommandeForm extends Vue {
          }
          this.CommandeFormStore.commandeFrom.commande.affaire.id = this.CommandeFormStore.commandeFrom.selectedAffaire.value;
          this.CommandeFormStore.commandeFrom.commande.systeme.id = this.CommandeFormStore.commandeFrom.selectedSysteme.value;
+         this.CommandeFormStore.commandeFrom.commande.regieSFP = this.CommandeFormStore.listSysteme.systemes.find(systeme => systeme.id === this.CommandeFormStore.commandeFrom.commande.systeme.id)?.refieSFP ?? 0;
+         this.CommandeFormStore.commandeFrom.commande.regieFP = this.CommandeFormStore.listSysteme.systemes.find(systeme => systeme.id === this.CommandeFormStore.commandeFrom.commande.systeme.id)?.refieFP ?? 0;
+         this.CommandeFormStore.commandeFrom.commande.grenaillage = this.CommandeFormStore.listGrenaillage.grenaillages.find(grenaillage => grenaillage.id === this.CommandeFormStore.listSysteme.systemes.find(system => system.id === this.CommandeFormStore.commandeFrom.commande.systeme.id)?.grenaillage?.id)?.tarif ?? 0;
          this.CommandeFormStore.commandeFrom.commande.articles = this.CommandeFormStore.modifCouchesCommande.map(modifCouche => {
             modifCouche.articleCouche.commande = this.CommandeFormStore.commandeFrom.commande;
             return modifCouche.articleCouche;
          });
-         //TODO : ajouter les commandeCalendar
          if (await this.CommandeFormStore.listCommande.add(this.CommandeFormStore.commandeFrom.commande)) {
             useAlert().alert('Commande créée avec succès !');
             this.CommandeFormStore.clearAll();
@@ -138,6 +143,20 @@ export default class CreerCommandeForm extends Vue {
                         :min="0"
                         variant="outlined"
                         dense
+                     ></v-number-input>
+                     <v-combobox
+                         v-if="false"
+                        variant="outlined"
+                        label="RAL de le commande"
+                        :items="formatedRAl"
+                        v-model="this.CommandeFormStore.commandeFrom.commande.ral"
+                     ></v-combobox>
+
+                     <v-number-input
+                        variant="outlined"
+                        label="RAL de le commande"
+                        type="number"
+                        v-model="this.CommandeFormStore.commandeFrom.commande.ral"
                      ></v-number-input>
                      <v-textarea
                          clearable

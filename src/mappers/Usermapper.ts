@@ -5,22 +5,25 @@ export default class Usermapper {
     public static mapUser(data: Users): User {
         return {
             id: data.id,
-            name: data.nameUsers
+            name: data.nameUser,
+            archive: data.archiveUser,
+            stocks: []
         }
     }
 
     public static mapArrayUser(data: Users[]): User[] {
-        return data.map(Usermapper.mapUser);
+        return data.map(this.mapUser);
     }
 
     public static mapUsers(data: User): Users {
         return {
             id: data.id,
-            nameUsers: data.name
+            nameUser: data.name,
+            archiveUser: data.archive
         }
     }
 
     public static mapArrayUsers(data: User[]): Users[] {
-        return data.map(Usermapper.mapUsers);
+        return data.map(this.mapUsers);
     }
 }

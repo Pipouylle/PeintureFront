@@ -7,7 +7,8 @@ import {ApiResponseCollection} from "@/models/common/ApiResponseCollection";
 export const getAllUser = async (): Promise<User[]> => {
     try {
         const response = await apiClient.get<ApiResponseCollection>("/users");
-        return Usermapper.mapArrayUser(response.data.member);
+        const users = Usermapper.mapArrayUser(response.data.member);
+        return users;
     } catch (error) {
         console.error(error);
         throw error;
@@ -30,6 +31,26 @@ export const updateUser = async (user: User): Promise<User> => {
         const users = Usermapper.mapUsers(user);
         const response = await apiClientPatch.patch(`/users/${user.id}`, users);
         return Usermapper.mapUser(response.data);
+    } catch (error) {
+        console.error(error);
+        throw error;
+    }
+}
+
+export const getAllUserArchived = async (): Promise<User[]> => {
+    try {
+        const response = await apiClient.get<ApiResponseCollection>("/users?archive_user=true");
+        return Usermapper.mapArrayUser(response.data.member);
+    } catch (error) {
+        console.error(error);
+        throw error;
+    }
+}
+
+export const getAllUserNotArchived = async (): Promise<User[]> => {
+    try {
+        const response = await apiClient.get<ApiResponseCollection>("/users?archive_user=false");
+        return Usermapper.mapArrayUser(response.data.member);
     } catch (error) {
         console.error(error);
         throw error;

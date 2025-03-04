@@ -14,13 +14,15 @@ import DialogOfComponent from "@/component/usine/DialogOfComponent.vue";
 export default class ViewUsineComponent extends Vue {
    private UsineStore = ViewUsineStore();
    private header = [
-      {title: "Numéro affaire", value: "numAffaire", sortable: false},
+      {title: "Num affaire", value: "numAffaire", sortable: false},
       {title: "Nom affaire", value: "nomAffaire", sortable: false},
-      {title: "Numéro demande", value: "numDemande", sortable: false},
+      {title: "Num demande", value: "numDemande", sortable: false},
       {title: "Nom Systeme", value: "nomSysteme", sortable: false},
+      {title: "Ral", value: "ral", sortable: false},
       {title: "Surface", value: "surface", sortable: false},
-      {title: "Nombre de pièce", value: "nbPiece", sortable: false},
-      {title: "date besoin", value: "dateDemande", sortable: false},
+      {title: "Nb pièce", value: "nbPiece", sortable: false},
+      {title: "Commentaire", value: "commentaire", sortable: false},
+      {title: "date", value: "dateDemande", sortable: false},
    ]
    private dialog: boolean = false;
    private selectedOf = createDefaultOf();
@@ -57,7 +59,7 @@ export default class ViewUsineComponent extends Vue {
          this.selectedOf = this.getOf[index - 2];
          this.dialog = true;
       } else {
-         console.warn("❌ Impossible de récupérer l'élément");
+         console.error("❌ Impossible de récupérer l'élément");
       }
    }
 
@@ -75,13 +77,13 @@ export default class ViewUsineComponent extends Vue {
    <v-card class="h-screen container">
       <v-card class="modifJour">
          <v-row>
-            <v-col cols="3">
+            <v-col cols="4">
                <v-row justify="space-between" class="ma-3">
                   <v-btn @click="UsineStore.previousJour" size="x-large">
                      <v-icon>mdi-arrow-left-bold</v-icon>
                   </v-btn>
                   <v-text-field
-                      disabled
+                      required
                       v-model="getJour"
                       outlined
                       dense
@@ -92,6 +94,7 @@ export default class ViewUsineComponent extends Vue {
                   </v-btn>
                </v-row>
             </v-col>
+            <v-spacer></v-spacer>
             <v-btn-group v-for="(cabine, index) in this.UsineStore.usineModel.cabines" :key="index"
                          class="buttonGroup">
                <v-btn
@@ -121,7 +124,6 @@ export default class ViewUsineComponent extends Vue {
              :items="getOf"
              :headers="header"
              :height="800"
-             :items-per-page="1000"
              @click:row="openDialog"
              class="text-h5"
          >
@@ -145,6 +147,11 @@ export default class ViewUsineComponent extends Vue {
                      this.UsineStore.listSysteme.systemes.find(systeme => systeme.id === this.UsineStore.listCommande.commandes.find(commande => commande.id === this.UsineStore.listDemande.demandes.find(demande => demande.id === item.demande.id)?.commande.id)?.systeme.id)?.nom
                   }} </span>
             </template>
+            <template v-slot:[`item.ral`]="{ item }">
+               <span> {{
+                     this.UsineStore.listCommande.commandes.find(commande => commande.id === this.UsineStore.listDemande.demandes.find(demande => demande.id === item.demande.id)?.commande.id)?.ral
+                  }} </span>
+            </template>
             <template v-slot:[`item.surface`]="{ item }">
                <span> {{
                      this.UsineStore.listDemande.demandes.find(demande => demande.id === item.demande.id)?.surface
@@ -153,6 +160,11 @@ export default class ViewUsineComponent extends Vue {
             <template v-slot:[`item.nbPiece`]="{ item }">
                <span> {{
                      this.UsineStore.listDemande.demandes.find(demande => demande.id === item.demande.id)?.nombrePiece
+                  }} </span>
+            </template>
+            <template v-slot:[`item.commentaire`]="{ item }">
+               <span> {{
+                     this.UsineStore.listDemande.demandes.find(demande => demande.id === item.demande.id)?.commentaire
                   }} </span>
             </template>
             <template v-slot:[`item.dateDemande`]="{ item }">

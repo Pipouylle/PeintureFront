@@ -12,6 +12,10 @@ export default class Commandemapper{
             surface: parseFloat(obj.surfaceCommande),
             ficheH: obj.ficheHCommande,
             pvPeinture: obj.pvPeintureCommande,
+            regieSFP: parseFloat(obj.regieSFPCommande),
+            regieFP: parseFloat(obj.regieFPCommande),
+            grenaillage: parseFloat(obj.grenaillageCommande),
+            ral: obj.ralCommande,
             affaire: createDefaultAffaire({id: parseInt(obj.affaireCommande.split("/")[3])}),
             systeme: createDefaultSysteme({id: parseInt(obj.systemeCommande.split("/")[3])}),
             demandes: [],
@@ -32,7 +36,11 @@ export default class Commandemapper{
             ficheHCommande: obj.ficheH,
             pvPeintureCommande: obj.pvPeinture,
             affaireCommande: "/api/affaires/" + obj.affaire.id,
-            systemeCommande: "/api/systemes/" + obj.systeme.id
+            systemeCommande: "/api/systemes/" + obj.systeme.id,
+            regieSFPCommande: String(obj.regieSFP).replace(/,/g, '.'),
+            regieFPCommande: String(obj.regieFP).replace(/,/g, '.'),
+            grenaillageCommande: String(obj.grenaillage).replace(/,/g, '.'),
+            ralCommande: obj.ral
         }
     }
 
