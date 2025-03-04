@@ -43,7 +43,7 @@ import {createDefaultSurfaceCouche} from "@/models/types/surfaceCouche";
 import {Commande, createDefaultCommande} from "@/models/types/commande";
 import {Stock} from "@/models/types/stock";
 import {User} from "@/models/types/user";
-import {getAllStock} from "@/services/StockService";
+import {getAllStock, SortieStock} from "@/services/StockService";
 import {getAllUser} from "@/services/UserService";
 import {createDefaultViewUsineModel, ViewUsineModel} from "@/models/usines/ViewUsineModel";
 import {createDefaultListSemaineModel} from "@/models/lists/ListSemaineModel";
@@ -53,6 +53,7 @@ import {createDefaultFournisseur} from "@/models/types/fournisseur";
 import {createDefaultListFournisseurModel} from "@/models/lists/ListFournisseurModel";
 import {getAllFournisseurs} from "@/services/FournisseurService";
 import {createDefaultArticle} from "@/models/types/article";
+import {listUserStore, useUserStore} from "@/stores/UserStore";
 
 export const useColorStore = defineStore('colorStore', {
     state: () => ({
@@ -412,7 +413,6 @@ export const ListStore = defineStore('ListStore', {
         ListSemaine: createDefaultListSemaineModel(),
         ListFournisseur: createDefaultListFournisseurModel(),
         ListStock: [] as Stock[],
-        ListUser: [] as User[],
         listloaded: false,
     }),
     actions: {
@@ -427,7 +427,6 @@ export const ListStore = defineStore('ListStore', {
                 await this.setListDemande();
                 await this.setDemandesCalendar();
                 await this.setStock();
-                await this.setUser();
                 await this.setFournisseur();
                 this.listloaded = true;
             }
@@ -476,9 +475,6 @@ export const ListStore = defineStore('ListStore', {
         },
         async setStock() {
             this.ListStock = await getAllStock();
-        },
-        async setUser() {
-            this.ListUser = await getAllUser();
         },
         async setFournisseur() {
             this.ListFournisseur.fournisseurs = await getAllFournisseurs();
@@ -622,10 +618,6 @@ export const ViewUsineStore = defineStore('ViewUsineStore', {
         usineModel: createDefaultViewUsineModel() as ViewUsineModel,
     }),
     getters: {
-        listUser: (state) => {
-            const list = ListStore();
-            return list.ListUser;
-        },
         listStock: (state) => {
             const list = ListStore();
             return list.ListStock;
@@ -650,11 +642,16 @@ export const ViewUsineStore = defineStore('ViewUsineStore', {
             const list = ListStore();
             return list.ListSemaine;
         },
+        listUser: (state) => {
+            const list = listUserStore();
+            return list.listUser;
+        }
     },
     actions: {
         async load() {
             this.setJour(new Date().toISOString());
             await this.setOf();
+            await useUserStore().load();
         },
         setJour(date: string) {
             this.usineModel.date = date;
@@ -683,6 +680,21 @@ export const ViewUsineStore = defineStore('ViewUsineStore', {
             const newDate = new Date(this.usineModel.date);
             newDate.setDate(newDate.getDate() - 1);
             this.setJour(newDate.toISOString());
+        },
+        async sortirStock(stocks: Stock[], user: User, of: Of) : Promise<boolean>{
+            try {
+                if (stocks.length < 1) {
+                    return false;
+                }
+                for (const stock of stocks) {
+                    stock.user = user;
+                    stock.of = of;
+                    await SortieStock(stock);
+                }
+                return true
+            } catch (e) {
+                return false;
+            }
         },
         clearAll() {
             this.clearListOf();

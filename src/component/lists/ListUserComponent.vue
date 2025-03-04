@@ -14,12 +14,21 @@ export default class ListUserComponent extends Vue {
       {title: 'Action', value: 'actions', sortable: false, align: 'end'},
    ];
 
-   mounted() {
-      this.clickOnButton();
+   async mounted() {
+      await this.store.load();
    }
-   private async clickOnButton() {
-      await this.store.getUser();
-      console.log(this.store.listUser.users);
+
+   private get listUser() {
+      if (this.store.archived && this.store.notArchived) {
+         return this.store.listUser.users;
+      } else if (this.store.archived && !this.store.notArchived) {
+         return this.store.listUser.users.filter(user => user.archive);
+      } else if (!this.store.archived && this.store.notArchived) {
+         return this.store.listUser.users.filter(user => !user.archive);
+      } else {
+         return [];
+      }
+
    }
 
    private async archiveUser(user: User) {
@@ -59,12 +68,14 @@ export default class ListUserComponent extends Vue {
          ></v-text-field>
          <v-spacer></v-spacer>
          <v-btn-group>
-            <v-btn @click="this.store.archived = !this.store.archived; clickOnButton()"
-                   :class="{ 'blue-button': this.store.archived }">
+            <v-btn @click="this.store.archived = !this.store.archived"
+                   :color="this.store.archived ? 'blue' : 'grey'"
+                   variant="outlined">
                archivé
             </v-btn>
-            <v-btn @click="this.store.notArchived = !this.store.notArchived; clickOnButton()"
-                   :class="{ 'blue-button': this.store.notArchived }">
+            <v-btn @click="this.store.notArchived = !this.store.notArchived"
+                   :color="this.store.notArchived ? 'blue' : 'grey'"
+                   variant="outlined">
                non archivé
             </v-btn>
          </v-btn-group>
@@ -78,7 +89,7 @@ export default class ListUserComponent extends Vue {
       <v-card-text>
          <v-data-table-virtual
              :headers="this.header"
-             :items="this.store.listUser.users"
+             :items="listUser"
              v-model:search="this.store.listUser.filter"
              :filter-keys="['name']"
              variant="outlined"
@@ -94,8 +105,12 @@ export default class ListUserComponent extends Vue {
             </template>
             <template v-slot:[`item.actions`]="{ item }">
                <v-icon size="x-large" color="primary" @click="updateUser(item)">mdi-pencil</v-icon>
-               <v-icon size="x-large" color="error" @click="archiveUser(item)" v-if="item.archive === false">mdi-archive-arrow-down</v-icon>
-               <v-icon size="x-large" color="error" @click="unArchiveUser(item)" v-if="item.archive === true">mdi-archive-arrow-up</v-icon>
+               <v-icon size="x-large" color="error" @click="archiveUser(item)" v-if="item.archive === false">
+                  mdi-archive-arrow-down
+               </v-icon>
+               <v-icon size="x-large" color="error" @click="unArchiveUser(item)" v-if="item.archive === true">
+                  mdi-archive-arrow-up
+               </v-icon>
             </template>
          </v-data-table-virtual>
       </v-card-text>
@@ -103,7 +118,7 @@ export default class ListUserComponent extends Vue {
 </template>
 
 <style scoped src="@/assets/styles/list.css">
-.blue-button {
+.blueButton {
    background-color: blue;
    color: white;
 }

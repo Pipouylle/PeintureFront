@@ -98,8 +98,7 @@ export default class ViewUsineComponent extends Vue {
             <v-btn-group v-for="(cabine, index) in this.UsineStore.usineModel.cabines" :key="index"
                          class="buttonGroup">
                <v-btn
-                   :disabled="this.UsineStore.usineModel.cabine === cabine || this.UsineStore.usineModel.jour === ''"
-                   :active="this.UsineStore.usineModel.cabine === cabine"
+                   :color="this.UsineStore.usineModel.cabine === cabine ? 'blue' : 'grey'"
                    variant="outlined"
                    @click="this.setOfCabine(cabine)"
                    class="text-h5"
@@ -109,7 +108,7 @@ export default class ViewUsineComponent extends Vue {
             <v-spacer si></v-spacer>
             <v-btn-group v-for="(temp, index) in UsineStore.usineModel.temps" :key="index" class="buttonGroup">
                <v-btn
-                   :disabled="UsineStore.usineModel.temp === temp"
+                   :color="UsineStore.usineModel.temp === temp ? 'blue' : 'grey'"
                    @click="setOf(temp)"
                    variant="outlined"
                    :active="this.UsineStore.usineModel.temp === temp"

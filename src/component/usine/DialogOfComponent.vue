@@ -8,6 +8,8 @@ import {Demande} from "@/models/types/demande";
 import {Article} from "@/models/types/article";
 import {getStockForSortie} from "@/services/StockService"
 import {Stock} from "@/models/types/stock"
+import {User, createDefaultUser} from "@/models/types/user"
+import {listUserStore} from "@/stores/UserStore";
 
 @Component({})
 
@@ -20,6 +22,8 @@ export default class DialogOfComponent extends Vue {
    private scanne: number = 0;
    private stockSelect: Stock[] = [];
    private inputRef = ref<any>(null);
+   private listUsersStore = listUserStore();
+   private sortieSelect: boolean = false;
 
    async selectCouche(couche: AvancementSurfaceCouche) {
       this.selectedCouche = this.item.avancements.indexOf(couche);
@@ -28,15 +32,24 @@ export default class DialogOfComponent extends Vue {
       //nextTick(() => {this.inputRef.value?.focus();});
    }
 
-   sortieStock() {
-      console.log(this.stockSelect);
+   async sortieStock(user: User) {
+      if (await this.UsineStore.sortirStock(this.stockSelect, user, this.item)){
+         this.stockSelect = [];
+      } else {
+         console.error('ben non en fait')
+      }
    }
 
    async scanneArticle() {
       const index = this.listStock.findIndex((stock: Stock) => stock.id === this.scanne)
       if (index != -1) {
-         this.stockSelect.push(this.listStock[index]);
-         this.listStock.splice(index, 1);
+         if (!this.stockSelect.find((stock: Stock) => stock.id === this.scanne)){
+            this.stockSelect.push(this.listStock[index]);
+            this.scanne = 0;
+            this.listStock.splice(index, 1);
+         } else {
+            console.log("en double")
+         }
       } else {
          console.log('pas bon')
       }
@@ -57,7 +70,7 @@ export default class DialogOfComponent extends Vue {
       >
          <v-btn @click="selectCouche(couche)" size="x-large" class="ma-1 buttonCouche "> {{ couche.surfaceCouches.articleCouche.couche.nom }}</v-btn>
       </v-btn-group>
-      <v-card v-else>
+      <v-card v-else-if="selectedCouche !== -1 && !this.sortieSelect">
          <v-card-title> {{
                this.item.avancements[selectedCouche].surfaceCouches.articleCouche.couche.nom
             }}
@@ -105,7 +118,7 @@ export default class DialogOfComponent extends Vue {
                   ></v-number-input>
                </v-col>
                <v-col>
-                  <v-btn color="error" prepend-icon="mdi-delete" @click="scanne = 0"> Supprimer selection</v-btn>
+                  <v-btn color="error" prepend-icon="mdi-delete" @click="scanne = 0" size="x-large"> Supprimer selection</v-btn>
                </v-col>
             </v-row>
             <v-row>
@@ -119,10 +132,15 @@ export default class DialogOfComponent extends Vue {
                </v-list>
             </v-row>
             <v-row>
-               <v-btn color="error" prepend-icon="mdi-arrow-left-thick" @click="sortieStock"> Sortie des stock </v-btn>
+               <v-btn color="error" prepend-icon="mdi-arrow-left-thick" @click="this.sortieSelect = true" size="x-large"> Sortie des stock </v-btn>
             </v-row>
          </v-card-text>
-         <v-btn prepend-icon="mdi-arrow-left-thick" @click="selectedCouche = -1"> Retour a la selection des couches</v-btn>
+         <v-btn prepend-icon="mdi-arrow-left-thick" @click="selectedCouche = -1" size="x-large"> Retour a la selection des couches</v-btn>
+      </v-card>
+      <v-card v-else>
+         <v-btn-group v-for="(user: User, index) in UsineStore.listUser.users" :key="index">
+            <v-btn size="x-large" @click="sortieStock(user)"> {{ user.name }} </v-btn>
+         </v-btn-group>
       </v-card>
    </v-card>
 </template>

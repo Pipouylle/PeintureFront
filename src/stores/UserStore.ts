@@ -12,41 +12,19 @@ export const listUserStore = defineStore("listUserStore", {
     state: () => ({
         listUser: createDefaultListUserModel() as ListUserModel,
         archived: false as boolean,
-        notArchived: true as boolean
+        notArchived: true as boolean,
+        isLoad: false as boolean
     }),
     actions: {
-        async getUser() {
-            if (this.archived && this.notArchived) {
+        async load() {
+            if (!this.isLoad) {
                 await this.getAll();
-            } else if (this.archived && !this.notArchived) {
-                await this.getArchived();
-            } else if (!this.archived && this.notArchived) {
-                await this.getNotArchived();
-            } else {
-                this.listUser.users = [];
+                this.isLoad = true;
             }
         },
         async getAll(): Promise<boolean> {
             try {
                 this.listUser.users = await getAllUser()
-                return true;
-            } catch (e) {
-                useAlert().error('')
-                return false;
-            }
-        },
-        async getArchived(): Promise<boolean> {
-            try {
-                this.listUser.users = await getAllUserArchived()
-                return true;
-            } catch (e) {
-                useAlert().error('')
-                return false;
-            }
-        },
-        async getNotArchived(): Promise<boolean> {
-            try {
-                this.listUser.users = await getAllUserNotArchived()
                 return true;
             } catch (e) {
                 useAlert().error('')

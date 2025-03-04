@@ -20,7 +20,7 @@ export default class ListDemandeComponent extends Vue {
       {title: 'Surface', value: 'surface'},
       {title: 'Date', value: 'date'},
       {title: 'Pièces', value: 'nombrePiece'},
-      {title: 'Réservation peinturre', value: 'reservation', align: 'center'},
+      {title: 'Réservation peinture', value: 'reservation', align: 'center'},
       {title: 'Commentaire', value: 'commentaire'},
       {title: 'Action', value: 'actions', sortable: false, align: 'end'}
    ];
