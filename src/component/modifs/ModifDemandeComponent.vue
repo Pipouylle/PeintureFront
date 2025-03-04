@@ -3,11 +3,9 @@ import {Component, Vue, Watch} from 'vue-facing-decorator';
 import {useRouter} from "vue-router";
 import {ModifDemandeStore, useAlert} from "@/stores";
 import {getArticleCoucheForDemande} from "@/services/ArticleCoucheService";
-import {createDefaultSurfaceCouche} from "@/models/types/surfaceCouche";
 import ModifDemandeCouche from "@/component/Form/ModifCoucheForDemande.vue";
 import {Systeme} from "@/models/types/systeme";
 import {getSurfaceCoucheByDemande} from "@/services/SurfaceCouchesService";
-import {createDefaultArticle} from "@/models/types/article";
 import {createDefaultArticleCouche} from "@/models/types/articleCouche";
 
 @Component({

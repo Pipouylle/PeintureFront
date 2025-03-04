@@ -23,7 +23,8 @@ import ModifDemandeView from "@/views/modifs/ModifDemandeView.vue";
 import ListFournisseurView from "@/views/lists/ListFournisseurView.vue";
 import CreationFounisseurView from "@/views/forms/CreationFounisseurView.vue";
 import ModifArticleView from "@/views/modifs/ModifArticleView.vue";
-import ListUserView from "@/views/lists/ListUserView.vue"
+import ListUserView from "@/views/lists/ListUserView.vue";
+import CreationUserView from "@/views/forms/CreationUserView.vue";
 
 const routes: Array<RouteRecordRaw> = [
     {
@@ -107,9 +108,14 @@ const routes: Array<RouteRecordRaw> = [
         component: ModifArticleView,
     },
     {
-       path: "/list/user",
-       name: "listUser",
-       component: ListUserView,
+        path: "/list/user",
+        name: "listUser",
+        component: ListUserView,
+    },
+    {
+        path: "/creer/user",
+        name: "CreerUser",
+        component: CreationUserView,
     },
     {
         path: "/list/fournisseur",

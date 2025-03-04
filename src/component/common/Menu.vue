@@ -12,7 +12,7 @@ export default class Menu extends Vue {
       {path: "list/commande", name: "Commandes"},
       {path: "list/demande", name: "Demandes"},
       {path: "list/article", name: "Articles"},
-      {path: "list/user", name: "Users"},
+      {path: "list/user", name: "Utilisateur"},
       {path: "list/fournisseur", name: "Fournisseurs"},
       {path: "list/grenaillage", name: "Grenaillages"},
       {path: "list/semaine", name: "Semaines"},
