@@ -8,25 +8,31 @@ export default class SelectJourComponent extends Vue {
    get getJour() {
       return this.store.avancementModel.jour + ' - ' + new Date(this.store.avancementModel.date).toLocaleDateString();
    }
+
+   update() {
+     this.$emit('updateOf');
+   };
 }
 </script>
 
 <template>
    <v-card>
       <v-row justify="space-between" class="ma-3">
-         <v-btn @click="store.previousJour" size="x-large">
+          <v-btn @click="store.previousJour" size="x-large">
             <v-icon>mdi-arrow-left-bold</v-icon>
-         </v-btn>
-         <v-text-field
-             required
-             v-model="getJour"
-             outlined
-             dense
-             class="select text-h3 w-auto">
-         </v-text-field>
-         <v-btn @click="store.nextJour" size="x-large">
+          </v-btn>
+          <v-text-field
+              readonly
+              v-model="getJour"
+              outlined
+              dense
+              class="select text-h3 w-auto">
+          </v-text-field>
+          <v-btn @click="store.nextJour" size="x-large">
             <v-icon>mdi-arrow-right-bold</v-icon>
-         </v-btn>
+          </v-btn>
+        <v-spacer></v-spacer>
+          <v-btn color="primary" @click="update"> Update all</v-btn>
       </v-row>
    </v-card>
 </template>

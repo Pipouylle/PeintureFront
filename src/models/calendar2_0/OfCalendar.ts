@@ -5,7 +5,7 @@ import {AvancementSurfaceCouche} from "@/models/types/avancementSurfaceCouche";
 export interface OfCalendar {
     id: number;
     cabineOF: string;
-    avancementOf: string;
+    avancementOf: number;
     jourOf: string;
     regieFPOf: string;
     regieSFPOf: string;
@@ -24,7 +24,7 @@ export function createDefaultOfCalendar(overrides: Partial<OfCalendar> = {}): Of
         semaineOf: createDefaultSemaine(),
         regieFPOf: "",
         regieSFPOf: "",
-        avancementOf: "",
+        avancementOf: 0,
         tempOf: "",
         idDemandeOf: createDefaultDemandesCalendar(),
         avancements: [],

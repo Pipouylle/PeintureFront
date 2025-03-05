@@ -30,6 +30,7 @@ export const listAffaireStore = defineStore("listAffaireStore", {
                 const index = this.listAffaire.affaires.findIndex((affaire: Affaire) => affaire.id === affaire.id);
                 this.listAffaire.affaires.splice(index, 1);
                 //TODO ste all to false
+
                 return true;
             } catch (e) {
                 return false;
@@ -65,12 +66,6 @@ export const updateAffaireStore = defineStore("updateAffaireStore", {
     state: () => ({
         affaire: createDefaultAffaire() as Affaire,
     }),
-    getters: {
-        listAffaire: (state) => {
-            const list = listAffaireStore();
-            return list.listAffaire;
-        },
-    },
     actions: {
         async load() {
             await listAffaireStore().load();
@@ -78,7 +73,7 @@ export const updateAffaireStore = defineStore("updateAffaireStore", {
         async update(affaire: Affaire): Promise<boolean> {
             try {
                 const response = await updateAffaire(affaire);
-                const index = this.listAffaire.affaires.findIndex((affaire: Affaire) => affaire.id === response.id);
+                const index = listAffaireStore().listAffaire.affaires.findIndex((affaire: Affaire) => affaire.id === response.id);
                 listAffaireStore().listAffaire.affaires[index] = response;
                 return true;
             } catch (e) {

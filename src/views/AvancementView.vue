@@ -2,9 +2,10 @@
 import {Vue, Component} from 'vue-facing-decorator';
 import Menu from "@/component/common/Menu.vue";
 import AvancementComponent from "@/component/avancements/AvancementComponent.vue";
+import NotificationHandlerComponent from "@/component/common/NotificationHandlerComponent.vue";
 
 @Component({
-   components: {AvancementComponent, Menu}
+  components: {NotificationHandlerComponent, AvancementComponent, Menu}
 })
 export default class AvancementView extends Vue {
 
@@ -12,8 +13,9 @@ export default class AvancementView extends Vue {
 </script>
 
 <template>
-   <Menu/>
-   <AvancementComponent/>
+  <Menu/>
+  <AvancementComponent/>
+  <NotificationHandlerComponent/>
 </template>
 
 <style scoped>

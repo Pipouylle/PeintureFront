@@ -73,11 +73,21 @@ export const updateOfOrder = async (of: Of): Promise<Of> => {
 export const getOfBySemaineAndJour = async (jour: string, semaine: Semaine): Promise<Of[]> => {
     try {
         const jourValue = getJourEnumValue(jour)
-        console.log("jour", jourValue, " semaine:" ,semaine.id);
         const response = await apiClient.get<ApiResponseCollection>(`/o_fs?semaine_of=${semaine.id}&jour_of=${jourValue}`);
         return Ofsmapper.mapArrayOf(response.data.member);
     } catch (e) {
         console.error('Erreur lors de la récupération des ofs par la semaine et le jour:', e);
         throw e;
+    }
+}
+
+export const updateAvancementOf = async (of: Of): Promise<Of> => {
+    try {
+        const ofs = Ofsmapper.mapOfs(of);
+        const response = await apiClientPatch.patch<Ofs>(`/ofsAvancement/${of.id}`, ofs);
+        return Ofsmapper.mapOf(response.data);
+    } catch (error) {
+        console.error('Erreur lors de la récupération des ofs:', error);
+        throw error;
     }
 }

@@ -25,9 +25,9 @@ export default class Stockmapper {
             id: data.id,
             dateStockStock: data.dateStock === "" ? null : data.dateStock,
             dateSortieStock: data.dateSortie,
-            articleStock: data.article.id === 0 ? "/api/articles/" + data.article.id : null,
-            userStock: data.user.id === 0 ? "/api/users/" + data.user.id : null,
-            ofStock: data.of.id === 0 ? "/api/of/" + data.of.id : null
+            articleStock: data.article ? "/api/articles/" + data.article.id : null,
+            userStock: data.user ? "/api/users/" + data.user.id : null,
+            ofStock: data.of ? "/api/o_fs/" + data.of.id : null
         }
     }
 

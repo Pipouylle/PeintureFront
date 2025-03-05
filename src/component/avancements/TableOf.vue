@@ -22,8 +22,6 @@ export default class TableOf extends Vue {
       {title: 'Pièce aujoud\'hui', key: 'pieceCurent', sortable: false},
       {title: 'Surface Total après validation', key: 'surfaceDemandeAfter', sortable: false},
    ]
-   //TODO: changer le les qrcode car trop le int est trop long
-   //TODO: mettre la regie et avancemnt_of devient pour l'avancement du grenaillage
    //TODO: remplir la listPresious
    async mounted() {
    }
@@ -51,30 +49,33 @@ export default class TableOf extends Vue {
             <span>{{ store.avancementModel.listDemande.find(demande => demande.id === item.demande.id)?.nombrePiece }}</span>
          </template>
          <template v-slot:[`item.pourcentageDemandePrevious`]="{ item }">
-            <span>{{ store.avancementModel.listPrevious.find(previous => previous.ofId === item.id)?.avancement + ' %' }}</span>
+            <span>{{ store.avancementModel.listPrevious.find(previous => previous.demandeId === item.demande.id)?.avancement + ' %' }}</span>
          </template>
          <template v-slot:[`item.surfaceDemandePrevious`]="{ item }">
-            <span>{{ ((store.avancementModel.listPrevious.find(previous => previous.ofId === item.id)?.avancement ?? 0) * (store.avancementModel.listDemande.find(demande => demande.id === item.demande.id)?.surface ?? 0) / 100) + " m²" }}</span>
+            <span>{{ ((store.avancementModel.listPrevious.find(previous => previous.demandeId === item.demande.id)?.avancement ?? 0) * (store.avancementModel.listDemande.find(demande => demande.id === item.demande.id)?.surface ?? 0) / 100) + " m²" }}</span>
          </template>
          <template v-slot:[`item.piecePrevious`]="{ item }">
-            <span>{{ ((store.avancementModel.listPrevious.find(previous => previous.ofId === item.id)?.avancement ?? 0) * (store.avancementModel.listDemande.find(demande => demande.id === item.demande.id)?.nombrePiece ?? 0) / 100) + " nb" }}</span>
+            <span>{{ ((store.avancementModel.listPrevious.find(previous => previous.demandeId === item.demande.id)?.avancement ?? 0) * (store.avancementModel.listDemande.find(demande => demande.id === item.demande.id)?.nombrePiece ?? 0) / 100) + " nb" }}</span>
          </template>
          <template v-slot:[`item.pourcentageCurent`]="{ item }">
             <v-number-input
                density="comfortable"
                v-model="item.avancement"
+               min="0"
             ></v-number-input>
          </template>
          <template v-slot:[`item.regieFP`]="{ item }">
             <v-number-input
                 density="comfortable"
                 v-model="item.regieFP"
+                min="0"
             ></v-number-input>
          </template>
          <template v-slot:[`item.regieSFP`]="{ item }">
             <v-number-input
                 density="comfortable"
                 v-model="item.regieSFP"
+                min="0"
             ></v-number-input>
          </template>
          <template v-slot:[`item.surfaceCurent`]="{ item }">

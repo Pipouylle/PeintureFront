@@ -27,7 +27,6 @@ export default class ViewUsineComponent extends Vue {
    private dialog: boolean = false;
    private selectedOf = createDefaultOf();
 
-   //TODO: Grossir les boutton et les text
    mounted() {
       this.UsineStore.load();
    }
@@ -62,7 +61,6 @@ export default class ViewUsineComponent extends Vue {
          console.error("❌ Impossible de récupérer l'élément");
       }
    }
-
 }
 </script>
 
@@ -83,7 +81,7 @@ export default class ViewUsineComponent extends Vue {
                      <v-icon>mdi-arrow-left-bold</v-icon>
                   </v-btn>
                   <v-text-field
-                      required
+                      readonly
                       v-model="getJour"
                       outlined
                       dense

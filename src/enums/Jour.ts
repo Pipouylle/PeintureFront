@@ -4,6 +4,8 @@ export enum Jour {
     mercredi = 3,
     jeudi = 4,
     vendredi = 5,
+    samedi = 6,
+    dimanche = 7,
     AUTRE = "Autre",
 }
 
@@ -19,6 +21,10 @@ export function getJourEnumValue(day: string): Jour | undefined {
             return Jour.jeudi;
         case "vendredi":
             return Jour.vendredi;
+        case "samedi":
+            return Jour.samedi;
+        case "dimanche":
+            return Jour.dimanche;
         default:
             return undefined;
     }

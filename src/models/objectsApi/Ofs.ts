@@ -1,9 +1,9 @@
 export interface Ofs {
     id: number;
     cabineOf: string;
-    avancementOf: string;
-    regieSFPOf: string;
-    regieFPOf: string;
+    avancementOf: number;
+    regieSFPOf: number;
+    regieFPOf: number;
     tempOf: string;
     demandeOf: string; //Demanade.id
     jourOf: string;

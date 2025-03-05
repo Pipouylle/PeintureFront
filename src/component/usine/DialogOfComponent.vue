@@ -6,7 +6,7 @@ import {ViewUsineStore} from "@/stores";
 import {AvancementSurfaceCouche} from "@/models/types/avancementSurfaceCouche";
 import {Demande} from "@/models/types/demande";
 import {Article} from "@/models/types/article";
-import {getStockForSortie} from "@/services/StockService"
+import {getStockForSortie, getStockNotSortie} from "@/services/StockService"
 import {Stock} from "@/models/types/stock"
 import {User, createDefaultUser} from "@/models/types/user"
 import {listUserStore} from "@/stores/UserStore";
@@ -19,16 +19,15 @@ export default class DialogOfComponent extends Vue {
    private UsineStore = ViewUsineStore();
    private selectedCouche: number = -1;
    private listStock: Stock[] = [];
-   private scanne: number = 0;
+   private scanne: string = "";
    private stockSelect: Stock[] = [];
-   private inputRef = ref<any>(null);
    private listUsersStore = listUserStore();
    private sortieSelect: boolean = false;
 
    async selectCouche(couche: AvancementSurfaceCouche) {
       this.selectedCouche = this.item.avancements.indexOf(couche);
-      this.listStock = await getStockForSortie();
-      //TOTO: le faire marcher
+      this.listStock = await getStockNotSortie();
+      //TODO: le faire marcher le focus et l'antiFocus
       //nextTick(() => {this.inputRef.value?.focus();});
    }
 
@@ -41,11 +40,11 @@ export default class DialogOfComponent extends Vue {
    }
 
    async scanneArticle() {
-      const index = this.listStock.findIndex((stock: Stock) => stock.id === this.scanne)
+      const index = this.listStock.findIndex((stock: Stock) => stock.id === parseInt(this.scanne));
       if (index != -1) {
-         if (!this.stockSelect.find((stock: Stock) => stock.id === this.scanne)){
+         if (!this.stockSelect.find((stock: Stock) => stock.id === parseInt(this.scanne))){
             this.stockSelect.push(this.listStock[index]);
-            this.scanne = 0;
+            this.scanne = "";
             this.listStock.splice(index, 1);
          } else {
             console.log("en double")
@@ -109,16 +108,15 @@ export default class DialogOfComponent extends Vue {
             </v-row>
             <v-row>
                <v-col>
-                  <v-number-input
-                      :ref="inputRef"
+                  <v-text-field
                       label="scanne"
                       v-model="scanne"
                       density="comfortable"
                       @update:model-value="scanneArticle"
-                  ></v-number-input>
+                  ></v-text-field>
                </v-col>
                <v-col>
-                  <v-btn color="error" prepend-icon="mdi-delete" @click="scanne = 0" size="x-large"> Supprimer selection</v-btn>
+                  <v-btn color="error" prepend-icon="mdi-delete" @click="scanne = ''" size="x-large"> Supprimer selection</v-btn>
                </v-col>
             </v-row>
             <v-row>

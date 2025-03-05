@@ -21,6 +21,8 @@ export default class ListFournisseurComponent extends Vue {
    private deleteFournisseur(item: any) {
       this.listStore.ListFournisseur.remove(item)
    };
+
+
 }
 </script>
 
@@ -65,7 +67,6 @@ export default class ListFournisseurComponent extends Vue {
                <v-btn color="primary" @click="editFournisseur(item)">Modifier</v-btn>
                <v-btn color="error" @click="deleteFournisseur(item)">Supprimer</v-btn>
             </template>
-
          </v-data-table-virtual>
       </v-card-text>
    </v-card>

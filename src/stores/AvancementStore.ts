@@ -3,7 +3,7 @@ import {listAffaireStore} from "@/stores/AffaireStore"
 import {listCommandeStore} from "@/stores/CommandeStore"
 import {ListStore} from "@/stores/index"
 import {AvancementModel, createDefaultAvancementModel} from "@/models/avancements/AvancementModel"
-import {getOfBySemaineAndJour} from "@/services/OfsService";
+import {getOfBySemaineAndJour, updateAvancementOf} from "@/services/OfsService";
 import {createDefaultSemaine} from "@/models/types/semaine";
 import {getAvancementSurfaceCoucheByOf} from "@/services/AvancementSurfaceCoucheService";
 import {AvancementSurfaceCouche} from "@/models/types/avancementSurfaceCouche";
@@ -49,6 +49,10 @@ export const avancementStore = defineStore('avancementStore',{
                 console.error("et merde")
             }
 
+            this.avancementModel.listDemande = [];
+            this.avancementModel.listCommande = [];
+            this.avancementModel.listAffaire = [];
+            this.avancementModel.listSysteme = [];
             for (const of of this.avancementModel.listOF) {
                 const demande = listDemandeStore().listDemande.demandes.find(demande => demande.id === of.demande.id);
                 if (demande) {
@@ -84,13 +88,13 @@ export const avancementStore = defineStore('avancementStore',{
                 }
             }
 
-            console.log("listOf :",this.avancementModel.listOF);
-            console.log("listDemande :",this.avancementModel.listDemande);
-            console.log("listCommande :",this.avancementModel.listCommande);
-            console.log("listAffaire :",this.avancementModel.listAffaire);
-            console.log("listSysteme :",this.avancementModel.listSysteme);
+            //console.log("listOf :",this.avancementModel.listOF);
+            //console.log("listDemande :",this.avancementModel.listDemande);
+            //console.log("listCommande :",this.avancementModel.listCommande);
+            //console.log("listAffaire :",this.avancementModel.listAffaire);
+            //console.log("listSysteme :",this.avancementModel.listSysteme);
             const test = this.avancementModel.listDemande.filter(demande => this.avancementModel.listCommande.some(commande =>commande.affaire.id === this.avancementModel.listAffaire[0].id && commande.id === demande.commande.id));
-            console.log("test :",test[0]);
+            //console.log("test :",test[0]);
             //TODO: faire les lists
         },
         async previousJour(){
@@ -108,6 +112,16 @@ export const avancementStore = defineStore('avancementStore',{
                 return getSurfaceCoucheById(avancementSurfaceCouche.surfaceCouches.id);
             } catch (e) {
                 return createDefaultSurfaceCouche();
+            }
+        },
+        async updateOf(): Promise<boolean>{
+            try {
+                for (const of of this.avancementModel.listOF) {
+                    await updateAvancementOf(of);
+                }
+                return true;
+            } catch (e) {
+                return false;
             }
         }
     }

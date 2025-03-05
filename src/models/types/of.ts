@@ -5,7 +5,7 @@ import {AvancementSurfaceCouche} from "@/models/types/avancementSurfaceCouche";
 export interface Of {
     id: number;
     cabine: string;
-    avancement: string;
+    avancement: number;
     jour: string;
     regieSFP: number;
     regieFP: number;
@@ -24,7 +24,7 @@ export function createDefaultOf(overrides: Partial<Of> = {}): Of {
         semaine: createDefaultSemaine(),
         regieSFP: 0,
         regieFP: 0,
-        avancement: "0",
+        avancement: 0,
         temp: "",
         demande: createDefaultDemande(),
         avancements: [],

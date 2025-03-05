@@ -14,7 +14,7 @@ export interface AvancementModel {
     listAffaire: Affaire[];
     listDemande: Demande[];
     listSysteme: Systeme[];
-    listPrevious: {ofId: number, avancement: number}[];
+    listPrevious: {demandeId: number, avancement: number}[];
 }
 
 export function createDefaultAvancementModel(overrides: Partial<AvancementModel> = {}): AvancementModel {

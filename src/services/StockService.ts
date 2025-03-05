@@ -51,6 +51,7 @@ export const creerStock = async (stock: Stock): Promise<Stock> => {
 export const SortieStock = async (stock: Stock): Promise<Stock> => {
     try {
         const stocks = Stockmapper.mapStocks(stock);
+        console.log(stocks);
         const response = await apiClientPatch.patch(`/stockSortie/${stock.id}`, stocks);
         return Stockmapper.mapStock(response.data);
     } catch (error) {
@@ -87,7 +88,17 @@ export const getStockForSortieByArticle = async (articleCouche: ArticleCouche): 
 
 export const getStockForSortie = async (): Promise<Stock[]> => {
     try {
-        const response = await apiClient.get<ApiResponseCollection>(`/stocks?&dateSortie_stock=null`);
+        const response = await apiClient.get<ApiResponseCollection>(`/stocks?exists[dateSortie_stock]=true`);
+        return Stockmapper.mapArrayStock(response.data.member);
+    } catch (error) {
+        console.error(error);
+        throw error;
+    }
+}
+
+export const getStockNotSortie = async (): Promise<Stock[]> => {
+    try {
+        const response = await apiClient.get<ApiResponseCollection>(`/stocks?exists[dateSortie_stock]=false`);
         return Stockmapper.mapArrayStock(response.data.member);
     } catch (error) {
         console.error(error);
