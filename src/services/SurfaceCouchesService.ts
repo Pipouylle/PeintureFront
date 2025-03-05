@@ -54,3 +54,13 @@ export const updateSurfaceCouche = async (surfaceCouche: SurfaceCouche): Promise
         throw error;
     }
 }
+
+export const getSurfaceCoucheById = async (id: number): Promise<SurfaceCouche> => {
+    try {
+        const response = await apiClient.get<SurfaceCouches>(`/surface_couches/${id}`);
+        return SurfaceCouchemapper.mapSurfaceCouche(response.data);
+    } catch (error) {
+        console.error('Erreur lors de la récupération des surfaceCouches:', error);
+        throw error;
+    }
+}

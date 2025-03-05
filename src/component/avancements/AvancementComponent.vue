@@ -1,0 +1,57 @@
+<script lang="ts">
+import {Vue, Component} from 'vue-facing-decorator';
+import SelectJourComponent from "@/component/avancements/SelectJourComponent.vue";
+import {avancementStore} from "@/stores/AvancementStore";
+import {Of} from "@/models/types/of";
+import TableOf from "@/component/avancements/TableOf.vue";
+
+@Component({
+   components: {TableOf, SelectJourComponent}
+})
+export default class AvancementComponent extends Vue {
+   private store = avancementStore();
+
+   async mounted() {
+      await this.store.load();
+   }
+}
+</script>
+
+<template>
+   <v-card>
+      <v-card-title>
+         <SelectJourComponent/>
+      </v-card-title>
+      <v-card-text>
+         <v-list>
+            <v-list-item v-for="(affaire: Affaire) in store.avancementModel.listAffaire" :key="affaire.id">
+               <v-list-group >
+                  <template v-slot:activator="{ props }">
+                     <v-list-item
+                         v-bind="props"
+                         :title="affaire.nom + ' - ' + affaire.numero"
+                     ></v-list-item>
+                  </template>
+                  <v-list-item v-for="(demande: Demande) in store.avancementModel.listDemande.filter(demande => store.avancementModel.listCommande.some(commande =>commande.affaire.id === affaire.id && commande.id === demande.commande.id))"
+                               :key="demande.id">
+                     <v-list-group>
+                        <template v-slot:activator="{ props }">
+                           <v-list-item
+                               v-bind="props"
+                               :title="demande.numero + ' - ' + this.store.avancementModel.listSysteme.find(systeme => systeme.id === this.store.avancementModel.listCommande.find(commande => commande.id === demande.commande.id)?.systeme.id)?.nom"
+                           ></v-list-item>
+                        </template>
+
+                        <TableOf :items="store.avancementModel.listOF.filter(of => of.demande.id === demande.id)"/>
+                     </v-list-group>
+                  </v-list-item>
+               </v-list-group>
+            </v-list-item>
+         </v-list>
+      </v-card-text>
+   </v-card>
+</template>
+
+<style scoped>
+
+</style>

@@ -8,6 +8,7 @@ import {entreeStock} from "@/services/StockService";
 @Component({})
 
 //TODO: mettre les nouvelle champs
+//TODO: mettre la quantiter de stock
 export default class ListArticleComponent extends Vue {
    private list = ListStore();
    private modifStore = ModifArticleStore();

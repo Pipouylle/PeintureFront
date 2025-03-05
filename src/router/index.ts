@@ -25,128 +25,35 @@ import CreationFounisseurView from "@/views/forms/CreationFounisseurView.vue";
 import ModifArticleView from "@/views/modifs/ModifArticleView.vue";
 import ListUserView from "@/views/lists/ListUserView.vue";
 import CreationUserView from "@/views/forms/CreationUserView.vue";
+import AvancementComponent from "@/component/avancements/AvancementComponent.vue";
+import AvancementView from "@/views/AvancementView.vue";
 
 const routes: Array<RouteRecordRaw> = [
-    {
-        path: "/",
-        name: "home",
-        component: HomeView,
-    },
-    {
-        path: "/list/affaire",
-        name: "listAffaire",
-        component: ListAffaireView,
-    },
-    {
-        path: "/creer/affaire",
-        name: "CreerAffaire",
-        component: CreationAffaireView,
-    },
-    {
-        path: "/modif/affaire",
-        name: "modifAffaire",
-        component: ModifAffaireView,
-    },
-    {
-        path: "/list/systeme",
-        name: "listSysteme",
-        component: ListSystemeView,
-    },
-    {
-        path: "/creer/systeme",
-        name: "CreerSysteme",
-        component: CreationSystemeView,
-    },
-    {
-        path: "/modif/systeme",
-        name: "modifSysteme",
-        component: ModifSystemeView,
-    },
-    {
-        path: "/list/commande",
-        name: "listCommande",
-        component: ListCommandeView,
-    },
-    {
-        path: "/creer/commande",
-        name: "CreerCommande",
-        component: CreationCommandeView,
-    },
-    {
-        path: "/modif/commande",
-        name: "modifCommande",
-        component: ModifCommandeView,
-    },
-    {
-        path: "/list/demande",
-        name: "listDemande",
-        component: ListDemandeView,
-    },
-    {
-        path: "/creer/demande",
-        name: "CreerDemande",
-        component: CreationDemandeView,
-    },
-    {
-        path: "/modif/demande",
-        name: "modifDemande",
-        component: ModifDemandeView,
-    },
-    {
-        path: "/list/article",
-        name: "listArticle",
-        component: ListArticleView,
-    },
-    {
-        path: "/creer/article",
-        name: "CreerArticle",
-        component: CreationArticleView,
-    },
-    {
-        path: "/modif/article",
-        name: "modifArticle",
-        component: ModifArticleView,
-    },
-    {
-        path: "/list/user",
-        name: "listUser",
-        component: ListUserView,
-    },
-    {
-        path: "/creer/user",
-        name: "CreerUser",
-        component: CreationUserView,
-    },
-    {
-        path: "/list/fournisseur",
-        name: "listFournisseur",
-        component: ListFournisseurView,
-    },
-    {
-        path: "/creer/fournisseur",
-        name: "creerFournisseur",
-        component: CreationFounisseurView,
-    },
-    {
-        path: "/list/grenaillage",
-        name: "listGrenaillage",
-        component: ListGrenaillageView,
-    },
-    {
-        path: "/list/semaine",
-        name: "listSemaine",
-        component: ListSemaineView,
-    },
-    {
-        path: "/calendar2",
-        name: "calendar2",
-        component: CalendarViewNew,
-    },
-    {
-        path: "/usineView",
-        name: "usineView",
-        component: ViewUsineView,
-    }
+    {path: "/", name: "home", component: HomeView,},
+    {path: "/list/affaire", name: "listAffaire", component: ListAffaireView,},
+    {path: "/creer/affaire", name: "CreerAffaire", component: CreationAffaireView,},
+    {path: "/modif/affaire", name: "modifAffaire", component: ModifAffaireView,},
+    {path: "/list/systeme", name: "listSysteme", component: ListSystemeView,},
+    {path: "/creer/systeme", name: "CreerSysteme", component: CreationSystemeView,},
+    {path: "/modif/systeme", name: "modifSysteme", component: ModifSystemeView,},
+    {path: "/list/commande", name: "listCommande", component: ListCommandeView,},
+    {path: "/creer/commande", name: "CreerCommande", component: CreationCommandeView,},
+    {path: "/modif/commande", name: "modifCommande", component: ModifCommandeView,},
+    {path: "/list/demande", name: "listDemande", component: ListDemandeView,},
+    {path: "/creer/demande", name: "CreerDemande", component: CreationDemandeView,},
+    {path: "/modif/demande", name: "modifDemande", component: ModifDemandeView,},
+    {path: "/list/article", name: "listArticle", component: ListArticleView,},
+    {path: "/creer/article", name: "CreerArticle", component: CreationArticleView,},
+    {path: "/modif/article", name: "modifArticle", component: ModifArticleView,},
+    {path: "/list/user", name: "listUser", component: ListUserView,},
+    {path: "/creer/user", name: "CreerUser", component: CreationUserView,},
+    {path: "/list/fournisseur", name: "listFournisseur", component: ListFournisseurView,},
+    {path: "/creer/fournisseur", name: "creerFournisseur", component: CreationFounisseurView,},
+    {path: "/list/grenaillage", name: "listGrenaillage", component: ListGrenaillageView,},
+    {path: "/list/semaine", name: "listSemaine", component: ListSemaineView,},
+    {path: "/calendar2", name: "calendar2", component: CalendarViewNew,},
+    {path: "/usineView", name: "usineView", component: ViewUsineView,},
+    {path: "/avancement/saisie", name: "avancementSaisie", component: AvancementView}
 ];
 
 const router = createRouter({

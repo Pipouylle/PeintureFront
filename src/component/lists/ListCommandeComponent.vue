@@ -82,17 +82,17 @@ export default class ListCommandeComponent extends Vue {
          >
             <template v-slot:[`item.nomAffaire`]="{ item }">
                <span> {{
-                     this.ListStore.ListAffaire.affaires.find(affaire => affaire.id === item.affaire.id).nom
+                     this.ListStore.ListAffaire.affaires.find(affaire => affaire.id === item.affaire.id)?.nom
                   }} </span>
             </template>
             <template v-slot:[`item.numAffaire`]="{ item }">
                <span> {{
-                     this.ListStore.ListAffaire.affaires.find(affaire => affaire.id === item.affaire.id).numero
+                     this.ListStore.ListAffaire.affaires.find(affaire => affaire.id === item.affaire.id)?.numero
                   }} </span>
             </template>
             <template v-slot:[`item.nomSysteme`]="{ item }">
                <span> {{
-                     this.ListStore.ListSysteme.systemes.find(systeme => systeme.id === item.systeme.id).nom
+                     this.ListStore.ListSysteme.systemes.find(systeme => systeme.id === item.systeme.id)?.nom
                   }}</span>
             </template>
             <template v-slot:[`item.ficheH`]="{ item }">

@@ -21,6 +21,7 @@ export default class Menu extends Vue {
       //{path: "calendarUsineCabine2", name: "Planing Atelier Cabine 2"},
       {path: "calendar2", name: "Planning"},
       {path: "usineView", name: "Cabine"},
+      {path: "avancement/saisie", name: "Saisie Avancement"},
    ]
 }
 </script>

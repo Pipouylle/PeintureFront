@@ -3,7 +3,7 @@ import {createDefaultSemaine, Semaine} from "@/models/types/semaine";
 
 export interface ViewUsineModel {
     cabine: string;
-    semaine: Semaine
+    semaine: Semaine;
     jour: string;
     temp: string;
     date: string;
