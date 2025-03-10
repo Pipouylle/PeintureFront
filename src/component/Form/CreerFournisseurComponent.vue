@@ -1,19 +1,26 @@
 <script lang="ts">
 import {Vue, Component} from 'vue-facing-decorator';
 import {createDefaultFournisseur} from "@/models/types/fournisseur";
-import {useAlert, useListStore} from "@/stores";
 import {useRouter} from "vue-router";
+import {creationFournisseurStore} from "@/stores/FournisseurStore";
+import NotificationHandler from "@/services/NotificationHandler";
 
 @Component({})
 export default class CreerFournisseurComponent extends Vue {
+   private store = creationFournisseurStore();
    private fournisseur = createDefaultFournisseur();
    private router = useRouter();
 
+   mounted() {
+      this.store.load();
+   }
    async submitForm() {
-      if (await useListStore().ListFournisseur.add(this.fournisseur)) {
+      if (await this.store.create(this.store.fournisseur)) {
+         NotificationHandler.showNewNotification('Fournisseur créé avec succès.');
+         this.store.clear();
          this.router.push({name: 'listFournisseur'});
       } else {
-         useAlert().alert('Erreur lors de la création du fournisseur.');
+         NotificationHandler.showNewNotification('Erreur lors de la création du fournisseur.', true);
       }
    }
 }
@@ -29,7 +36,7 @@ export default class CreerFournisseurComponent extends Vue {
                   <v-form>
                      <v-text-field
                          label="Nom du fournisseur"
-                         v-model="this.fournisseur.nom"
+                         v-model="this.store.fournisseur.nom"
                          outlined
                          dense
                          required

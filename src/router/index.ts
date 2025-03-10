@@ -10,7 +10,7 @@ import ModifAffaireView from "@/views/modifs/ModifAffaireView.vue";
 import ListDemandeView from "@/views/lists/ListDemandeView.vue";
 import ListSystemeView from "@/views/lists/ListSystemeView.vue";
 import ListCommandeView from "@/views/lists/ListCommandeView.vue";
-import {useAlert, useListStore} from "@/stores";
+import {useAlert} from "@/stores";
 import ListGrenaillageView from "@/views/lists/ListGrenaillageView.vue";
 import ListArticleView from "@/views/lists/ListArticleView.vue";
 import ModifSystemeView from "@/views/modifs/ModifSystemeView.vue";
@@ -62,10 +62,9 @@ const router = createRouter({
 });
 
 router.beforeEach(async (to, from, next) => {
-    useAlert().alertPossible = true; // true = alert on, false = alert off
+    useAlert().alertPossible = false; // true = alert on, false = alert off
     useAlert().logPossible = true;
     useAlert().errorPossible = true;
-    await useListStore().loadList(); // Load lists only if not already loaded
     next();
 });
 export default router;

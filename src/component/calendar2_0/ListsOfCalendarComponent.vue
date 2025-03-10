@@ -1,24 +1,20 @@
 <script lang="ts">
 import {Vue, Component} from 'vue-facing-decorator';
 import ListJourOfCalendarComponent from "@/component/calendar2_0/ListJourOfCalendarComponent.vue";
-import {CalendarComponentStore} from "@/stores";
+import {planingStore} from "@/stores/PlainingStore";
 
 @Component({
    components: {ListJourOfCalendarComponent}
 })
 export default class ListsOfCalendarComponent extends Vue {
-   private CalendarComponentStore = CalendarComponentStore();
-
-   mounted() {
-      this.CalendarComponentStore.setOfBySemaine();
-   }
+   private store = planingStore();
 }
 </script>
 
 <template>
    <v-card class="overflow-auto listJour">
       <v-list
-          v-for="(jour , index) in CalendarComponentStore.calendarModel.jour" :key="index"
+          v-for="(jour , index) in store.planingModel.jour" :key="index"
       >
          <ListJourOfCalendarComponent :jour="jour"/>
       </v-list>

@@ -1,18 +1,25 @@
 <script lang="ts">
 import {Vue, Component} from 'vue-facing-decorator';
 import {useRouter} from "vue-router";
-import {ListStore, ModifCommandeStore} from "@/stores";
 import {Commande} from "@/models/types/commande";
 import {deleteCommande} from "@/services/CommandesService";
 import {createDefaultSysteme} from "@/models/types/systeme";
 import {createDefaultAffaire} from "@/models/types/affaire";
+import {creationCommandeStore, listCommandeStore, updateCommandeStore} from "@/stores/CommandeStore";
+import {listAffaireStore} from "@/stores/AffaireStore";
+import {listSystemeStore} from "@/stores/SystemeStore";
+import {listFournisseurStore} from "@/stores/FournisseurStore";
+import {listGrenaillageStore} from "@/stores/GrenaillageStore";
+import NotificationHandler from "@/services/NotificationHandler";
 
 @Component({})
 
 export default class ListCommandeComponent extends Vue {
+   private store = listCommandeStore();
+   private affaireStore = listAffaireStore();
+   private systemeStore = listSystemeStore();
+   private modifStore = updateCommandeStore();
    private router = useRouter();
-   private ListStore = ListStore();
-   private modifStore = ModifCommandeStore();
    private header = [
       {title: 'Eureka', value: 'eureka'},
       {title: 'Numéro affaire', value: 'numAffaire'},
@@ -26,25 +33,26 @@ export default class ListCommandeComponent extends Vue {
       {title: 'Actions', value: 'actions', sortable: false, align: 'end'}
    ]
 
-   mounted() {
-      for (const commande of this.ListStore.ListCommande.commandes) {
-         commande.affaire = this.ListStore.ListAffaire.affaires.find((affaire) => affaire.id === commande.affaire.id) ?? createDefaultAffaire();
-         commande.systeme = this.ListStore.ListSysteme.systemes.find((systeme) => systeme.id === commande.systeme.id) ?? createDefaultSysteme();
-      }
+   async mounted() {
+      await this.store.load();
+   }
+
+   async reload() {
+      this.store.unLoad();
+      await this.store.load();
    }
 
    editCommande(item: Commande) {
-      this.modifStore.commande = JSON.parse(JSON.stringify(item));
+      this.modifStore.commandeModif.commande = JSON.parse(JSON.stringify(item));
       this.router.push({name: 'modifCommande'});
    }
 
    async deleteCommande(item: Commande) {
-
-      try {
-         await deleteCommande(item)
-         this.ListStore.ListCommande.commandes = this.ListStore.ListCommande.commandes.filter(commande => commande.id !== item.id);
-      } catch (error) {
-         console.error(error);
+      if (await this.store.delete(item)) {
+         NotificationHandler.showNewNotification('Commande supprimée avec succès !');
+      } else {
+         NotificationHandler.showNewNotification('Erreur lors de la suppression de la commande.', true);
+         await this.reload();
       }
    }
 }
@@ -59,7 +67,7 @@ export default class ListCommandeComponent extends Vue {
              label="Rechercher"
              density="compact"
              prepend-inner-icon="mdi-magnify"
-             v-model="this.ListStore.ListCommande.filter"
+             v-model="this.store.listCommande.filter"
              variant="outlined"
              class="textFilter"
              :fixed-header="true"
@@ -74,25 +82,25 @@ export default class ListCommandeComponent extends Vue {
       <v-card-text>
          <v-data-table
              :headers="this.header"
-             :items="this.ListStore.ListCommande.commandes"
-             v-model:search="ListStore.ListCommande.filter"
+             :items="this.store.listCommande.commandes"
+             v-model:search="store.listCommande.filter"
              :filter-keys="['eureka', 'affaire.nom', 'systeme.nom', 'commentaire']"
              variant="outlined"
              class="tableList"
          >
             <template v-slot:[`item.nomAffaire`]="{ item }">
                <span> {{
-                     this.ListStore.ListAffaire.affaires.find(affaire => affaire.id === item.affaire.id)?.nom
+                     this.affaireStore.listAffaire.affaires.find(affaire => affaire.id === item.affaire.id)?.nom
                   }} </span>
             </template>
             <template v-slot:[`item.numAffaire`]="{ item }">
                <span> {{
-                     this.ListStore.ListAffaire.affaires.find(affaire => affaire.id === item.affaire.id)?.numero
+                     this.affaireStore.listAffaire.affaires.find(affaire => affaire.id === item.affaire.id)?.numero
                   }} </span>
             </template>
             <template v-slot:[`item.nomSysteme`]="{ item }">
                <span> {{
-                     this.ListStore.ListSysteme.systemes.find(systeme => systeme.id === item.systeme.id)?.nom
+                     this.systemeStore.listSysteme.systemes.find(systeme => systeme.id === item.systeme.id)?.nom
                   }}</span>
             </template>
             <template v-slot:[`item.ficheH`]="{ item }">
@@ -104,8 +112,8 @@ export default class ListCommandeComponent extends Vue {
                <v-icon v-else color="red">mdi-close</v-icon>
             </template>
             <template v-slot:[`item.actions`]="{ item }">
-               <v-btn color="primary" @click="editCommande(item)">Modifier</v-btn>
-               <v-btn color="error" @click="deleteCommande(item)">Supprimer</v-btn>
+               <v-icon size="x-large" color="primary" @click="editCommande(item)">mdi-pencil</v-icon>
+               <v-icon size="x-large" color="error" @click="deleteCommande(item)">mdi-delete</v-icon>
             </template>
 
          </v-data-table>

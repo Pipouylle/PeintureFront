@@ -2,9 +2,10 @@
 import {Vue, Component} from 'vue-facing-decorator';
 import Menu from "@/component/common/Menu.vue";
 import CreerArticleForm from "@/component/Form/CreerArticleForm.vue";
+import NotificationHandlerComponent from "@/component/common/NotificationHandlerComponent.vue";
 
 @Component({
-   components: {CreerArticleForm, Menu}
+   components: {NotificationHandlerComponent, CreerArticleForm, Menu}
 })
 export default class CreationArticleView extends Vue {
 
@@ -14,6 +15,7 @@ export default class CreationArticleView extends Vue {
 <template>
    <Menu/>
    <CreerArticleForm/>
+   <NotificationHandlerComponent/>
 </template>
 
 <style scoped>

@@ -1,9 +1,13 @@
 <script lang="ts">
 import {Vue, Component, Prop} from 'vue-facing-decorator';
-import {CalendarComponentStore} from "@/stores";
-import {createDefaultOfCalendar, OfCalendar} from "@/models/calendar2_0/OfCalendar";
-import {createDefaultDemandesCalendar} from "@/models/calendar2_0/DemandesCalendar";
 import OFCalendarDraggableComponent from "@/component/calendar2_0/OFCalendarDraggableComponent.vue";
+import {planingStore} from "@/stores/PlainingStore";
+import {listCommandeStore} from "@/stores/CommandeStore";
+import {listAffaireStore} from "@/stores/AffaireStore";
+import {listSystemeStore} from "@/stores/SystemeStore";
+import {createDefaultDemande, Demande} from "@/models/types/demande";
+import {createDefaultOf, Of} from "@/models/types/of";
+import NotificationHandler from "@/services/NotificationHandler";
 
 @Component({
    components: {OFCalendarDraggableComponent}
@@ -12,40 +16,42 @@ export default class ListDemiJourOfCalendarComponent extends Vue {
    @Prop({required: true}) private temp!: string;
    @Prop({required: true}) private jour!: string;
 
-   private CalendarStore = CalendarComponentStore();
+   private store = planingStore();
+   private commandeStore = listCommandeStore();
+   private affaireStore = listAffaireStore();
+   private systemeStore = listSystemeStore();
 
-   get getOfForDay(): OfCalendar[] {
-      return this.CalendarStore.getOfByDemiJour(this.jour, this.temp);
+   get getOfForDay(): Of[] {
+      return this.store.getOfByDemiJour(this.jour, this.temp);
    }
 
    private onClone(of: any){
-      this.CalendarStore.calendarModel.ofClone = of;
+      this.store.planingModel.ofClone = of;
       return { ...of };
    }
 
    private onDrop(event: any) {
-      const demande = this.CalendarStore.calendarModel.demandeClone;
-      const ofClone = this.CalendarStore.calendarModel.ofClone;
-      //item.data
-      const existTes: OfCalendar[] = this.getOfForDay;
-      const existForDemande = existTes.find((of: OfCalendar) => of.idDemandeOf.idDemande === demande.idDemande && of.jourOf === this.jour);
-      const existForOF = existTes.find((of: OfCalendar) => of.idDemandeOf.idDemande === ofClone.idDemandeOf.idDemande && of.jourOf === this.jour && of.tempOf === this.temp);
-      console.log('exist', existForOF);
-      if (!existForDemande && demande.idDemande !== 0) {
-         this.CalendarStore.creerOfCalendar(demande.idDemande, this.jour, this.temp);
-         this.CalendarStore.updateOrderOfCalendar(this.jour, this.getOfForDay);
+      const demande = this.store.planingModel.demandeClone;
+      const ofClone = this.store.planingModel.ofClone;
+      const existList: Of[] = this.getOfForDay;
+      const existForDemande = existList.find((of: Of) => of.demande.id === demande.id && of.jour === this.jour);
+      const existForOF = existList.find((of: Of) => of.demande.id === ofClone.demande.id && of.jour === this.jour && of.temp === this.temp);
+      if (!existForDemande && demande.id !== 0) {
+         this.store.creerOfCalendar(demande.id, this.jour, this.temp);
+         NotificationHandler.showNewNotification('Of créer avec succes');
+         this.store.updateOrderOfCalendar(this.jour, this.getOfForDay);
       } else if (!existForOF && ofClone.id !== 0) {
-         if (ofClone.jourOf !== this.jour || ofClone.tempOf !== this.temp) {
-            console.log('je l\'update');
-            this.CalendarStore.updateOfCalendar(ofClone.id ?? createDefaultOfCalendar().id, this.jour, this.temp);
+         if (ofClone.jour !== this.jour || ofClone.temp !== this.temp) {
+            this.store.updateOfCalendar(ofClone.id ?? createDefaultOf().id, this.jour, this.temp);
          }
       }
-      this.CalendarStore.calendarModel.demandeClone = createDefaultDemandesCalendar();
-      this.CalendarStore.calendarModel.ofClone = createDefaultOfCalendar();
+      this.store.planingModel.demandeClone = createDefaultDemande();
+      this.store.planingModel.ofClone = createDefaultOf();
    }
 
    private async onMove(newList: any) {
-      await this.CalendarStore.updateOrderOfCalendar(this.jour, newList);
+      await this.store.updateOrderOfCalendar(this.jour, newList);
+      NotificationHandler.showNewNotification('Ordre mise a jour');
    }
 }
 </script>
@@ -65,7 +71,7 @@ export default class ListDemiJourOfCalendarComponent extends Vue {
                >
                   <template #item="{ element }">
                      <OFCalendarDraggableComponent :item="element"
-                                                   :header="CalendarStore.calendarModel.headerListJour"/>
+                                                   :header="store.planingModel.headerListOf"/>
                   </template>
                </draggable>
             </v-list-item>

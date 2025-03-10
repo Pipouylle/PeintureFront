@@ -2,7 +2,6 @@
 import {Vue, Component, Prop} from 'vue-facing-decorator';
 import {ref, nextTick} from 'vue'
 import {Of} from "@/models/types/of";
-import {ViewUsineStore} from "@/stores";
 import {AvancementSurfaceCouche} from "@/models/types/avancementSurfaceCouche";
 import {Demande} from "@/models/types/demande";
 import {Article} from "@/models/types/article";
@@ -10,32 +9,39 @@ import {getStockForSortie, getStockNotSortie} from "@/services/StockService"
 import {Stock} from "@/models/types/stock"
 import {User, createDefaultUser} from "@/models/types/user"
 import {listUserStore} from "@/stores/UserStore";
+import type { VTextField } from 'vuetify/components';
+import NotificationHandler from "@/services/NotificationHandler";
+import {OperateurViewStore} from "@/stores/UsineStore";
+import {listDemandeStore} from "@/stores/DemandeStore";
 
 @Component({})
 
 //TODO: faut mettre la surface
 export default class DialogOfComponent extends Vue {
    @Prop({required: true}) private item!: Of;
-   private UsineStore = ViewUsineStore();
+   private store = OperateurViewStore();
+   private demandeStore = listDemandeStore();
+   private userStore = listUserStore();
    private selectedCouche: number = -1;
    private listStock: Stock[] = [];
    private scanne: string = "";
    private stockSelect: Stock[] = [];
    private listUsersStore = listUserStore();
    private sortieSelect: boolean = false;
+   private textFieldRef!: VTextField;
 
    async selectCouche(couche: AvancementSurfaceCouche) {
       this.selectedCouche = this.item.avancements.indexOf(couche);
       this.listStock = await getStockNotSortie();
-      //TODO: le faire marcher le focus et l'antiFocus
-      //nextTick(() => {this.inputRef.value?.focus();});
    }
 
    async sortieStock(user: User) {
-      if (await this.UsineStore.sortirStock(this.stockSelect, user, this.item)){
+      if (await this.store.sortirStock(this.stockSelect, user, this.item)){
          this.stockSelect = [];
+         this.selectedCouche = -1;
+         NotificationHandler.showNewNotification("la sortie de stock a bine été effectuer");
       } else {
-         console.error('ben non en fait')
+         NotificationHandler.showNewNotification("la sortie de stock n'a pas été effectuer", true);
       }
    }
 
@@ -44,13 +50,15 @@ export default class DialogOfComponent extends Vue {
       if (index != -1) {
          if (!this.stockSelect.find((stock: Stock) => stock.id === parseInt(this.scanne))){
             this.stockSelect.push(this.listStock[index]);
-            this.scanne = "";
-            this.listStock.splice(index, 1);
          } else {
-            console.log("en double")
+            NotificationHandler.showNewNotification("le stock a déjà été selectionner", true);
          }
-      } else {
-         console.log('pas bon')
+         this.scanne = "";
+         await nextTick();
+         (this.$refs.textFieldRef as VTextField)?.blur();
+         setTimeout(() => {
+            (this.$refs.textFieldRef as VTextField)?.focus();
+         }, 10);
       }
    }
 }
@@ -59,7 +67,7 @@ export default class DialogOfComponent extends Vue {
 <template>
    <v-card class="container">
       <v-card-title> Demande :
-         {{ this.UsineStore.listDemande.demandes.find((demande: Demande) => demande.id === item.demande.id)?.numero }}
+         {{ demandeStore.listDemande.demandes.find((demande: Demande) => demande.id === item.demande.id)?.numero }}
       </v-card-title>
       <v-btn-group
           v-if="selectedCouche === -1"
@@ -109,6 +117,8 @@ export default class DialogOfComponent extends Vue {
             <v-row>
                <v-col>
                   <v-text-field
+                      ref="textFieldRef"
+                      autofocus
                       label="scanne"
                       v-model="scanne"
                       density="comfortable"
@@ -136,7 +146,7 @@ export default class DialogOfComponent extends Vue {
          <v-btn prepend-icon="mdi-arrow-left-thick" @click="selectedCouche = -1" size="x-large"> Retour a la selection des couches</v-btn>
       </v-card>
       <v-card v-else>
-         <v-btn-group v-for="(user: User, index) in UsineStore.listUser.users" :key="index">
+         <v-btn-group v-for="(user: User, index) in userStore.listUser.users" :key="index">
             <v-btn size="x-large" @click="sortieStock(user)"> {{ user.name }} </v-btn>
          </v-btn-group>
       </v-card>

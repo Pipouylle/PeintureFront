@@ -22,6 +22,10 @@ export const listUserStore = defineStore("listUserStore", {
                 this.isLoad = true;
             }
         },
+        unLoad() {
+            this.isLoad = false;
+            //TODO : false Saisie
+        },
         async getAll(): Promise<boolean> {
             try {
                 this.listUser.users = await getAllUser()

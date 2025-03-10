@@ -1,5 +1,5 @@
 export interface Articles {
-    "id": number,
+    "id": string,
     "designationArticle": string,
     "RALArticle": string,
     "fournisseurArticle": string, // Fournisseur.id

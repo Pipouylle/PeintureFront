@@ -18,7 +18,7 @@ export default class AvancementComponent extends Vue {
 
   async handleUpdateOf() {
     if (await this.store.updateOf()) {
-      NotificationHandler.showNewNotification('l\'avancement a été effectué');
+      NotificationHandler.showNewNotification('l\'avancement a été mit a jour');
       this.store.isLoad = false;
       await this.store.load();
     } else {
@@ -36,7 +36,7 @@ export default class AvancementComponent extends Vue {
     <v-card-text>
       <v-list>
         <v-list-item v-for="(affaire: Affaire) in store.avancementModel.listAffaire" :key="affaire.id">
-          <v-list-group>
+          <v-list-group variant="outlined">
             <template v-slot:activator="{ props }">
               <v-list-item
                   v-bind="props"
@@ -46,7 +46,7 @@ export default class AvancementComponent extends Vue {
             <v-list-item
                 v-for="(demande: Demande) in store.avancementModel.listDemande.filter(demande => store.avancementModel.listCommande.some(commande =>commande.affaire.id === affaire.id && commande.id === demande.commande.id))"
                 :key="demande.id">
-              <v-list-group>
+              <v-list-group variant="outlined">
                 <template v-slot:activator="{ props }">
                   <v-list-item
                       v-bind="props"

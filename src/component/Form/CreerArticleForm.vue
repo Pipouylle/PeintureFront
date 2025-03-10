@@ -1,22 +1,27 @@
 <script lang="ts">
 import {Vue, Component} from 'vue-facing-decorator';
 import {createDefaultArticle} from "@/models/types/article";
-import {useAlert, useListStore} from "@/stores";
+import {useAlert} from "@/stores";
 import {useRouter} from "vue-router";
 import {Selected} from "@/models/common/Selected";
 import {createDefaultFournisseur} from "@/models/types/fournisseur";
+import {creationArticleStore} from "@/stores/ArticleStore";
+import {listFournisseurStore} from "@/stores/FournisseurStore";
+import NotificationHandler from "@/services/NotificationHandler";
 
 @Component({})
 
-//TODO :mettre les nouveaux champs
-//TODO: mettre en store flemme ca pas le temp
 export default class CreerArticleForm extends Vue {
-   private article = createDefaultArticle();
-   private selectFournisseur = null as Selected | null;
+   private store = creationArticleStore();
+   private fournisseurStore = listFournisseurStore();
    private router = useRouter();
 
+   async mounted() {
+      await this.store.load();
+   }
+
    get formatedFournisseur() {
-      return useListStore().ListFournisseur.fournisseurs.map((fournisseur) => {
+      return this.fournisseurStore.listFournisseur.fournisseurs.map((fournisseur) => {
          return {
             title: fournisseur.nom,
             value: fournisseur.id
@@ -25,13 +30,13 @@ export default class CreerArticleForm extends Vue {
    }
 
    async submitForm(){
-      this.article.fournisseur = this.selectFournisseur ? useListStore().ListFournisseur.fournisseurs.find((fournisseur) => fournisseur.id === this.selectFournisseur?.value) ?? createDefaultFournisseur() : createDefaultFournisseur();
-      if (await useListStore().ListArticle.add(this.article)){
+      this.store.articleForm.article.fournisseur = this.store.articleForm.selectFournisseur ? this.fournisseurStore.listFournisseur.fournisseurs.find((fournisseur) => fournisseur.id === this.store.articleForm.selectFournisseur?.value) ?? createDefaultFournisseur() : createDefaultFournisseur();
+      if (await this.store.create()){
+         NotificationHandler.showNewNotification('Article créé avec succès.');
          this.router.push({name: 'listArticle'});
       } else {
-         useAlert().alert('Erreur lors de la création de l\'article.');
+         NotificationHandler.showNewNotification('Erreur lors de la création de l\'article.', true);
       }
-
    }
 }
 </script>
@@ -46,21 +51,21 @@ export default class CreerArticleForm extends Vue {
                   <v-form>
                      <v-text-field
                          label="Numéro de l'article"
-                         v-model="this.article.id"
+                         v-model="this.store.articleForm.article.id"
                          outlined
                          dense
                          required
                      ></v-text-field>
                      <v-text-field
                          label="descriptif de l'article"
-                         v-model="this.article.descriptif"
+                         v-model="this.store.articleForm.article.descriptif"
                          outlined
                          dense
                          required
                      ></v-text-field>
                      <v-text-field
                          label="ral de l'article"
-                         v-model="this.article.ral"
+                         v-model="this.store.articleForm.article.ral"
                          outlined
                          dense
                          required
@@ -71,7 +76,7 @@ export default class CreerArticleForm extends Vue {
                          item-title="title"
                          item-value="value"
                          variant="outlined"
-                         v-model="this.selectFournisseur"
+                         v-model="this.store.articleForm.selectFournisseur"
                      ></v-combobox>
                      <v-btn
                          color="primary"

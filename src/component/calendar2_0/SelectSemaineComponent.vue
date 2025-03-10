@@ -1,28 +1,29 @@
 <script lang="ts">
 import {Vue, Component} from 'vue-facing-decorator';
-import {CalendarComponentStore} from "@/stores";
 import {Semaine} from "@/models/types/semaine";
 import {getSemaineByInfo} from "@/services/SemainesService";
+import {planingStore} from "@/stores/PlainingStore";
+import {listSemaineStore} from "@/stores/SemaineStore";
 
 @Component({})
 export default class SelectSemaineComponent extends Vue {
-   private CalendarComponentStore = CalendarComponentStore();
-
+   private store = planingStore();
+   private semaineStore = listSemaineStore();
    get availableYears() {
-      return [...new Set(this.CalendarComponentStore.listSemaine.semaines.map((semaine: Semaine) => semaine.annee))];
+      return [...new Set(this.semaineStore.listSemaine.semaines.map((semaine: Semaine) => semaine.annee))];
    }
 
    get availableWeeks() {
-      return this.CalendarComponentStore.listSemaine.semaines
+      return this.semaineStore.listSemaine.semaines
           .filter((semaine: Semaine) =>
-              semaine.annee === this.CalendarComponentStore.semaine.annee)
+              semaine.annee === this.store.planingModel.semaine.annee)
           .map((semaine: Semaine) => semaine.semaine);
    }
 
    async setCabine() {
-      if (this.CalendarComponentStore.calendarModel.cabine != '') {
-         this.CalendarComponentStore.semaine = await getSemaineByInfo(this.CalendarComponentStore.semaine);
-         await this.CalendarComponentStore.setOfBySemaine();
+      if (this.store.planingModel.cabine != '') {
+         this.store.planingModel.semaine = await getSemaineByInfo(this.store.planingModel.semaine);
+         await this.store.setSemaine();
       }
    }
 }
@@ -39,31 +40,31 @@ export default class SelectSemaineComponent extends Vue {
                 density="compact"
                 outlined
                 dense
-                v-model="this.CalendarComponentStore.semaine.annee"
-                @update:model-value="this.CalendarComponentStore.semaine.mois = 0; this.CalendarComponentStore.semaine.semaine = 0; this.CalendarComponentStore.calendarModel.cabine = ''"
+                v-model="this.store.planingModel.semaine.annee"
+                @update:model-value="this.store.planingModel.semaine.mois = 0; this.store.planingModel.semaine.semaine = 0; this.store.planingModel.cabine = ''"
             ></v-select>
          </v-col>
          <v-col cols="1">
             <v-select
-                :disabled="!this.CalendarComponentStore.semaine.annee"
+                :disabled="!this.store.planingModel.semaine.annee"
                 :items="availableWeeks"
                 label="Semaine"
                 density="compact"
                 outlined
                 dense
-                v-model="this.CalendarComponentStore.semaine.semaine"
-                @update:model-value="this.CalendarComponentStore.calendarModel.cabine = ''"
+                v-model="this.store.planingModel.semaine.semaine"
+                @update:model-value="this.store.planingModel.cabine = ''"
             ></v-select>
          </v-col>
          <v-col cols="2">
             <v-select
-                :disabled="!this.CalendarComponentStore.semaine.semaine"
-                :items="this.CalendarComponentStore.calendarModel.cabines"
+                :disabled="!this.store.planingModel.semaine.semaine"
+                :items="this.store.planingModel.cabines"
                 label="cabine"
                 density="compact"
                 outlined
                 dense
-                v-model="this.CalendarComponentStore.calendarModel.cabine"
+                v-model="this.store.planingModel.cabine"
                 @update:model-value="setCabine"
             ></v-select>
          </v-col>

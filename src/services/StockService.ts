@@ -105,3 +105,12 @@ export const getStockNotSortie = async (): Promise<Stock[]> => {
         throw error;
     }
 }
+
+export const getStockNotSortieByArticle = async (article: Article): Promise<Stock[]> => {
+    try {
+        const response = await apiClient.get<ApiResponseCollection>(`/stocks?exists[dateSortie_stock]=false&article_stock=${article.id}`);
+        return Stockmapper.mapArrayStock(response.data.member);
+    } catch (e) {
+        throw e;
+    }
+}

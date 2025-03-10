@@ -1,12 +1,15 @@
 <script lang="ts">
 import {Component, Prop, Vue, Watch} from 'vue-facing-decorator';
 import CreerCoucheForm from "@/component/Form/CreerCoucheForm.vue";
-import {ModifSystemeStore, SystemeFormStore, useAlert} from "@/stores";
 import {createDefaultGrenaillage, Grenaillage} from "@/models/types/Grenaillage";
 import {getAllGrenaillage} from "@/services/GrenaillagesService";
 import {createDefaultSysteme} from "@/models/types/systeme";
 import {useRouter} from "vue-router";
 import {createDefaultFournisseur} from "@/models/types/fournisseur";
+import {updateSystemeStore} from "@/stores/SystemeStore";
+import {listFournisseurStore} from "@/stores/FournisseurStore";
+import {listGrenaillageStore} from "@/stores/GrenaillageStore";
+import NotificationHandler from "@/services/NotificationHandler";
 
 @Component({
    components: {CreerCoucheForm}
@@ -15,25 +18,30 @@ import {createDefaultFournisseur} from "@/models/types/fournisseur";
 //TODO: il y a pas le clasement, faut voire api
 //TODO : le granillage ne marche pas
 export default class ModifSystemesComponent extends Vue {
-   private ModifSysteme = ModifSystemeStore();
+   private store = updateSystemeStore();
+   private fournisseurStore = listFournisseurStore();
+   private grenaillageStore = listGrenaillageStore();
+
    private router = useRouter();
 
 
    mounted() {
-      this.ModifSysteme.selectGrenaillage = this.ModifSysteme.systeme.grenaillage ? {
-         title: "" + this.ModifSysteme.systeme.grenaillage.nom + " - " + this.ModifSysteme.systeme.grenaillage.typeChantier,
-         value: this.ModifSysteme.systeme.grenaillage.id
+      if (this.store.systemeModif.systeme.id === 0) {
+         this.router.push({name: 'listSysteme'});
+      }
+      this.store.load();
+      this.store.systemeModif.selectGrenaillage = this.store.systemeModif.systeme.grenaillage ? {
+         title: "" + this.store.systemeModif.systeme.grenaillage.nom + " - " + this.store.systemeModif.systeme.grenaillage.typeChantier,
+         value: this.store.systemeModif.systeme.grenaillage.id
       } : null;
-      this.ModifSysteme.selectFournisseur = this.ModifSysteme.listFournisseur.fournisseurs.find(fournisseur => fournisseur.id === this.ModifSysteme.systeme.fournisseur.id) ? {
-         title: this.ModifSysteme.listFournisseur.fournisseurs.find(fournisseur => fournisseur.id === this.ModifSysteme.systeme.fournisseur.id)?.nom ?? "",
-         value: this.ModifSysteme.listFournisseur.fournisseurs.find(fournisseur => fournisseur.id === this.ModifSysteme.systeme.fournisseur.id)?.id ?? 0,
+      this.store.systemeModif.selectFournisseur = this.fournisseurStore.listFournisseur.fournisseurs.find(fournisseur => fournisseur.id === this.store.systemeModif.systeme.fournisseur.id) ? {
+         title: this.fournisseurStore.listFournisseur.fournisseurs.find(fournisseur => fournisseur.id === this.store.systemeModif.systeme.fournisseur.id)?.nom ?? "",
+         value: this.fournisseurStore.listFournisseur.fournisseurs.find(fournisseur => fournisseur.id === this.store.systemeModif.systeme.fournisseur.id)?.id ?? 0,
       } : null
-      console.log(this.ModifSysteme.selectFournisseur);
-      console.log(this.ModifSysteme.systeme);
    }
 
    get formatedGrenaillages() {
-      return this.ModifSysteme.listgrenaillages.grenaillages.map((grenaillage: Grenaillage) => {
+      return this.grenaillageStore.listGrenaillage.map((grenaillage: Grenaillage) => {
          return {
             title: "" + grenaillage.nom + " - " + grenaillage.typeChantier,
             value: grenaillage.id
@@ -42,7 +50,7 @@ export default class ModifSystemesComponent extends Vue {
    }
 
    get formatedFournisseur() {
-      return this.ModifSysteme.listFournisseur.fournisseurs.map((fournisseur) => {
+      return this.fournisseurStore.listFournisseur.fournisseurs.map((fournisseur) => {
          return {
             title: fournisseur.nom,
             value: fournisseur.id
@@ -53,15 +61,14 @@ export default class ModifSystemesComponent extends Vue {
 
    public async submitForm() {
       try {
-         this.ModifSysteme.systeme.fournisseur = this.ModifSysteme.selectFournisseur ? this.ModifSysteme.listFournisseur.fournisseurs.find((fournisseur) => fournisseur.id === this.ModifSysteme.selectFournisseur?.value) ?? createDefaultFournisseur() : createDefaultFournisseur();
-         this.ModifSysteme.systeme.grenaillage = this.ModifSysteme.selectGrenaillage ? this.ModifSysteme.listgrenaillages.grenaillages.find((grenaillage: Grenaillage) => grenaillage.id === this.ModifSysteme.selectGrenaillage?.value) ?? null : null;
-         if (await this.ModifSysteme.listSystemes.modif(this.ModifSysteme.systeme)) {
-            useAlert().alert('Systeme créée avec succès !');
+         this.store.systemeModif.systeme.fournisseur = this.store.systemeModif.selectFournisseur ? this.fournisseurStore.listFournisseur.fournisseurs.find((fournisseur) => fournisseur.id === this.store.systemeModif.selectFournisseur?.value) ?? createDefaultFournisseur() : createDefaultFournisseur();
+         this.store.systemeModif.systeme.grenaillage = this.store.systemeModif.selectGrenaillage ? this.grenaillageStore.listGrenaillage.find((grenaillage: Grenaillage) => grenaillage.id === this.store.systemeModif.selectGrenaillage?.value) ?? null : null;
+         if (await this.store.update(this.store.systemeModif.systeme)) {
+            NotificationHandler.showNewNotification('Systeme créée avec succès !');
+            this.router.push({name: 'listSysteme'});
          } else {
-            useAlert().alert('Erreur lors de la création du systeme.');
+            NotificationHandler.showNewNotification('Erreur lors de la création du systeme.', true);
          }
-         this.ModifSysteme.systeme = createDefaultSysteme();
-         this.router.push({name: 'listSysteme'});
       } catch (error) {
          console.error(error);
       }
@@ -80,7 +87,7 @@ export default class ModifSystemesComponent extends Vue {
                   <v-form>
                      <v-text-field
                          label="Nom du systeme"
-                         v-model="this.ModifSysteme.systeme.nom"
+                         v-model="this.store.systemeModif.systeme.nom"
                          outlined
                          dense
                          prepend-icon="mdi-briefcase-outline"
@@ -91,7 +98,7 @@ export default class ModifSystemesComponent extends Vue {
                         item-title="title"
                         item-value="value"
                         variant="outlined"
-                        v-model="this.ModifSysteme.selectFournisseur"
+                        v-model="this.store.systemeModif.selectFournisseur"
                      ></v-combobox>
                      <v-combobox
                          label="grenaillage"
@@ -99,29 +106,29 @@ export default class ModifSystemesComponent extends Vue {
                          item-title="title"
                          item-value="value"
                          variant="outlined"
-                         v-model="this.ModifSysteme.selectGrenaillage"
+                         v-model="this.store.systemeModif.selectGrenaillage"
                          clearable
                      ></v-combobox>
                      <v-text-field
                          label="tarif regieSFP"
-                         v-model="this.ModifSysteme.systeme.refieSFP"
+                         v-model="this.store.systemeModif.systeme.refieSFP"
                          outlined
                          dense
                          type="number"
                      ></v-text-field>
                      <v-text-field
                          label="tarif regieFP"
-                         v-model="this.ModifSysteme.systeme.refieFP"
+                         v-model="this.store.systemeModif.systeme.refieFP"
                          outlined
                          dense
                          type="number"
                      ></v-text-field>
                      <v-radio-group
-                         v-model="this.ModifSysteme.systeme.type"
+                         v-model="this.store.systemeModif.systeme.type"
                          row
                          dense
                      >
-                        <v-radio v-if="ModifSysteme.systeme.couches.length <= 1"
+                        <v-radio v-if="store.systemeModif.systeme.couches.length <= 1"
                                  label="Glycero"
                                  value="glycero"
                         ></v-radio>
@@ -130,7 +137,7 @@ export default class ModifSystemesComponent extends Vue {
                             value="complexe"
                         ></v-radio>
                      </v-radio-group>
-                     <div v-for="couche in this.ModifSysteme.systeme.couches" :key="couche.id">
+                     <div v-for="couche in this.store.systemeModif.systeme.couches" :key="couche.id">
                         <CreerCoucheForm :couche="couche"/>
                      </div>
                      <v-btn

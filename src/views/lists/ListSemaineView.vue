@@ -2,9 +2,10 @@
 import {Vue, Component} from 'vue-facing-decorator';
 import Menu from "@/component/common/Menu.vue";
 import ListSemaineComponent from "@/component/lists/ListSemaineComponent.vue";
+import NotificationHandlerComponent from "@/component/common/NotificationHandlerComponent.vue";
 
 @Component({
-   components: {ListSemaineComponent, Menu}
+   components: {NotificationHandlerComponent, ListSemaineComponent, Menu}
 })
 export default class ListSemaineView extends Vue {
 
@@ -14,6 +15,7 @@ export default class ListSemaineView extends Vue {
 <template>
    <Menu/>
    <ListSemaineComponent/>
+   <NotificationHandlerComponent/>
 </template>
 
 <style scoped>

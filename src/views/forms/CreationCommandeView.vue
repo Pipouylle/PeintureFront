@@ -2,9 +2,10 @@
 import {Vue, Component} from 'vue-facing-decorator';
 import CreerCommandeForm from "@/component/Form/CreerCommandeForm.vue";
 import Menu from "@/component/common/Menu.vue";
+import NotificationHandlerComponent from "@/component/common/NotificationHandlerComponent.vue";
 
 @Component({
-  components: {Menu, CreerCommandeForm}
+  components: {NotificationHandlerComponent, Menu, CreerCommandeForm}
 })
 export default class CreationCommandeView extends Vue {
 
@@ -14,6 +15,7 @@ export default class CreationCommandeView extends Vue {
 <template>
  <Menu/>
   <CreerCommandeForm />
+   <NotificationHandlerComponent/>
 </template>
 
 <style scoped>

@@ -16,7 +16,7 @@ export default class CreerCoucheForm extends Vue {
     <v-row align="center" justify="center" class="form-container">
       <v-col cols="20" md="10" lg="14">
         <v-card elevation="3">
-          <v-card-title class="form-title">Couche n°{{this.couche.id}}</v-card-title>
+          <v-card-title class="form-title">Couche {{this.couche.nom}}</v-card-title>
           <v-card-text>
             <v-row>
               <v-col>

@@ -6,6 +6,7 @@ import {Demandes} from "@/models/objectsApi/Demandes";
 import {Couche} from "@/models/types/couche";
 import Couchemapper from "@/mappers/Couchemapper";
 import {DemandesCalendar} from "@/models/calendar2_0/DemandesCalendar";
+import {Of} from "@/models/types/of";
 
 export const getAllDemandes = async (): Promise<Demande[]> => {
     try {
@@ -82,10 +83,32 @@ export const updateDemande = async (demande: Demande): Promise<Demande> => {
 export const updateEtatDemande = async (demande: Demande): Promise<Demande> => {
     try {
         const demandes = Demandesmapper.mapDemandes(demande);
-        const response = await apiClient.patch<Demandes>(`/demandesEtat/${demande.id}`, demandes)
+        const response = await apiClientPatch.patch<Demandes>(`/demandeEtat/${demande.id}`, demandes)
         return Demandesmapper.mapDemande(response.data);
     } catch (error) {
         console.log('Erreur lors de la modification de la demande:', error)
+        throw error;
+    }
+}
+
+export const getPreviousAvancement = async (of: Of): Promise<any> => {
+    try {
+        const response =await apiClient.get<{
+            demandeId: number,
+            avancement: number
+        }>(`/previousAvancement/${of.demande.id}/${of.id}`);
+        return response.data;
+    } catch (e) {
+        throw e;
+    }
+}
+
+export const getDemandeNotFinish = async (): Promise<Demande[]> => {
+    try {
+        const response = await apiClient.get<ApiResponseCollection>('/demandesNotFinish')
+        return Demandesmapper.mapArrayDemande(response.data.member);
+    } catch (error) {
+        console.log('Erreur lors de la récupération des demandes:', error)
         throw error;
     }
 }

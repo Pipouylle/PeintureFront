@@ -2,9 +2,10 @@
 import {Vue, Component} from 'vue-facing-decorator';
 import Menu from "@/component/common/Menu.vue";
 import CreerFournisseurComponent from "@/component/Form/CreerFournisseurComponent.vue";
+import NotificationHandlerComponent from "@/component/common/NotificationHandlerComponent.vue";
 
 @Component({
-   components: {CreerFournisseurComponent, Menu}
+   components: {NotificationHandlerComponent, CreerFournisseurComponent, Menu}
 })
 export default class CreationFounisseurView extends Vue {
 
@@ -14,6 +15,7 @@ export default class CreationFounisseurView extends Vue {
 <template>
    <Menu/>
    <CreerFournisseurComponent/>
+   <NotificationHandlerComponent/>
 </template>
 
 <style scoped>

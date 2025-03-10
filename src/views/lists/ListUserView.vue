@@ -2,9 +2,10 @@
 import {Vue, Component} from 'vue-facing-decorator';
 import Menu from "@/component/common/Menu.vue";
 import ListUserComponent from "@/component/lists/ListUserComponent.vue"
+import NotificationHandlerComponent from "@/component/common/NotificationHandlerComponent.vue";
 
 @Component({
-   components: {Menu, ListUserComponent}
+   components: {NotificationHandlerComponent, Menu, ListUserComponent}
 })
 export default class ListUserView extends Vue {
 
@@ -14,6 +15,7 @@ export default class ListUserView extends Vue {
 <template>
    <Menu/>
    <ListUserComponent/>
+   <NotificationHandlerComponent/>
 </template>
 
 <style scoped>

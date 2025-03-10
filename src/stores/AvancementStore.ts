@@ -1,7 +1,6 @@
 import {defineStore} from 'pinia'
 import {listAffaireStore} from "@/stores/AffaireStore"
 import {listCommandeStore} from "@/stores/CommandeStore"
-import {ListStore} from "@/stores/index"
 import {AvancementModel, createDefaultAvancementModel} from "@/models/avancements/AvancementModel"
 import {getOfBySemaineAndJour, updateAvancementOf} from "@/services/OfsService";
 import {createDefaultSemaine} from "@/models/types/semaine";
@@ -11,6 +10,9 @@ import {createDefaultSurfaceCouche} from "@/models/types/surfaceCouche";
 import {getSurfaceCoucheById} from "@/services/SurfaceCouchesService";
 import {listSystemeStore} from "@/stores/SystemeStore";
 import {listDemandeStore} from "@/stores/DemandeStore";
+import {getPreviousAvancement} from "@/services/DemandesService";
+import NotificationHandler from "@/services/NotificationHandler";
+import {listSemaineStore} from "@/stores/SemaineStore";
 
 export const avancementStore = defineStore('avancementStore',{
     state: () => ({
@@ -19,15 +21,15 @@ export const avancementStore = defineStore('avancementStore',{
     }),
     actions: {
         async load(){
-            await listAffaireStore().load();
-            await listCommandeStore().load();
-            await listSystemeStore().load();
+            await listSemaineStore().load();
             await listDemandeStore().load();
             if(!this.isLoad || this.avancementModel.date != new Date().toISOString()){
                 await this.setJour(new Date().toISOString());
                 this.isLoad = true;
             }
-
+        },
+        unLoad(){
+            this.isLoad = false;
         },
         async getOf(): Promise<Boolean>{
             try{
@@ -42,7 +44,7 @@ export const avancementStore = defineStore('avancementStore',{
         },
         async setJour(date: string){
             this.avancementModel.date = date;
-            this.avancementModel.semaine = ListStore().getSemaines(date) ?? createDefaultSemaine();
+            this.avancementModel.semaine = listSemaineStore().getSemaine(date) ?? createDefaultSemaine();
             this.avancementModel.jour = this.avancementModel.jours[new Date(date).getDay()];
 
             if (!await this.getOf()) {
@@ -53,6 +55,10 @@ export const avancementStore = defineStore('avancementStore',{
             this.avancementModel.listCommande = [];
             this.avancementModel.listAffaire = [];
             this.avancementModel.listSysteme = [];
+            /**
+             * On récupère les demandes, commandes, affaires et systèmes uniquement en lien avec les of
+             * l'on remplit aussi la list des avancement précedent
+             */
             for (const of of this.avancementModel.listOF) {
                 const demande = listDemandeStore().listDemande.demandes.find(demande => demande.id === of.demande.id);
                 if (demande) {
@@ -61,6 +67,7 @@ export const avancementStore = defineStore('avancementStore',{
                         this.avancementModel.listDemande.push(demande);
                     }
                 }
+
             }
             for (const demande of this.avancementModel.listDemande) {
                 const commande = listCommandeStore().listCommande.commandes.find(commande => commande.id === demande.commande.id);
@@ -68,6 +75,14 @@ export const avancementStore = defineStore('avancementStore',{
                     const commandeTest = this.avancementModel.listCommande.find(c => c.id === commande.id);
                     if (!commandeTest){
                         this.avancementModel.listCommande.push(commande);
+                    }
+                }
+                const of = this.avancementModel.listOF.filter(of => of.demande.id === demande.id)[0];
+                if (of) {
+                    try {
+                        this.avancementModel.listPrevious.push(await getPreviousAvancement(of));
+                    } catch (e) {
+                        NotificationHandler.showNewNotification('je n\'ai pas pu récupérer les avancements précédents', true);
                     }
                 }
             }
@@ -87,15 +102,7 @@ export const avancementStore = defineStore('avancementStore',{
                     }
                 }
             }
-
-            //console.log("listOf :",this.avancementModel.listOF);
-            //console.log("listDemande :",this.avancementModel.listDemande);
-            //console.log("listCommande :",this.avancementModel.listCommande);
-            //console.log("listAffaire :",this.avancementModel.listAffaire);
-            //console.log("listSysteme :",this.avancementModel.listSysteme);
-            const test = this.avancementModel.listDemande.filter(demande => this.avancementModel.listCommande.some(commande =>commande.affaire.id === this.avancementModel.listAffaire[0].id && commande.id === demande.commande.id));
-            //console.log("test :",test[0]);
-            //TODO: faire les lists
+            console.log(this.avancementModel.listPrevious);
         },
         async previousJour(){
             const newDate = new Date(this.avancementModel.date);

@@ -1,38 +1,50 @@
 <script lang="ts">
 import {Component, Vue, Watch} from 'vue-facing-decorator';
 import ModifCoucheForDemande from "@/component/Form/ModifCoucheForDemande.vue";
-import {DemandeFormStore, useAlert} from "@/stores";
+import {useAlert} from "@/stores";
 import {createDefaultSurfaceCouche} from "@/models/types/surfaceCouche";
 import {getArticleCoucheForDemande} from "@/services/ArticleCoucheService";
 import {Systeme} from "@/models/types/systeme";
 import {Affaire} from "@/models/types/affaire";
 import {Commande} from "@/models/types/commande";
 import {useRouter} from "vue-router";
+import {creationDemandeStore} from "@/stores/DemandeStore";
+import {listCommandeStore} from "@/stores/CommandeStore";
+import {listAffaireStore} from "@/stores/AffaireStore";
+import {listSystemeStore} from "@/stores/SystemeStore";
+import NotificationHandler from "@/services/NotificationHandler";
 
 @Component({
    components: {ModifDemandeCouche: ModifCoucheForDemande}
 })
 
 export default class CreerDemandeForm extends Vue {
-   private demandeFormstore = DemandeFormStore();
+   private store = creationDemandeStore();
+   private commandeStore = listCommandeStore();
+   private affaireStore = listAffaireStore();
+   private systemeStore = listSystemeStore();
    private router = useRouter();
 
+
+   async mounted(){
+      await this.store.load();
+   }
    get formatedCommande() {
-      return this.demandeFormstore.listCommande.commandes.filter((commande: Commande) => commande.affaire.id === this.demandeFormstore.demandeFrom.selectedAffaire?.value).map((commande: Commande) => {
+      return this.commandeStore.listCommande.commandes.filter((commande: Commande) => commande.affaire.id === this.store.demandeForm.selectedAffaire?.value).map((commande: Commande) => {
          return {
-            title: commande.eureka + " - " + this.demandeFormstore.listSysteme.systemes.find((systeme: Systeme) => systeme.id === commande.systeme.id)?.nom,
+            title: commande.eureka + " - " + this.systemeStore.listSysteme.systemes.find((systeme: Systeme) => systeme.id === commande.systeme.id)?.nom,
             value: commande.id
          }
       });
    }
 
    onSelectedAffaire() {
-      this.demandeFormstore.demandeFrom.demandeDemande.surfaceCouches = [];
-      this.demandeFormstore.demandeFrom.selectedCommande = null;
+      this.store.demandeForm.demande.surfaceCouches = [];
+      this.store.demandeForm.selectedCommande = null;
    }
 
    get formatedAffaire() {
-      return this.demandeFormstore.listAffaire.affaires.map((affaire: Affaire) => {
+      return this.affaireStore.listAffaire.affaires.map((affaire: Affaire) => {
          return {
             title: affaire.numero + " - " + affaire.nom,
             value: affaire.id
@@ -41,14 +53,14 @@ export default class CreerDemandeForm extends Vue {
    }
 
    async onSelectCommande() {
-      const commande = this.demandeFormstore.listCommande.commandes.find((commande: Commande) => commande.id === this.demandeFormstore.demandeFrom.selectedCommande?.value);
+      const commande = this.commandeStore.listCommande.commandes.find((commande: Commande) => commande.id === this.store.demandeForm.selectedCommande?.value);
       if (commande) {
-         this.demandeFormstore.demandeFrom.demandeDemande.commande = commande;
-         this.demandeFormstore.demandeFrom.demandeDemande.surfaceCouches = [];
-         const ArticlesCouches = await getArticleCoucheForDemande(this.demandeFormstore.demandeFrom.demandeDemande.commande);
+         this.store.demandeForm.demande.commande = commande;
+         this.store.demandeForm.demande.surfaceCouches = [];
+         const ArticlesCouches = await getArticleCoucheForDemande(this.store.demandeForm.demande.commande);
          for (const articleCouche of ArticlesCouches) {
-            this.demandeFormstore.demandeFrom.demandeDemande.surfaceCouches.push(createDefaultSurfaceCouche({
-               id: this.demandeFormstore.demandeFrom.demandeDemande.surfaceCouches.length,
+            this.store.demandeForm.demande.surfaceCouches.push(createDefaultSurfaceCouche({
+               id: this.store.demandeForm.demande.surfaceCouches.length,
                articleCouche: articleCouche
             }));
          }
@@ -56,9 +68,9 @@ export default class CreerDemandeForm extends Vue {
    }
 
 
-   @Watch('demandeFormstore.demandeFrom.demandeDemande.surface', {deep: true, immediate: true})
+   @Watch('store.demandeForm.demande.surface', {deep: true, immediate: true})
    public updateSurface(newValue: number, oldValue: number) {
-      for (const surfaceCouche of this.demandeFormstore.demandeFrom.demandeDemande.surfaceCouches) {
+      for (const surfaceCouche of this.store.demandeForm.demande.surfaceCouches) {
          if (surfaceCouche.surface == oldValue) {
             surfaceCouche.surface = newValue;
          }
@@ -67,13 +79,13 @@ export default class CreerDemandeForm extends Vue {
 
    async submitForm() {
       try {
-         this.demandeFormstore.demandeFrom.demandeDemande.date = this.demandeFormstore.demandeFrom.dateDemande ? this.demandeFormstore.demandeFrom.dateDemande : String(new Date());
-         if (await this.demandeFormstore.listDemande.add(this.demandeFormstore.demandeFrom.demandeDemande)) {
-            useAlert().alert('Demande créée avec succès !');
-            this.demandeFormstore.clearDemandeFrom();
+         this.store.demandeForm.demande.date = this.store.demandeForm.dateDemande ? this.store.demandeForm.dateDemande : String(new Date());
+         if (await this.store.create(this.store.demandeForm.demande)) {
+            NotificationHandler.showNewNotification('Demande créée avec succès !');
+            this.store.clear();
             this.router.push({name: 'listDemande'});
          } else {
-            useAlert().alert('Erreur lors de la création de la demande.');
+            NotificationHandler.showNewNotification('Erreur lors de la création de la demande.', true);
          }
       } catch (error) {
          console.error(error);
@@ -98,18 +110,18 @@ export default class CreerDemandeForm extends Vue {
                          item-title="title"
                          item-value="value"
                          variant="outlined"
-                         v-model="this.demandeFormstore.demandeFrom.selectedAffaire"
+                         v-model="this.store.demandeForm.selectedAffaire"
                          @update:model-value="onSelectedAffaire"
                          return-object
                      ></v-combobox>
                      <v-combobox
-                         v-if="this.demandeFormstore.demandeFrom.selectedAffaire"
+                         v-if="this.store.demandeForm.selectedAffaire"
                          label="Commande"
                          :items="formatedCommande"
                          item-title="title"
                          item-value="value"
                          variant="outlined"
-                         v-model="this.demandeFormstore.demandeFrom.selectedCommande"
+                         v-model="this.store.demandeForm.selectedCommande"
                          @update:model-value="onSelectCommande"
                          return-object
                      />
@@ -117,14 +129,14 @@ export default class CreerDemandeForm extends Vue {
                         <v-row align="center" justify="center">
                            <v-text-field
                                label="Numero de la demande"
-                               v-model="this.demandeFormstore.demandeFrom.demandeDemande.numero"
+                               v-model="this.store.demandeForm.demande.numero"
                                outlined
                                dense
                                prepend-icon="mdi-briefcase-outline"
                            ></v-text-field>
                         </v-row>
                         <v-date-picker
-                            v-model="this.demandeFormstore.demandeFrom.dateDemande"
+                            v-model="this.store.demandeForm.dateDemande"
                             label="Date de la demande"
                             outlined
                             dense
@@ -133,27 +145,27 @@ export default class CreerDemandeForm extends Vue {
                         <v-textarea
                             label="commentaire"
                             variant="outlined"
-                            v-model="this.demandeFormstore.demandeFrom.demandeDemande.commentaire">
+                            v-model="this.store.demandeForm.demande.commentaire">
                         </v-textarea>
                         <v-checkbox
                             label="reservation peinture"
-                            v-model="demandeFormstore.demandeFrom.demandeDemande.reservation"
+                            v-model="store.demandeForm.demande.reservation"
                         ></v-checkbox>
                         <v-number-input
-                            v-model="this.demandeFormstore.demandeFrom.demandeDemande.surface"
+                            v-model="this.store.demandeForm.demande.surface"
                             label="surface"
                             :min="0"
                             outlined
                             dense
                         ></v-number-input>
                         <v-number-input
-                            v-model="this.demandeFormstore.demandeFrom.demandeDemande.nombrePiece"
+                            v-model="this.store.demandeForm.demande.nombrePiece"
                             label="nombre de pièces"
                             :min="0"
                             variant="outlined"
                             dense
                         ></v-number-input>
-                        <div v-for="surfaceCouche in this.demandeFormstore.demandeFrom.demandeDemande.surfaceCouches"
+                        <div v-for="surfaceCouche in this.store.demandeForm.demande.surfaceCouches"
                              :key="surfaceCouche.id">
                            <ModifDemandeCouche :surface-couche="surfaceCouche"/>
                         </div>

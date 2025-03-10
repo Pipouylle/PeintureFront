@@ -6,6 +6,10 @@ import {CommandeFormModel, createDefaultCommandeFormModel} from "@/models/forms/
 import {CommandeModifModel, createDefaultCommandeModifModel} from "@/models/modifs/CommandeModifModel";
 import {creerArticleCouche, updateArticleArticleCouche} from "@/services/ArticleCoucheService";
 import {ModifCoucheCommandeModel} from "@/models/forms/CreerCommande/ModifCoucheCommandeModel";
+import {listDemandeStore} from "@/stores/DemandeStore";
+import {listAffaireStore} from "@/stores/AffaireStore";
+import {listSystemeStore} from "@/stores/SystemeStore";
+import {listArticleStore} from "@/stores/ArticleStore";
 
 export const listCommandeStore = defineStore("listCommandeStore", {
     state: () => ({
@@ -14,10 +18,17 @@ export const listCommandeStore = defineStore("listCommandeStore", {
     }),
     actions: {
         async load() {
+            await listAffaireStore().load();
+            await listSystemeStore().load();
+            await listArticleStore().load();
             if (!this.isLoad) {
                 await this.getAll()
                 this.isLoad = true
             }
+        },
+        unLoad(){
+            this.isLoad = false;
+            listDemandeStore().unLoad()
         },
         async getAll(): Promise<boolean> {
             try {
@@ -33,6 +44,7 @@ export const listCommandeStore = defineStore("listCommandeStore", {
                 if (index !== -1) {
                     await deleteCommande(commande);
                     this.listCommande.commandes.splice(index, 1);
+                    listDemandeStore().unLoad()
                     return true;
                 }
                 return false;
@@ -45,7 +57,7 @@ export const listCommandeStore = defineStore("listCommandeStore", {
 
 export const creationCommandeStore = defineStore("creationCommandeStore", {
     state: () => ({
-        commande: createDefaultCommandeFormModel() as CommandeFormModel,
+        commandeFrom: createDefaultCommandeFormModel() as CommandeFormModel,
         listModifCouche: [] as ModifCoucheCommandeModel[]
     }),
     actions: {
@@ -56,7 +68,7 @@ export const creationCommandeStore = defineStore("creationCommandeStore", {
             try {
                 const responseCommande = await creerCommmande(commande);
                 for (const articleCouche of commande.articles) {
-                    articleCouche.id = responseCommande.id;
+                    articleCouche.commande.id = responseCommande.id;
                     await creerArticleCouche(articleCouche);
                 }
                 listCommandeStore().listCommande.commandes.push(responseCommande);
@@ -69,15 +81,16 @@ export const creationCommandeStore = defineStore("creationCommandeStore", {
             this.listModifCouche.push(modifCouche);
         },
         clear() {
-            this.commande = createDefaultCommandeFormModel();
+            this.commandeFrom = createDefaultCommandeFormModel();
             this.listModifCouche = [];
-        }
+        },
     }
 });
 
 export const updateCommandeStore = defineStore("updateCommandeStore", {
     state: () => ({
         commandeModif: createDefaultCommandeModifModel() as CommandeModifModel,
+        modifCouches: [] as ModifCoucheCommandeModel[],
     }),
     actions: {
         async load() {
@@ -89,11 +102,17 @@ export const updateCommandeStore = defineStore("updateCommandeStore", {
                 for (const articleCouche of commande.articles) {
                     await updateArticleArticleCouche(articleCouche);
                 }
-                const index = listCommandeStore().listCommande.commandes.findIndex((c: Commande) => c.id === responseCommande.id);
+                listCommandeStore().unLoad();
                 return true;
             } catch (e) {
                 return false;
             }
+        },
+        addModifCouche(modifCouche: ModifCoucheCommandeModel) {
+            this.modifCouches.push(modifCouche);
+        },
+        clear() {
+            this.commandeModif = createDefaultCommandeModifModel();
         }
     }
 });

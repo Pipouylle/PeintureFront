@@ -1,6 +1,6 @@
 <script lang="ts">
 import {Vue, Component} from 'vue-facing-decorator';
-import {ModifCommandeStore, useAlert} from "@/stores";
+import {useAlert} from "@/stores";
 import {useRouter} from "vue-router";
 import {createDefaultSysteme, Systeme} from "@/models/types/systeme";
 import {Affaire, createDefaultAffaire} from "@/models/types/affaire";
@@ -10,45 +10,52 @@ import {createDefaultModifCoucheCommandeModel} from "@/models/forms/CreerCommand
 import {createDefaultSelectArticles} from "@/models/forms/CreerCommande/SelectArticles";
 import {getArticlesCoucheByDemande} from "@/services/CouchesService";
 import {getArticleCoucheBySystemeAndCommande} from "@/services/ArticleCoucheService";
+import {updateCommandeStore} from "@/stores/CommandeStore";
+import {listAffaireStore} from "@/stores/AffaireStore";
+import {listSystemeStore} from "@/stores/SystemeStore";
+import {listFournisseurStore} from "@/stores/FournisseurStore";
+import NotificationHandler from "@/services/NotificationHandler";
 
 
 @Component({
    components:{ModifCommandeCouche: ModifCoucheForCommande}
 })
 
-//TODO : gérer le cas sans article dasn une couche
 export default class ModifCommandeComponent extends Vue {
-   private modifStore = ModifCommandeStore();
+   private store = updateCommandeStore();
+   private affaireStore = listAffaireStore();
+   private systemeStore = listSystemeStore();
+   private fournisseurStore = listFournisseurStore();
    private router = useRouter();
 
 
    async mounted() {
-      this.modifStore.selectAffaire = this.modifStore.commande.affaire ? {
-         title: this.modifStore.commande.affaire.numero + " - " + this.modifStore.commande.affaire.nom,
-         value: this.modifStore.commande.affaire.id
+      await this.store.load();
+      this.store.commandeModif.selectedAffaire = this.store.commandeModif.commande.affaire ? {
+         title: this.affaireStore.listAffaire.affaires.find(affaire => affaire.id === this.store.commandeModif.commande.affaire.id)?.numero + " - " + this.affaireStore.listAffaire.affaires.find(affaire => affaire.id === this.store.commandeModif.commande.affaire.id)?.nom,
+         value: this.store.commandeModif.commande.affaire.id
       } : null;
-      //TODO: mettre bien le fournisseur
-      this.modifStore.selectSysteme = this.modifStore.commande.systeme ? {
-         title: this.modifStore.commande.systeme.nom + " - " + this.modifStore.listFournisseur.fournisseurs.find(fournisseur => fournisseur.id === this.modifStore.commande.systeme.fournisseur.id)?.nom,
-         value: this.modifStore.commande.systeme.id
+      this.store.commandeModif.selectedSysteme = this.store.commandeModif.commande.systeme ? {
+         title: this.systemeStore.listSysteme.systemes.find(systeme => systeme.id === this.store.commandeModif.commande.systeme.id)?.nom + " - " + this.fournisseurStore.listFournisseur.fournisseurs.find(fournisseur => fournisseur.id === this.systemeStore.listSysteme.systemes.find(systeme => systeme.id === this.store.commandeModif.commande.systeme.id)?.fournisseur.id)?.nom,
+         value: this.store.commandeModif.commande.systeme.id
       } : null;
-      const systeme = this.modifStore.listSysteme.systemes.find((systeme: Systeme) => systeme.id === this.modifStore.selectSysteme?.value);
+      const systeme = this.systemeStore.listSysteme.systemes.find((systeme: Systeme) => systeme.id === this.store.commandeModif.selectedSysteme?.value);
       if (systeme){
-         this.modifStore.clearModifCoucheCommande();
-         const responseSelectArticles = await getArticleCoucheBySystemeAndCommande(systeme.id, this.modifStore.commande.id);
+         this.store.modifCouches = [];
+         const responseSelectArticles = await getArticleCoucheBySystemeAndCommande(systeme.id, this.store.commandeModif.commande.id);
          for (const responseSelectArticle of responseSelectArticles) {
-            this.modifStore.addModifCouche(createDefaultModifCoucheCommandeModel({
-               id : this.modifStore.modifCouchesCommande.length,
+            this.store.addModifCouche(createDefaultModifCoucheCommandeModel({
+               id : this.store.modifCouches.length,
                articleCouche: responseSelectArticle,
             }));
             if (responseSelectArticle.articles.length === 0){
-               this.modifStore.modifCouchesCommande[this.modifStore.modifCouchesCommande.length -1].articles.push(createDefaultSelectArticles(
-                   {id: this.modifStore.modifCouchesCommande[this.modifStore.modifCouchesCommande.length -1].articles.length}
+               this.store.modifCouches[this.store.modifCouches.length -1].articles.push(createDefaultSelectArticles(
+                   {id: this.store.modifCouches[this.store.modifCouches.length -1].articles.length}
                ));
             } else {
                for (const article of responseSelectArticle.articles) {
-                  this.modifStore.modifCouchesCommande[this.modifStore.modifCouchesCommande.length -1].articles.push({
-                     id: this.modifStore.modifCouchesCommande[this.modifStore.modifCouchesCommande.length -1].articles.length,
+                  this.store.modifCouches[this.store.modifCouches.length -1].articles.push({
+                     id: this.store.modifCouches[this.store.modifCouches.length -1].articles.length,
                      article : {title : article.descriptif, value : article.id},
                   })
                }
@@ -59,16 +66,16 @@ export default class ModifCommandeComponent extends Vue {
 
 
    get formatedSysteme() {
-      return this.modifStore.listSysteme.systemes.map((systeme: Systeme) => {
+      return this.systemeStore.listSysteme.systemes.map((systeme: Systeme) => {
          return {
-            title: systeme.nom + " - " + this.modifStore.listFournisseur.fournisseurs.find(fournisseur => fournisseur.id === systeme.fournisseur.id)?.nom,
+            title: systeme.nom + " - " + this.fournisseurStore.listFournisseur.fournisseurs.find(fournisseur => fournisseur.id === systeme.fournisseur.id)?.nom,
             value: systeme.id
          }
       })
    }
 
    get formatedAffaire() {
-      return this.modifStore.listAffaire.affaires.map((affaire: Affaire) => {
+      return this.affaireStore.listAffaire.affaires.map((affaire: Affaire) => {
          return {
             title: affaire.numero + " - " + affaire.nom,
             value: affaire.id
@@ -77,14 +84,15 @@ export default class ModifCommandeComponent extends Vue {
    }
 
    async submitForm(){
-      this.modifStore.commande.articles = this.modifStore.modifCouchesCommande.map(modifCouche => {
-         modifCouche.articleCouche.commande = this.modifStore.commande;
+      this.store.commandeModif.commande.articles = this.store.modifCouches.map(modifCouche => {
+         modifCouche.articleCouche.commande = this.store.commandeModif.commande;
          return modifCouche.articleCouche;
       });
-      if (await this.modifStore.listCommande.modif(this.modifStore.commande)){
-         this.modifStore.clearAll();
+      if (await this.store.update(this.store.commandeModif.commande)){
+         NotificationHandler.showNewNotification('Commande modifiée avec succès !');
          this.router.push({name: 'listCommande'});
       } else {
+         NotificationHandler.showNewNotification('Erreur lors de la modification de la commande.', true);
          useAlert().alert('Erreur lors de la modification de la commande');
          console.error('Erreur lors de la modification de la commande');
       }
@@ -107,7 +115,7 @@ export default class ModifCommandeComponent extends Vue {
                          item-title="title"
                          item-value="value"
                          variant="outlined"
-                         v-model="this.modifStore.selectAffaire"
+                         v-model="this.store.commandeModif.selectedAffaire"
                          return-object
                      ></v-combobox>
                      <v-combobox
@@ -117,10 +125,10 @@ export default class ModifCommandeComponent extends Vue {
                          item-title="title"
                          item-value="value"
                          variant="outlined"
-                         v-model="this.modifStore.selectSysteme"
+                         v-model="this.store.commandeModif.selectedSysteme"
                          return-object
                      />
-                     <div v-for="ModifCommandeCouche in modifStore.modifCouchesCommande"
+                     <div v-for="ModifCommandeCouche in store.modifCouches"
                           :key="ModifCommandeCouche.id">
                         <ModifCommandeCouche :modifCommandeCouche="ModifCommandeCouche"></ModifCommandeCouche>
                      </div>
@@ -130,10 +138,10 @@ export default class ModifCommandeComponent extends Vue {
                          clearable
                          label="eureka"
                          variant="outlined"
-                         v-model="this.modifStore.commande.eureka"
+                         v-model="this.store.commandeModif.commande.eureka"
                      ></v-text-field>
                      <v-number-input
-                         v-model="this.modifStore.commande.surface"
+                         v-model="this.store.commandeModif.commande.surface"
                          label="Surface"
                          :min="0"
                          variant="outlined"
@@ -143,21 +151,21 @@ export default class ModifCommandeComponent extends Vue {
                          variant="outlined"
                          label="RAL de le commande"
                          type="number"
-                         v-model="this.modifStore.commande.ral"
+                         v-model="this.store.commandeModif.commande.ral"
                      ></v-number-input>
                      <v-textarea
                          clearable
                          label="commentaire"
                          variant="outlined"
-                         v-model="this.modifStore.commande.commentaire"
+                         v-model="this.store.commandeModif.commande.commentaire"
                      ></v-textarea>
                      <v-divider class="mt-4"></v-divider>
                      <v-checkbox
-                         v-model="this.modifStore.commande.ficheH"
+                         v-model="this.store.commandeModif.commande.ficheH"
                          label="Fiche H"
                      ></v-checkbox>
                      <v-checkbox
-                         v-model="this.modifStore.commande.pvPeinture"
+                         v-model="this.store.commandeModif.commande.pvPeinture"
                          label="pv Peinture"
                      ></v-checkbox>
                      <v-btn

@@ -4,19 +4,17 @@ import SelectSemaineComponent from "@/component/calendar2_0/SelectSemaineCompone
 import ListCommandeComponent from "@/component/lists/ListCommandeComponent.vue";
 import ListsOfCalendarComponent from "@/component/calendar2_0/ListsOfCalendarComponent.vue";
 import ListDemandeCalendarComponent from "@/component/calendar2_0/ListDemandeCalendarComponent.vue";
-import {CalendarComponentStore, useListStore} from "@/stores";
+import {planingStore} from "@/stores/PlainingStore";
 
 @Component({
    components: {
       ListCommandeCalendarComponent: ListDemandeCalendarComponent,
       ListsOfCalendarComponent, ListCommandeComponent, SelectSemaineComponent}
 })
-//TODO : verif qu'il ai pas deux of le même jour
-//TODO : if pour l'affcihage du bas par apport a la semaine
 export default class CalendarViewComponent extends Vue {
-   private CalendarCompoenentStore = CalendarComponentStore();
-   mounted() {
-      useListStore().setDemandesCalendar();
+   private store = planingStore();
+   async mounted() {
+      await this.store.load()
    }
 }
 </script>
@@ -26,7 +24,7 @@ export default class CalendarViewComponent extends Vue {
       <v-row class="align-center fixed-select-semaine">
          <SelectSemaineComponent class="semaine"/>
       </v-row>
-      <v-row class="content" v-if="CalendarCompoenentStore.calendarModel.cabine">
+      <v-row class="content" v-if="store.planingModel.cabine">
          <v-col>
             <ListCommandeCalendarComponent class="ListCommande"/>
          </v-col>

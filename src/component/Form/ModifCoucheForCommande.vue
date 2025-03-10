@@ -2,20 +2,20 @@
 import {Vue, Component, Prop} from 'vue-facing-decorator';
 import {ModifCoucheCommandeModel} from "@/models/forms/CreerCommande/ModifCoucheCommandeModel";
 import {Article} from "@/models/types/article";
-import {CommandeFormStore, ListStore, useListStore} from "@/stores";
 import {createDefaultSelectArticles, SelectArticles} from "@/models/forms/CreerCommande/SelectArticles";
 import {Fournisseur} from "@/models/types/fournisseur";
+import {listArticleStore} from "@/stores/ArticleStore";
+import {listFournisseurStore} from "@/stores/FournisseurStore";
 
 @Component({
-   methods: {useListStore}
 })
 export default class ModifCoucheForCommande extends Vue {
    @Prop({required: true}) private modifCommandeCouche!: ModifCoucheCommandeModel;
-   private CommandeFormStore = CommandeFormStore();
-   private listStore = ListStore();
+   private articleStore = listArticleStore();
+   private fournisseurStore = listFournisseurStore();
 
    async onArticleSelected(id: any) {
-      const article = this.CommandeFormStore.listArticle.articles.find((article: Article) => article.id === this.modifCommandeCouche.articles[id].article?.value);
+      const article = this.articleStore.listArticle.articles.find((article: Article) => article.id === this.modifCommandeCouche.articles[id].article?.value);
       if (article) {
          this.modifCommandeCouche.articleCouche.articles[id] = article;
       }
@@ -44,7 +44,7 @@ export default class ModifCoucheForCommande extends Vue {
 
    get formatedArticle() {
       //TODO: faire en sorte que ça propose pas deux fois
-      return this.CommandeFormStore.listArticle.articles.map((article: Article) => {
+      return this.articleStore.listArticle.articles.map((article: Article) => {
          return {
             title: article.descriptif,
             value: article.id
@@ -80,7 +80,7 @@ export default class ModifCoucheForCommande extends Vue {
                                label="RAL"
                                outlined
                                dense
-                               :model-value="articleSelect.article ? listStore.ListArticle.articles.find((article :Article) => article.id === articleSelect.article?.value)?.ral : ''"
+                               :model-value="articleSelect.article ? this.articleStore.listArticle.articles.find((article :Article) => article.id === articleSelect.article?.value)?.ral : ''"
                                readonly
                                disabled
                            ></v-text-field>
@@ -88,7 +88,7 @@ export default class ModifCoucheForCommande extends Vue {
                                label="Fournisseur"
                                outlined
                                dense
-                               :model-value="articleSelect.article ? listStore.ListFournisseur.fournisseurs.find((fournisseur: Fournisseur) => fournisseur.id === listStore.ListArticle.articles.find((article :Article) => article.id === articleSelect.article?.value)?.fournisseur.id)?.nom : ''"
+                               :model-value="articleSelect.article ? this.fournisseurStore.listFournisseur.fournisseurs.find((fournisseur: Fournisseur) => fournisseur.id === this.articleStore.listArticle.articles.find((article :Article) => article.id === articleSelect.article?.value)?.fournisseur.id)?.nom : ''"
                                readonly
                                disabled
                            ></v-text-field>

@@ -5,7 +5,7 @@ import {createDefaultFournisseur} from "@/models/types/fournisseur";
 export default class Articlemapper {
     static mapArticle(obj: Articles): Article {
         return {
-            id: obj.id,
+            id: parseInt(obj.id),
             descriptif: obj.designationArticle,
             couches: [],
             ral: obj.RALArticle,
@@ -19,7 +19,7 @@ export default class Articlemapper {
 
     static mapArticles(obj: Article): Articles {
         return {
-            id: obj.id,
+            id: String(obj.id),
             designationArticle: obj.descriptif,
             fournisseurArticle: "/api/fournisseurs/" + obj.fournisseur.id,
             RALArticle: obj.ral,

@@ -2,9 +2,10 @@
 import {Vue, Component} from 'vue-facing-decorator';
 import Menu from "@/component/common/Menu.vue";
 import ViewUsineComponent from "@/component/usine/ViewUsineComponent.vue";
+import NotificationHandlerComponent from "@/component/common/NotificationHandlerComponent.vue";
 
 @Component({
-   components: {ViewUsineComponent, Menu}
+   components: {NotificationHandlerComponent, ViewUsineComponent, Menu}
 })
 export default class ViewUsineView extends Vue {
 
@@ -14,6 +15,7 @@ export default class ViewUsineView extends Vue {
 <template>
    <router-link to="/" class="router"/>
    <ViewUsineComponent/>
+   <NotificationHandlerComponent/>
 </template>
 
 <style scoped>

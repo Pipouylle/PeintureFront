@@ -1,10 +1,14 @@
 <script lang="ts">
 import {Vue, Component} from 'vue-facing-decorator';
-import {ViewUsineStore} from "@/stores";
 import SelectSemaine from "@/component/usine/SelectSemaine.vue";
 import {getSemaineByInfo} from "@/services/SemainesService";
 import {createDefaultOf, Of} from "@/models/types/of";
 import DialogOfComponent from "@/component/usine/DialogOfComponent.vue";
+import {OperateurViewStore} from "@/stores/UsineStore";
+import {listCommandeStore} from "@/stores/CommandeStore";
+import {listAffaireStore} from "@/stores/AffaireStore";
+import {listSystemeStore} from "@/stores/SystemeStore";
+import {listDemandeStore} from "@/stores/DemandeStore";
 
 @Component({
    components: {DialogOfComponent, SelectSemaine}
@@ -12,7 +16,11 @@ import DialogOfComponent from "@/component/usine/DialogOfComponent.vue";
 
 //TODO : ça bug sur le dimanche quand je click sur les fleche
 export default class ViewUsineComponent extends Vue {
-   private UsineStore = ViewUsineStore();
+   private store = OperateurViewStore();
+   private demandeStore = listDemandeStore();
+   private commandeStore = listCommandeStore();
+   private affaireStore = listAffaireStore();
+   private systemeStore = listSystemeStore();
    private header = [
       {title: "Num affaire", value: "numAffaire", sortable: false},
       {title: "Nom affaire", value: "nomAffaire", sortable: false},
@@ -28,26 +36,26 @@ export default class ViewUsineComponent extends Vue {
    private selectedOf = createDefaultOf();
 
    mounted() {
-      this.UsineStore.load();
+      this.store.load();
    }
 
    get getJour() {
-      return this.UsineStore.usineModel.jour + ' - ' + new Date(this.UsineStore.usineModel.date).toLocaleDateString();
+      return this.store.usineModel.jour + ' - ' + new Date(this.store.usineModel.date).toLocaleDateString();
    }
 
    get getOf() {
-      return this.UsineStore.getOfBytempAndJour();
+      return this.store.getOfBytempAndJour();
    }
 
    private setOf(temp: string) {
-      this.UsineStore.usineModel.temp = temp;
+      this.store.usineModel.temp = temp;
    }
 
    async setOfCabine(cabine: string) {
-      this.UsineStore.usineModel.cabine = cabine;
-      if (this.UsineStore.usineModel.cabine != '') {
-         this.UsineStore.usineModel.semaine = await getSemaineByInfo(this.UsineStore.usineModel.semaine);
-         await this.UsineStore.setOf();
+      this.store.usineModel.cabine = cabine;
+      if (this.store.usineModel.cabine != '') {
+         this.store.usineModel.semaine = await getSemaineByInfo(this.store.usineModel.semaine);
+         await this.store.setOf();
       }
    }
 
@@ -77,7 +85,7 @@ export default class ViewUsineComponent extends Vue {
          <v-row>
             <v-col cols="4">
                <v-row justify="space-between" class="ma-3">
-                  <v-btn @click="UsineStore.previousJour" size="x-large">
+                  <v-btn @click="store.previousJour" size="x-large">
                      <v-icon>mdi-arrow-left-bold</v-icon>
                   </v-btn>
                   <v-text-field
@@ -87,16 +95,16 @@ export default class ViewUsineComponent extends Vue {
                       dense
                       class="select text-h3 w-auto">
                   </v-text-field>
-                  <v-btn @click="UsineStore.nextJour" size="x-large">
+                  <v-btn @click="store.nextJour" size="x-large">
                      <v-icon>mdi-arrow-right-bold</v-icon>
                   </v-btn>
                </v-row>
             </v-col>
             <v-spacer></v-spacer>
-            <v-btn-group v-for="(cabine, index) in this.UsineStore.usineModel.cabines" :key="index"
+            <v-btn-group v-for="(cabine, index) in this.store.usineModel.cabines" :key="index"
                          class="buttonGroup">
                <v-btn
-                   :color="this.UsineStore.usineModel.cabine === cabine ? 'blue' : 'grey'"
+                   :color="this.store.usineModel.cabine === cabine ? 'blue' : 'grey'"
                    variant="outlined"
                    @click="this.setOfCabine(cabine)"
                    class="text-h5"
@@ -104,12 +112,12 @@ export default class ViewUsineComponent extends Vue {
                </v-btn>
             </v-btn-group>
             <v-spacer si></v-spacer>
-            <v-btn-group v-for="(temp, index) in UsineStore.usineModel.temps" :key="index" class="buttonGroup">
+            <v-btn-group v-for="(temp, index) in store.usineModel.temps" :key="index" class="buttonGroup">
                <v-btn
-                   :color="UsineStore.usineModel.temp === temp ? 'blue' : 'grey'"
+                   :color="store.usineModel.temp === temp ? 'blue' : 'grey'"
                    @click="setOf(temp)"
                    variant="outlined"
-                   :active="this.UsineStore.usineModel.temp === temp"
+                   :active="this.store.usineModel.temp === temp"
                    class="text-h5"
                >{{ temp }}
                </v-btn>
@@ -126,47 +134,47 @@ export default class ViewUsineComponent extends Vue {
          >
             <template v-slot:[`item.numAffaire`]="{ item }">
                <span> {{
-                     this.UsineStore.listAffaire.affaires.find(affaire => affaire.id === this.UsineStore.listCommande.commandes.find(commande => commande.id === this.UsineStore.listDemande.demandes.find(demande => demande.id === item.demande.id)?.commande.id)?.affaire.id)?.numero
+                     this.affaireStore.listAffaire.affaires.find(affaire => affaire.id === this.commandeStore.listCommande.commandes.find(commande => commande.id === this.demandeStore.listDemande.demandes.find(demande => demande.id === item.demande.id)?.commande.id)?.affaire.id)?.numero
                   }} </span>
             </template>
             <template v-slot:[`item.nomAffaire`]="{ item }">
                <span> {{
-                     this.UsineStore.listAffaire.affaires.find(affaire => affaire.id === this.UsineStore.listCommande.commandes.find(commande => commande.id === this.UsineStore.listDemande.demandes.find(demande => demande.id === item.demande.id)?.commande.id)?.affaire.id)?.nom
+                     this.affaireStore.listAffaire.affaires.find(affaire => affaire.id === this.commandeStore.listCommande.commandes.find(commande => commande.id === this.demandeStore.listDemande.demandes.find(demande => demande.id === item.demande.id)?.commande.id)?.affaire.id)?.nom
                   }} </span>
             </template>
             <template v-slot:[`item.numDemande`]="{ item }">
                <span> {{
-                     this.UsineStore.listDemande.demandes.find(demande => demande.id === item.demande.id)?.numero
+                     this.demandeStore.listDemande.demandes.find(demande => demande.id === item.demande.id)?.numero
                   }} </span>
             </template>
             <template v-slot:[`item.nomSysteme`]="{ item }">
                <span> {{
-                     this.UsineStore.listSysteme.systemes.find(systeme => systeme.id === this.UsineStore.listCommande.commandes.find(commande => commande.id === this.UsineStore.listDemande.demandes.find(demande => demande.id === item.demande.id)?.commande.id)?.systeme.id)?.nom
+                     this.systemeStore.listSysteme.systemes.find(systeme => systeme.id === this.commandeStore.listCommande.commandes.find(commande => commande.id === this.demandeStore.listDemande.demandes.find(demande => demande.id === item.demande.id)?.commande.id)?.systeme.id)?.nom
                   }} </span>
             </template>
             <template v-slot:[`item.ral`]="{ item }">
                <span> {{
-                     this.UsineStore.listCommande.commandes.find(commande => commande.id === this.UsineStore.listDemande.demandes.find(demande => demande.id === item.demande.id)?.commande.id)?.ral
+                     this.commandeStore.listCommande.commandes.find(commande => commande.id === this.demandeStore.listDemande.demandes.find(demande => demande.id === item.demande.id)?.commande.id)?.ral
                   }} </span>
             </template>
             <template v-slot:[`item.surface`]="{ item }">
                <span> {{
-                     this.UsineStore.listDemande.demandes.find(demande => demande.id === item.demande.id)?.surface
+                     this.demandeStore.listDemande.demandes.find(demande => demande.id === item.demande.id)?.surface
                   }} </span>
             </template>
             <template v-slot:[`item.nbPiece`]="{ item }">
                <span> {{
-                     this.UsineStore.listDemande.demandes.find(demande => demande.id === item.demande.id)?.nombrePiece
+                     this.demandeStore.listDemande.demandes.find(demande => demande.id === item.demande.id)?.nombrePiece
                   }} </span>
             </template>
             <template v-slot:[`item.commentaire`]="{ item }">
                <span> {{
-                     this.UsineStore.listDemande.demandes.find(demande => demande.id === item.demande.id)?.commentaire
+                     this.demandeStore.listDemande.demandes.find(demande => demande.id === item.demande.id)?.commentaire
                   }} </span>
             </template>
             <template v-slot:[`item.dateDemande`]="{ item }">
                <span> {{
-                     new Date(this.UsineStore.listDemande.demandes.find(demande => demande.id === item.demande.id)?.date ?? "").toLocaleDateString()
+                     new Date(this.demandeStore.listDemande.demandes.find(demande => demande.id === item.demande.id)?.date ?? "").toLocaleDateString()
                   }} </span>
             </template>
          </v-data-table-virtual>

@@ -3,6 +3,7 @@ import {Vue, Component} from 'vue-facing-decorator';
 import {useRouter} from "vue-router";
 import {listUserStore} from "@/stores/UserStore";
 import {User} from "@/models/types/user";
+import NotificationHandler from "@/services/NotificationHandler";
 
 @Component({})
 //TODO : faire marcher les boton bleu
@@ -18,6 +19,11 @@ export default class ListUserComponent extends Vue {
       await this.store.load();
    }
 
+   private async reload() {
+      this.store.unLoad();
+      await this.store.load();
+   }
+
    private get listUser() {
       if (this.store.archived && this.store.notArchived) {
          return this.store.listUser.users;
@@ -28,7 +34,6 @@ export default class ListUserComponent extends Vue {
       } else {
          return [];
       }
-
    }
 
    private async archiveUser(user: User) {
@@ -36,6 +41,7 @@ export default class ListUserComponent extends Vue {
       const userToUpdate = this.store.listUser.users.find(user2 => user2.id === user.id);
       if (userToUpdate) {
          userToUpdate.archive = true;
+         NotificationHandler.showNewNotification('User archivé avec succès !');
       }
    };
 
@@ -44,11 +50,17 @@ export default class ListUserComponent extends Vue {
       const userToUpdate = this.store.listUser.users.find(user2 => user2.id === user.id);
       if (userToUpdate) {
          userToUpdate.archive = false;
+         NotificationHandler.showNewNotification('User désarchivé avec succès !');
       }
    };
 
    private async updateUser(user: User) {
-      await this.store.updateUser(user);
+      if (await this.store.updateUser(user)) {
+         NotificationHandler.showNewNotification('User modifié avec succès !');
+      } else {
+         NotificationHandler.showNewNotification('Erreur lors de la modification du user.', true);
+         await this.reload();
+      }
    };
 }
 </script>

@@ -2,12 +2,13 @@ import {Systeme} from "@/models/types/systeme";
 import {Affaire} from "@/models/types/affaire";
 import {Commande, createDefaultCommande} from "@/models/types/commande";
 import {createDefaultDemande, Demande} from "@/models/types/demande";
+import {Selected} from "@/models/common/Selected";
 
 export interface DemandeFormModel {
-    selectedAffaire: { title: string; value: number } | null;
-    selectedCommande: { title: string; value: number } | null;
+    selectedAffaire: Selected | null;
+    selectedCommande: Selected | null;
     dateDemande: string | null,
-    demandeDemande: Demande,
+    demande: Demande,
 }
 
 export function createDefaultDemandeFormModel(override: Partial<DemandeFormModel> = {}): DemandeFormModel {
@@ -15,7 +16,7 @@ export function createDefaultDemandeFormModel(override: Partial<DemandeFormModel
         selectedAffaire: null,
         selectedCommande: null,
         dateDemande: null,
-        demandeDemande: createDefaultDemande(),
+        demande: createDefaultDemande(),
         ...override
     }
 }

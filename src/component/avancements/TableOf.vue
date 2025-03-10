@@ -23,8 +23,8 @@ export default class TableOf extends Vue {
       {title: 'Surface Total après validation', key: 'surfaceDemandeAfter', sortable: false},
    ]
    //TODO: remplir la listPresious
-   async mounted() {
-   }
+   //TODO: mettre la cabine et le temp
+   //TODO :trier par temp
 }
 </script>
 
@@ -42,7 +42,7 @@ export default class TableOf extends Vue {
          </template>
          <template v-slot:[`item.surfaceDemande`]="{ item }">
            <span>{{
-                 store.avancementModel.listDemande.find(demande => demande.id === item.demande.id)?.surface
+                 store.avancementModel.listDemande.find(demande => demande.id === item.demande.id)?.surface + " m²"
               }}</span>
          </template>
          <template v-slot:[`item.pieceTotal`]="{ item }">
@@ -62,6 +62,7 @@ export default class TableOf extends Vue {
                density="comfortable"
                v-model="item.avancement"
                min="0"
+               :max="100 - (store.avancementModel.listPrevious.find(previous => previous.demandeId === item.demande.id)?.avancement ?? 0)"
             ></v-number-input>
          </template>
          <template v-slot:[`item.regieFP`]="{ item }">
@@ -73,19 +74,20 @@ export default class TableOf extends Vue {
          </template>
          <template v-slot:[`item.regieSFP`]="{ item }">
             <v-number-input
+                hide-spin-buttons
                 density="comfortable"
                 v-model="item.regieSFP"
                 min="0"
             ></v-number-input>
          </template>
          <template v-slot:[`item.surfaceCurent`]="{ item }">
-           <span>{{ store.avancementModel.listPrevious.find(previous => previous.ofId === item.id)?.avancement + item.avancement}}</span>
+           <span>{{  (item.avancement * (store.avancementModel.listDemande.find(demande => demande.id === item.demande.id)?.surface ?? 0) / 100) }}</span>
          </template>
          <template v-slot:[`item.pieceCurent`]="{ item }">
-            <span>{{ "TODO" }}</span>
+            <span>{{ (item.avancement * (store.avancementModel.listDemande.find(demande => demande.id === item.demande.id)?.nombrePiece ?? 0) / 100) }}</span>
          </template>
          <template v-slot:[`item.surfaceDemandeAfter`]="{ item }">
-            <span>{{ "TODO" }}</span>
+            <span>{{ (store.avancementModel.listPrevious.find(previous => previous.demandeId === item.demande.id)?.avancement + item.avancement) * (store.avancementModel.listDemande.find(demande => demande.id === item.demande.id)?.surface ?? 0) / 100 }}</span>
          </template>
       </v-data-table-virtual>
    </v-card>

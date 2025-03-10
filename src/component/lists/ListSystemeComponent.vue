@@ -1,18 +1,24 @@
 <script lang="ts">
 import {Vue, Component} from 'vue-facing-decorator';
-import {ListStore, ModifSystemeStore} from "@/stores";
 import {useRouter} from "vue-router";
 import {deleteSysteme} from "@/services/SystemesService";
 import {Couche} from "@/models/types/couche";
 import {createDefaultGrenaillage, Grenaillage} from "@/models/types/Grenaillage";
+import {listSystemeStore, updateSystemeStore} from "@/stores/SystemeStore";
+import {listFournisseurStore} from "@/stores/FournisseurStore";
+import {listGrenaillageStore} from "@/stores/GrenaillageStore";
+import NotificationHandler from "@/services/NotificationHandler";
 
 @Component({})
 
 
 //TODO: modification des fournisseur
 export default class ListSystemeComponent extends Vue {
-   private listSystemeStore = ListStore();
-   private modifSystemeStore = ModifSystemeStore();
+   private store = listSystemeStore();
+   private fournisseurStore = listFournisseurStore();
+   private grenaillageStore = listGrenaillageStore();
+   private modifStore = updateSystemeStore();
+   private router = useRouter();
    private selectedCouches: Record<number, Couche> = {};
    private header = [
       {title: 'Nom', value: 'nom'},
@@ -24,26 +30,28 @@ export default class ListSystemeComponent extends Vue {
       {title: 'Actions', value: 'actions', sortable: false, align: 'end'}
    ]
 
-   private router = useRouter();
 
-   mounted() {
-      for (const systeme of this.listSystemeStore.ListSysteme.systemes) {
-         systeme.grenaillage = this.listSystemeStore.ListGrenaillage.grenaillages.find((grenaillage: Grenaillage) => grenaillage.id === systeme.grenaillage?.id) ?? createDefaultGrenaillage();
-      }
+
+   async mounted() {
+      await this.store.load();
+   }
+
+   async reload() {
+      this.store.unLoad();
+      await this.store.load();
    }
 
    async deleteSysteme(item: any) {
-      try {
-         await deleteSysteme(item);
-         await this.listSystemeStore.ListSysteme.delete(item);
-      } catch (error) {
-         console.log(error);
+      if (await this.store.delete(item)) {
+         NotificationHandler.showNewNotification('Systeme supprimé avec succès !');
+      } else {
+         NotificationHandler.showNewNotification('Erreur lors de la suppression du systeme.', true);
+         await this.reload();
       }
    }
 
-
    editSysteme(item: any) {
-      this.modifSystemeStore.systeme = JSON.parse(JSON.stringify(item));
+      this.modifStore.systemeModif.systeme = JSON.parse(JSON.stringify(item));
       this.router.push({name: 'modifSysteme'});
    }
 
@@ -62,7 +70,7 @@ export default class ListSystemeComponent extends Vue {
              label="Rechercher"
              density="compact"
              prepend-inner-icon="mdi-magnify"
-             v-model="this.listSystemeStore.ListSysteme.filter"
+             v-model="this.store.listSysteme.filter"
              variant="outlined"
              class="textFilter"
          ></v-text-field>
@@ -76,8 +84,8 @@ export default class ListSystemeComponent extends Vue {
       <v-card-text>
          <v-data-table-virtual
              :headers="header"
-             :items="listSystemeStore.ListSysteme.systemes"
-             v-model:search="this.listSystemeStore.ListSysteme.filter"
+             :items="store.listSysteme.systemes"
+             v-model:search="this.store.listSysteme.filter"
              :filter-keys="['nom', 'fournisseur', 'grenaillage.id', 'type']"
              variant="outlined"
              class="tableList"
@@ -85,7 +93,7 @@ export default class ListSystemeComponent extends Vue {
          >
             <template v-slot:[`item.nomFournisseur`]="{ item }">
                <span> {{
-                     listSystemeStore.ListFournisseur.fournisseurs.find(fournisseur => fournisseur.id === item.fournisseur.id)?.nom
+                     this.fournisseurStore.listFournisseur.fournisseurs.find(fournisseur => fournisseur.id === item.fournisseur.id)?.nom
                   }} </span>
             </template>
             <template v-slot:[`item.couches`]="{ item }">
@@ -94,7 +102,7 @@ export default class ListSystemeComponent extends Vue {
                    item-title="nom"
                    item-value="id"
                    label="Sélectionner une couche"
-                   @update:modelValue="(value) => onCoucheSelected(item.id, item.couches.find(c => c.id === value))"
+                   @update:modelValue="(value: number) => onCoucheSelected(item.id, item.couches.find((c) => c.id === value))"
                    :model-value="selectedCouches[item.id]?.id"
                ></v-select>
             </template>
@@ -106,8 +114,8 @@ export default class ListSystemeComponent extends Vue {
                </div>
             </template>
             <template v-slot:[`item.actions`]="{ item }">
-               <v-btn color="primary" @click="editSysteme(item)">Modifier</v-btn>
-               <v-btn color="error" @click="deleteSysteme(item)">Supprimer</v-btn>
+               <v-icon size="x-large" color="primary" @click="editSysteme(item)">mdi-pencil</v-icon>
+               <v-icon size="x-large" color="error" @click="deleteSysteme(item)">mdi-delete</v-icon>
             </template>
          </v-data-table-virtual>
       </v-card-text>

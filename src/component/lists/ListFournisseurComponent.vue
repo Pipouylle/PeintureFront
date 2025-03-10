@@ -1,25 +1,41 @@
 <script lang="ts">
 import {Vue, Component} from 'vue-facing-decorator';
-import {ListStore} from "@/stores";
+import {listFournisseurStore} from "@/stores/FournisseurStore";
+import NotificationHandler from "@/services/NotificationHandler";
 
 @Component({})
 
-//TODO : faire créer mais pas ans un page avec une nouvexu ligne si t'as vraiment envie de te faire chier
 export default class ListFournisseurComponent extends Vue {
-   private listStore = ListStore();
+   private store = listFournisseurStore();
    private header = [
       {title: 'Nom', value: 'nom'},
-      {title: 'Action', value: 'actions', sortable: false, align: 'end'}
+      {title: 'Action', value: 'actions', align: 'end'}
    ];
 
-   private async editFournisseur(item: any) {
-      if (await this.listStore.ListFournisseur.modif(item)) {
+  async mounted() {
+      await this.store.load();
+   }
 
+   async reload() {
+      this.store.unLoad();
+      await this.store.load();
+   }
+
+   private async editFournisseur(item: any) {
+      if (await this.store.update(item)) {
+         NotificationHandler.showNewNotification('Fournisseur modifié avec succès !');
+      } else {
+         NotificationHandler.showNewNotification('Erreur lors de la modification du fournisseur.', true);
+         await this.reload();
       }
    };
 
-   private deleteFournisseur(item: any) {
-      this.listStore.ListFournisseur.remove(item)
+   private async deleteFournisseur(item: any) {
+      if (await this.store.delete(item)) {
+         NotificationHandler.showNewNotification('Fournisseur supprimé avec succès !');
+      } else {
+         NotificationHandler.showNewNotification('Erreur lors de la suppression du fournisseur.', true);
+      }
    };
 
 
@@ -35,7 +51,7 @@ export default class ListFournisseurComponent extends Vue {
              label="Rechercher"
              density="compact"
              prepend-inner-icon="mdi-magnify"
-             v-model="this.listStore.ListFournisseur.filter"
+             v-model="this.store.listFournisseur.filter"
              variant="outlined"
              class="textFilter"
          ></v-text-field>
@@ -49,8 +65,8 @@ export default class ListFournisseurComponent extends Vue {
       <v-card-text>
          <v-data-table-virtual
              :headers="this.header"
-             :items="this.listStore.ListFournisseur.fournisseurs"
-             v-model:search="this.listStore.ListFournisseur.filter"
+             :items="this.store.listFournisseur.fournisseurs"
+             v-model:search="this.store.listFournisseur.filter"
              :filter-keys="['nom']"
              variant="outlined"
              class="tableList"
@@ -64,8 +80,8 @@ export default class ListFournisseurComponent extends Vue {
                ></v-text-field>
             </template>
             <template v-slot:[`item.actions`]="{ item }">
-               <v-btn color="primary" @click="editFournisseur(item)">Modifier</v-btn>
-               <v-btn color="error" @click="deleteFournisseur(item)">Supprimer</v-btn>
+               <v-icon size="x-large" color="primary" @click="editFournisseur(item)">mdi-pencil</v-icon>
+               <v-icon size="x-large" color="error" @click="deleteFournisseur(item)">mdi-delete</v-icon>
             </template>
          </v-data-table-virtual>
       </v-card-text>

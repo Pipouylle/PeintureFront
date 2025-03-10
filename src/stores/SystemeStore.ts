@@ -7,24 +7,38 @@ import {creerCouche, getAllCouches, updateCouche} from "@/services/CouchesServic
 import {listFournisseurStore} from "@/stores/FournisseurStore";
 import {createDefaultSystemeFormModel, systemeFormModel} from "@/models/forms/CreerSysteme/SystemeFormModel";
 import {createDefaultSystemeModifModel} from "@/models/modifs/SystemeModifModel";
+import {listCommandeStore} from "@/stores/CommandeStore";
+import {listGrenaillageStore} from "@/stores/GrenaillageStore";
+import {createDefaultGrenaillage, Grenaillage} from "@/models/types/Grenaillage";
 
 export const listSystemeStore = defineStore("listSystemeStore", {
     state: () => ({
         listSysteme: createDefaultListSystemeModel() as ListSystemeModel,
         listCouche: [] as Couche[],
+        //TODO : supprime la liste des couches
         isLoad: false as boolean
     }),
     actions: {
         async load() {
+            await listGrenaillageStore().load();
+            await listFournisseurStore().load();
             if (!this.isLoad) {
                 await this.getAll()
                 this.isLoad = true
             }
         },
+        unLoad() {
+            this.isLoad = false
+            listCommandeStore().unLoad();
+        },
         async getAll(): Promise<boolean> {
             try {
                 this.listSysteme.systemes = await getAllSystemes()
-                await this.getAllCouche()
+                await this.getAllCouche();
+                for (const systeme of this.listSysteme.systemes) {
+                    systeme.grenaillage = listGrenaillageStore().listGrenaillage.find((grenaillage: Grenaillage) => grenaillage.id === systeme.grenaillage?.id) ?? createDefaultGrenaillage();
+                    systeme.couches = this.listCouche.filter((c: Couche) => c.systeme.id === systeme.id);
+                }
                 return true
             } catch (e) {
                 return false
@@ -43,6 +57,7 @@ export const listSystemeStore = defineStore("listSystemeStore", {
                 await deleteSysteme(systeme);
                 this.listSysteme.systemes = this.listSysteme.systemes.filter((s: Systeme) => s.id !== systeme.id);
                 this.listCouche = this.listCouche.filter((c: Couche) => c.systeme.id !== systeme.id);
+                listCommandeStore().unLoad();
                 return true;
             } catch (e) {
                 return false;
@@ -61,15 +76,18 @@ export const creationSystemeStore = defineStore("creationSystemeStore", {
     actions: {
         async load() {
             await listSystemeStore().load();
+            this.clearCouches();
         },
         async create(systeme: Systeme): Promise<boolean> {
             try {
-                const response = await creerSysteme(systeme);
+                const responseSysteme = await creerSysteme(systeme);
                 for (const couche of systeme.couches) {
-                    couche.systeme.id = systeme.id;
+                    couche.systeme.id = responseSysteme.id;
                     const response = await creerCouche(couche);
+                    responseSysteme.couches.push(response);
                 }
-                listSystemeStore().listSysteme.systemes.push(response);
+                listSystemeStore().listSysteme.systemes.push(responseSysteme);
+                this.clear();
                 return true;
             } catch (e) {
                 return false;
@@ -104,24 +122,14 @@ export const updateSystemeStore = defineStore("updateSystemeStore", {
     actions: {
         async load() {
             await listSystemeStore().load();
-            this.setCouche();
-        },
-        setCouche() {
-            const couches = listSystemeStore().listCouche.filter((c: Couche) => c.systeme.id === this.systemeModif.systeme.id);
-            for (const couche of couches) {
-                this.systemeModif.systeme.couches.push(couche);
-            }
         },
         async update(systeme: Systeme): Promise<boolean> {
             try {
                 const responseSysteme = await updateSysteme(systeme);
                 for (const couche of systeme.couches) {
                     const responseCouche = await updateCouche(couche);
-                    const index = listSystemeStore().listCouche.findIndex((c: Couche) => c.id === responseCouche.id);
-                    listSystemeStore().listCouche[index] = responseCouche;
                 }
-                const index = listSystemeStore().listSysteme.systemes.findIndex((s: Systeme) => s.id === responseSysteme.id);
-                listSystemeStore().listSysteme.systemes[index] = responseSysteme;
+                listSystemeStore().unLoad();
                 return true
             } catch (e) {
                 return false;

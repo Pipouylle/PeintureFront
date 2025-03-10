@@ -2,6 +2,7 @@ import {defineStore} from "pinia";
 import {Affaire, createDefaultAffaire} from "@/models/types/affaire"
 import {getAllAffaires, creerAffaire, updateAffaire, deleteAffaire} from "@/services/AffairesService"
 import {ListAffaireModel, createDefaultListAffaireModel} from "@/models/lists/ListAffaireModel"
+import {listCommandeStore} from "@/stores/CommandeStore";
 
 
 export const listAffaireStore = defineStore("listAffaireStore", {
@@ -16,6 +17,10 @@ export const listAffaireStore = defineStore("listAffaireStore", {
                 this.isLoad = true;
             }
         },
+        unLoad() {
+            this.isLoad = false;
+            listCommandeStore().unLoad();
+        },
         async getAll(): Promise<boolean> {
             try {
                 this.listAffaire.affaires = await getAllAffaires();
@@ -29,8 +34,7 @@ export const listAffaireStore = defineStore("listAffaireStore", {
                 await deleteAffaire(affaire);
                 const index = this.listAffaire.affaires.findIndex((affaire: Affaire) => affaire.id === affaire.id);
                 this.listAffaire.affaires.splice(index, 1);
-                //TODO ste all to false
-
+                listCommandeStore().unLoad();
                 return true;
             } catch (e) {
                 return false;

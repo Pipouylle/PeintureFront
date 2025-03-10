@@ -1,14 +1,21 @@
 <script lang="ts">
 import {Vue, Component} from 'vue-facing-decorator';
-import {ListStore, ModifDemandeStore} from "@/stores";
 import {deleteDemande} from "@/services/DemandesService";
 import {Demande} from "@/models/types/demande";
 import {useRouter} from "vue-router";
+import {listCommandeStore} from "@/stores/CommandeStore";
+import {listAffaireStore} from "@/stores/AffaireStore";
+import {listSystemeStore} from "@/stores/SystemeStore";
+import {listDemandeStore, modifDemandeStore} from "@/stores/DemandeStore";
+import NotificationHandler from "@/services/NotificationHandler";
 
 @Component({})
 export default class ListDemandeComponent extends Vue {
-   private listeStore = ListStore();
-   private modifStore = ModifDemandeStore();
+   private store = listDemandeStore();
+   private modifStore = modifDemandeStore();
+   private commandeStore = listCommandeStore();
+   private affaireStore = listAffaireStore();
+   private systemeStore = listSystemeStore();
    private router = useRouter();
    private header = [
       {title: 'Numéro affaire', value: 'numAffaire'},
@@ -25,23 +32,48 @@ export default class ListDemandeComponent extends Vue {
       {title: 'Action', value: 'actions', sortable: false, align: 'end'}
    ];
 
-   async deleteDemande(item: Demande) {
-      try {
-         await deleteDemande(item);
-         this.listeStore.ListDemande.demandes = this.listeStore.ListDemande.demandes.filter(demande => demande.id !== item.id);
-      } catch (error) {
-         console.log(error);
-      }
+   async mounted() {
+      await this.store.load()
+   }
 
+   async reload() {
+      this.store.unLoad();
+      await this.store.load();
+   }
+
+   async deleteDemande(item: Demande) {
+      if(await this.store.delete(item)) {
+         NotificationHandler.showNewNotification('Demande supprimée avec succès !');
+      } else {
+         NotificationHandler.showNewNotification('Erreur lors de la suppression de la demande.', true);
+      }
    }
 
    editDemande(item: Demande) {
-      const index = this.listeStore.ListDemande.demandes.findIndex(demande => demande.id === item.id);
+      const index = this.store.listDemande.demandes.findIndex(demande => demande.id === item.id);
       if (index !== -1) {
-         this.modifStore.demande = JSON.parse(JSON.stringify(this.listeStore.ListDemande.demandes[index]));
+         this.modifStore.modifDemande.demande = JSON.parse(JSON.stringify(this.store.listDemande.demandes[index]));
          this.router.push({name: 'modifDemande'});
       }
    }
+
+   async finish(item: Demande) {
+      if (await this.store.finish(item)) {
+         NotificationHandler.showNewNotification('Demande terminée avec succès !');
+      } else {
+         NotificationHandler.showNewNotification('Erreur lors de la fin de la demande.', true);
+      }
+   }
+
+   async notFinish(item: Demande) {
+      if (await this.store.notFinish(item)) {
+         NotificationHandler.showNewNotification('Demande non terminée avec succès !');
+      } else {
+         NotificationHandler.showNewNotification('Erreur lors de la fin de la demande.', true);
+      }
+   }
+
+
 
 }
 </script>
@@ -55,7 +87,7 @@ export default class ListDemandeComponent extends Vue {
              label="Rechercher"
              density="compact"
              prepend-inner-icon="mdi-magnify"
-             v-model="this.listeStore.ListDemande.filter"
+             v-model="this.store.listDemande.filter"
              variant="outlined"
              class="textFilter"
          ></v-text-field>
@@ -67,8 +99,8 @@ export default class ListDemandeComponent extends Vue {
       <v-card-text>
          <v-data-table-virtual
              :headers="this.header"
-             :items="this.listeStore.ListDemande.demandes"
-             v-model:search="this.listeStore.ListDemande.filter"
+             :items="this.store.listDemande.demandes"
+             v-model:search="this.store.listDemande.filter"
              :filter-keys="['numero', 'etat', 'surface', 'date']"
              variant="outlined"
              class="tableList"
@@ -76,22 +108,22 @@ export default class ListDemandeComponent extends Vue {
          >
             <template v-slot:[`item.numAffaire`]="{ item }">
                <span> {{
-                     listeStore.ListAffaire.affaires.find(affaire => affaire.id === listeStore.ListCommande.commandes.find(commande => commande.id === item.commande.id)?.affaire.id)?.numero
+                     affaireStore.listAffaire.affaires.find(affaire => affaire.id === commandeStore.listCommande.commandes.find(commande => commande.id === item.commande.id)?.affaire.id)?.numero
                   }} </span>
             </template>
             <template v-slot:[`item.nomAffaire`]="{ item }">
                <span> {{
-                     listeStore.ListAffaire.affaires.find(affaire => affaire.id === listeStore.ListCommande.commandes.find(commande => commande.id === item.commande.id)?.affaire.id)?.nom
+                     affaireStore.listAffaire.affaires.find(affaire => affaire.id === commandeStore.listCommande.commandes.find(commande => commande.id === item.commande.id)?.affaire.id)?.nom
                   }} </span>
             </template>
             <template v-slot:[`item.nomSysteme`]="{ item }">
                <span> {{
-                    listeStore.ListSysteme.systemes.find(systeme => systeme.id === listeStore.ListCommande.commandes.find(commande => commande.id === item.commande.id)?.systeme.id)?.nom
+                    systemeStore.listSysteme.systemes.find(systeme => systeme.id === commandeStore.listCommande.commandes.find(commande => commande.id === item.commande.id)?.systeme.id)?.nom
                   }} </span>
             </template>
             <template v-slot:[`item.ral`]="{ item }">
             <span> {{
-                  listeStore.ListCommande.commandes.find(commande => commande.id === item.commande.id)?.ral
+                  commandeStore.listCommande.commandes.find(commande => commande.id === item.commande.id)?.ral
                }} </span>
             </template>
             <template v-slot:[`item.date`]="{ item }">
@@ -102,10 +134,11 @@ export default class ListDemandeComponent extends Vue {
                <v-icon v-else color="red">mdi-close</v-icon>
             </template>
             <template v-slot:[`item.actions`]="{ item }">
+               <v-btn v-if="!(item.etat === 'terminé')" color="primary" @click="finish(item)">Terminer</v-btn>
+               <v-btn v-else color="primary" @click="notFinish(item)">Pas terminer</v-btn>
                <v-icon size="x-large" color="primary" @click="editDemande(item)">mdi-pencil</v-icon>
                <v-icon size="x-large" color="error" @click="deleteDemande(item)">mdi-delete</v-icon>
             </template>
-
          </v-data-table-virtual>
       </v-card-text>
    </v-card>

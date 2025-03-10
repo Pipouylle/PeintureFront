@@ -3,6 +3,7 @@ import {Fournisseur, createDefaultFournisseur} from "@/models/types/fournisseur"
 import {getAllFournisseurs, creerFournisseur, updateFournisseur, deleteFournisseur} from "@/services/FournisseurService"
 import {ListFournisseurModel, createDefaultListFournisseurModel} from "@/models/lists/ListFournisseurModel"
 import {listSystemeStore} from "@/stores/SystemeStore";
+import {listArticleStore} from "@/stores/ArticleStore";
 
 
 export const listFournisseurStore = defineStore("listFournisseurStore", {
@@ -16,6 +17,11 @@ export const listFournisseurStore = defineStore("listFournisseurStore", {
                 await this.getAll();
                 this.isLoad = true;
             }
+        },
+        unLoad() {
+            this.isLoad = false;
+            listSystemeStore().unLoad();
+            listArticleStore().unLoad();
         },
         async getAll(): Promise<boolean> {
             try {

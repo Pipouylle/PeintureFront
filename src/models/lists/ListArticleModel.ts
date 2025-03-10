@@ -4,6 +4,7 @@ import {creerArticle, deleteArticle, updateArticle} from "@/services/ArticlesSer
 export interface ListArticleModel {
     articles: Article[];
     filter: string;
+    stock: { idArticle: number, quantite: number }[];
     modif: (article: Article) => Promise<boolean>;
     add: (article: Article) => Promise<boolean>;
     remove: (article: Article) => void;
@@ -13,6 +14,7 @@ export function createDefaultListArticleModel(overrides: Partial<ListArticleMode
     const listArticle = {
         articles: [],
         filter: "",
+        stock: [],
         modif: async (article: Article): Promise<boolean> => {
             try {
                 await updateArticle(article);

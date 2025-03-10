@@ -1,8 +1,9 @@
 <script lang="ts">
 import {Vue, Component} from 'vue-facing-decorator';
-import {useAlert, useListStore} from "@/stores";
+import {useAlert} from "@/stores";
 import {createUserStore} from "@/stores/UserStore";
 import {useRouter} from "vue-router";
+import NotificationHandler from "@/services/NotificationHandler";
 
 @Component({})
 export default class CreerUserComponent extends Vue {
@@ -10,10 +11,11 @@ export default class CreerUserComponent extends Vue {
    private router = useRouter();
    async submitForm() {
       if (await this.store.create()) {
+         NotificationHandler.showNewNotification('Utilisateur créé avec succès.');
          this.store.clear();
          this.router.push({name: 'listUser'});
       } else {
-         useAlert().alert('Erreur lors de la création du fournisseur.');
+         NotificationHandler.showNewNotification('Erreur lors de la création de l\'utilisateur.', true);
       }
    }
 }

@@ -13,7 +13,6 @@ export default class AvancementView extends Vue {
 </script>
 
 <template>
-  <Menu/>
   <AvancementComponent/>
   <NotificationHandlerComponent/>
 </template>

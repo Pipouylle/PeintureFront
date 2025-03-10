@@ -1,10 +1,11 @@
 <script lang="ts">
 import {Vue, Component} from 'vue-facing-decorator';
-import {ListStore, useAlert} from "@/stores";
+import {listGrenaillageStore} from "@/stores/GrenaillageStore";
+import NotificationHandler from "@/services/NotificationHandler";
 
 @Component({})
 export default class ListGrenaillageComponent extends Vue {
-   private list = ListStore();
+   private store = listGrenaillageStore();
    private header = [
       {title: "Nom", value: "nom"},
       {title: "Type de tarif", value: "typeChantier"},
@@ -12,11 +13,21 @@ export default class ListGrenaillageComponent extends Vue {
       {title: "Action", value: "actions", sortable: false, align: "end"}
    ];
 
+   async mounted() {
+      await this.store.load();
+   }
+
+   async reload() {
+      this.store.unLoad();
+      await this.store.load();
+   }
    async editGrenaillage(item: any) {
-      if (await this.list.ListGrenaillage.modif(item)) {
-         useAlert().alert('Modification effectuée avec succès');
+      if (await this.store.update(item)) {
+         NotificationHandler.showNewNotification('Grenaillage modifié avec succès !');
       } else {
-         useAlert().alert('Erreur lors de la modification');
+         NotificationHandler.showNewNotification('Erreur lors de la modification du grenaillage.', true);
+         await this.reload();
+
       }
    }
 }
@@ -30,7 +41,7 @@ export default class ListGrenaillageComponent extends Vue {
       <v-card-text>
          <v-data-table-virtual
              :headers="this.header"
-             :items="this.list.ListGrenaillage.grenaillages"
+             :items="this.store.listGrenaillage"
              variant="outlined"
              class="tableList"
              :fixed-header="true"
@@ -43,7 +54,7 @@ export default class ListGrenaillageComponent extends Vue {
                ></v-text-field>
             </template>
             <template v-slot:[`item.actions`]="{ item }">
-               <v-btn color="primary" @click="editGrenaillage(item)">Modifier</v-btn>
+               <v-icon size="x-large" color="primary" @click="editGrenaillage(item)">mdi-pensil</v-icon>
             </template>
          </v-data-table-virtual>
       </v-card-text>

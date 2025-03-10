@@ -2,9 +2,10 @@
 import {Vue, Component} from 'vue-facing-decorator';
 import Menu from "@/component/common/Menu.vue";
 import ListGrenaillageComponent from "@/component/lists/ListGrenaillageComponent.vue";
+import NotificationHandlerComponent from "@/component/common/NotificationHandlerComponent.vue";
 
 @Component({
-  components: {ListGrenaillageComponent, Menu}
+   components: {NotificationHandlerComponent, ListGrenaillageComponent, Menu}
 })
 export default class ListGrenaillageView extends Vue {
 
@@ -12,8 +13,9 @@ export default class ListGrenaillageView extends Vue {
 </script>
 
 <template>
-  <Menu/>
-  <ListGrenaillageComponent/>
+   <Menu/>
+   <ListGrenaillageComponent/>
+   <NotificationHandlerComponent/>
 </template>
 
 <style scoped>

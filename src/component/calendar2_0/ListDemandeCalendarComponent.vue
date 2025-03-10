@@ -1,8 +1,8 @@
 <script lang="ts">
 import {Vue, Component} from 'vue-facing-decorator';
-import {CalendarComponentStore} from "@/stores";
 import {VueDraggableNext} from 'vue-draggable-next'
 import DemandeCalendarDraggableComponent from "@/component/calendar2_0/DemandeCalendarDraggableComponent.vue";
+import {planingStore} from "@/stores/PlainingStore";
 
 @Component({
    components: {
@@ -12,11 +12,10 @@ import DemandeCalendarDraggableComponent from "@/component/calendar2_0/DemandeCa
 })
 
 export default class ListDemandeCalendarComponent extends Vue {
-   private CalendarComponentStore = CalendarComponentStore();
+   private store = planingStore();
 
    cloneDemande(demande: any) {
-      this.CalendarComponentStore.calendarModel.demandeClone = demande;
-      console.log(demande);
+      this.store.planingModel.demandeClone = demande;
       return { ...demande };
    }
 
@@ -29,7 +28,7 @@ export default class ListDemandeCalendarComponent extends Vue {
       <v-card>
          <v-card>
             <v-row>
-               <v-col v-for="(head, index) in CalendarComponentStore.calendarModel.headerListDemande" :key="index">
+               <v-col v-for="(head, index) in store.planingModel.headerListDemande" :key="index">
                   {{ head.title }}
                </v-col>
             </v-row>
@@ -37,7 +36,7 @@ export default class ListDemandeCalendarComponent extends Vue {
          <v-card>
             <v-list-item class="">
                <draggable
-                   :list="CalendarComponentStore.listDemandeCalendar"
+                   :list="store.planingModel.listDemande"
                    :group="{ name: 'demande', pull: 'clone', put: false }"
                    :clone="cloneDemande"
                    @start="dragging = true"
@@ -45,7 +44,7 @@ export default class ListDemandeCalendarComponent extends Vue {
                >
                   <template #item="{ element }">
                      <DemandeCalendarDraggableComponent :item="element"
-                                                        :header="CalendarComponentStore.calendarModel.headerListDemande"/>
+                                                        :header="store.planingModel.headerListDemande"/>
                   </template>
                </draggable>
             </v-list-item>

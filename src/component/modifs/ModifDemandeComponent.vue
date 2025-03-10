@@ -1,48 +1,57 @@
 <script lang="ts">
 import {Component, Vue, Watch} from 'vue-facing-decorator';
 import {useRouter} from "vue-router";
-import {ModifDemandeStore, useAlert} from "@/stores";
+import {useAlert} from "@/stores";
 import {getArticleCoucheForDemande} from "@/services/ArticleCoucheService";
 import ModifDemandeCouche from "@/component/Form/ModifCoucheForDemande.vue";
 import {Systeme} from "@/models/types/systeme";
 import {getSurfaceCoucheByDemande} from "@/services/SurfaceCouchesService";
 import {createDefaultArticleCouche} from "@/models/types/articleCouche";
+import {creationDemandeStore, modifDemandeStore} from "@/stores/DemandeStore";
+import {listCommandeStore} from "@/stores/CommandeStore";
+import {listAffaireStore} from "@/stores/AffaireStore";
+import {listSystemeStore} from "@/stores/SystemeStore";
+import NotificationHandler from "@/services/NotificationHandler";
 
 @Component({
    components: {ModifDemandeCouche}
 })
 export default class ModifDemandeComponent extends Vue {
+   private store = modifDemandeStore();
+   private commandeStore = listCommandeStore();
+   private affaireStore = listAffaireStore();
+   private systemeStore = listSystemeStore();
    private router = useRouter();
-   private modifStore = ModifDemandeStore();
 
 
    async mounted() {
-      this.modifStore.selectDate = new Date(this.modifStore.demande.date);
-      this.modifStore.selectAffaire = this.modifStore.listAffaire.affaires.filter((affaire) => affaire.id === this.modifStore.listCommande.commandes.find((commande) => commande.id === this.modifStore.demande.commande.id)?.affaire.id).map((affaire) => {
+      await this.store.load();
+      this.store.modifDemande.selectedDate = new Date(this.store.modifDemande.demande.date);
+      this.store.modifDemande.selectedAffaire = this.affaireStore.listAffaire.affaires.filter((affaire) => affaire.id === this.commandeStore.listCommande.commandes.find((commande) => commande.id === this.store.modifDemande.demande.commande.id)?.affaire.id).map((affaire) => {
          return {
             title: affaire.numero + " - " + affaire.nom,
             value: affaire.id
          }
       })[0];
-      this.modifStore.selectCommande = this.modifStore.listCommande.commandes.filter((commande) => commande.id === this.modifStore.demande.commande.id).map((commande) => {
+      this.store.modifDemande.selectedCommande = this.commandeStore.listCommande.commandes.filter((commande) => commande.id === this.store.modifDemande.demande.commande.id).map((commande) => {
          return {
-            title: commande.eureka + " - " + this.modifStore.listSysteme.systemes.find((systeme: Systeme) => systeme.id === commande.systeme.id)?.nom,
+            title: commande.eureka + " - " + this.systemeStore.listSysteme.systemes.find((systeme: Systeme) => systeme.id === commande.systeme.id)?.nom,
             value: commande.id
          }
       })[0];
       //TODO: mettre la surface car je la récup pas
-      this.modifStore.demande.surfaceCouches = [];
-      const ArticlesCouches = await getArticleCoucheForDemande(this.modifStore.demande.commande);
-      this.modifStore.demande.surfaceCouches = await getSurfaceCoucheByDemande(this.modifStore.demande.id);
-      for (const surfaceCouche of this.modifStore.demande.surfaceCouches) {
+      this.store.modifDemande.demande.surfaceCouches = [];
+      const ArticlesCouches = await getArticleCoucheForDemande(this.store.modifDemande.demande.commande);
+      this.store.modifDemande.demande.surfaceCouches = await getSurfaceCoucheByDemande(this.store.modifDemande.demande.id);
+      for (const surfaceCouche of this.store.modifDemande.demande.surfaceCouches) {
          surfaceCouche.articleCouche = ArticlesCouches.find(articleCouche => articleCouche.id === surfaceCouche.articleCouche.id) ?? createDefaultArticleCouche();
       }
    }
 
 
-   @Watch('modifStore.demande.surface', {deep: true, immediate: true})
+   @Watch('store.modifDemande.demande.surface', {deep: true, immediate: true})
    public updateSurface(newValue: number, oldValue: number) {
-      for (const surfaceCouche of this.modifStore.demande.surfaceCouches) {
+      for (const surfaceCouche of this.store.modifDemande.demande.surfaceCouches) {
          if (surfaceCouche.surface == oldValue) {
             surfaceCouche.surface = newValue;
          }
@@ -51,13 +60,12 @@ export default class ModifDemandeComponent extends Vue {
 
    private async submitForm(){
       try {
-         this.modifStore.demande.date = this.modifStore.selectDate ? this.modifStore.selectDate.toISOString() : String(new Date());
-         if (await this.modifStore.listDemande.modif(this.modifStore.demande)) {
-            useAlert().alert('Demande créée avec succès !');
-            this.modifStore.clearAll();
+         this.store.modifDemande.demande.date = this.store.modifDemande.selectedDate ? this.store.modifDemande.selectedDate.toISOString() : String(new Date());
+         if (await this.store.update(this.store.modifDemande.demande)) {
+            NotificationHandler.showNewNotification('Demande modifiée avec succès !');
             this.router.push({name: 'listDemande'});
          } else {
-            useAlert().alert('Erreur lors de la création de la demande.');
+            NotificationHandler.showNewNotification('Erreur lors de la création de la demande.', true);
          }
       } catch (error) {
          console.error(error);
@@ -82,7 +90,7 @@ export default class ModifDemandeComponent extends Vue {
                          item-title="title"
                          item-value="value"
                          variant="outlined"
-                         v-model="this.modifStore.selectAffaire"
+                         v-model="this.store.modifDemande.selectedAffaire"
                          return-object
                      ></v-combobox>
                      <v-combobox
@@ -91,21 +99,21 @@ export default class ModifDemandeComponent extends Vue {
                          item-title="title"
                          item-value="value"
                          variant="outlined"
-                         v-model="this.modifStore.selectCommande"
+                         v-model="this.store.modifDemande.selectedCommande"
                          return-object
                      />
                      <v-col align-self="center" justify="center">
                         <v-row align="center" justify="center">
                            <v-text-field
                                label="Numero de la demande"
-                               v-model="this.modifStore.demande.numero"
+                               v-model="this.store.modifDemande.demande.numero"
                                outlined
                                dense
                                prepend-icon="mdi-briefcase-outline"
                            ></v-text-field>
                         </v-row>
                         <v-date-picker
-                            v-model="this.modifStore.selectDate"
+                            v-model="this.store.modifDemande.selectedDate"
                             label="Date de la demande"
                             outlined
                             dense
@@ -114,27 +122,27 @@ export default class ModifDemandeComponent extends Vue {
                         <v-textarea
                             label="commentaire"
                             variant="outlined"
-                            v-model="this.modifStore.demande.commentaire">
+                            v-model="this.store.modifDemande.demande.commentaire">
                         </v-textarea>
                         <v-checkbox
                             label="reservation peinture"
-                            v-model="this.modifStore.demande.reservation"
+                            v-model="this.store.modifDemande.demande.reservation"
                         ></v-checkbox>
                         <v-number-input
-                            v-model="this.modifStore.demande.surface"
+                            v-model="this.store.modifDemande.demande.surface"
                             label="surface"
                             :min="0"
                             outlined
                             dense
                         ></v-number-input>
                         <v-number-input
-                            v-model="this.modifStore.demande.nombrePiece"
+                            v-model="this.store.modifDemande.demande.nombrePiece"
                             label="nombre de pièces"
                             :min="0"
                             variant="outlined"
                             dense
                         ></v-number-input>
-                        <div v-for="surfaceCouche in this.modifStore.demande.surfaceCouches"
+                        <div v-for="surfaceCouche in this.store.modifDemande.demande.surfaceCouches"
                              :key="surfaceCouche.id">
                            <ModifDemandeCouche :surface-couche="surfaceCouche"/>
                         </div>
