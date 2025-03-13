@@ -88,7 +88,10 @@ export const getStockForSortieByArticle = async (articleCouche: ArticleCouche): 
 
 export const getStockForSortie = async (): Promise<Stock[]> => {
     try {
-        const response = await apiClient.get<ApiResponseCollection>(`/stocks?exists[dateSortie_stock]=true`);
+        const date = new Date();
+        date.setMonth(date.getMonth() - 6);
+        console.log(date.toISOString().split('T')[0]);
+        const response = await apiClient.get<ApiResponseCollection>(`/stocks?dateSortie_stock[after]=${date.toISOString().split('T')[0]}`);
         return Stockmapper.mapArrayStock(response.data.member);
     } catch (error) {
         console.error(error);

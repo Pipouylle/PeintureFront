@@ -10,10 +10,12 @@ import {listDemandeStore} from "@/stores/DemandeStore";
 import {listAffaireStore} from "@/stores/AffaireStore";
 import {listSystemeStore} from "@/stores/SystemeStore";
 import {listArticleStore} from "@/stores/ArticleStore";
+import {getPreviousAvancement} from "@/services/DemandesService";
 
 export const listCommandeStore = defineStore("listCommandeStore", {
     state: () => ({
         listCommande: createDefaultListCommandeModel() as ListCommandeModel,
+        listAvancement: [] as {demandeId: number, avancement: number}[],
         isLoad: false as boolean
     }),
     actions: {
@@ -22,8 +24,9 @@ export const listCommandeStore = defineStore("listCommandeStore", {
             await listSystemeStore().load();
             await listArticleStore().load();
             if (!this.isLoad) {
-                await this.getAll()
+                await this.getAll();
                 this.isLoad = true
+                await this.getAvancement();
             }
         },
         unLoad(){
@@ -36,6 +39,12 @@ export const listCommandeStore = defineStore("listCommandeStore", {
                 return true;
             } catch (e) {
                 return false;
+            }
+        },
+        async getAvancement(): Promise<void> {
+            await listDemandeStore().load();
+            for (const demande of listDemandeStore().listDemande.demandes) {
+                this.listAvancement.push(await getPreviousAvancement(demande.id));
             }
         },
         async delete(commande: Commande): Promise<boolean> {

@@ -27,6 +27,8 @@ import ListUserView from "@/views/lists/ListUserView.vue";
 import CreationUserView from "@/views/forms/CreationUserView.vue";
 import AvancementComponent from "@/component/avancements/AvancementComponent.vue";
 import AvancementView from "@/views/AvancementView.vue";
+import ListSortieStockComponent from "@/component/lists/ListSortieStockComponent.vue";
+import ListStockSortieView from "@/views/lists/ListStockSortieView.vue";
 
 const routes: Array<RouteRecordRaw> = [
     {path: "/", name: "home", component: HomeView,},
@@ -52,8 +54,9 @@ const routes: Array<RouteRecordRaw> = [
     {path: "/list/grenaillage", name: "listGrenaillage", component: ListGrenaillageView,},
     {path: "/list/semaine", name: "listSemaine", component: ListSemaineView,},
     {path: "/calendar2", name: "calendar2", component: CalendarViewNew,},
-    {path: "/usineView", name: "usineView", component: ViewUsineView,},
-    {path: "/avancement/saisie", name: "avancementSaisie", component: AvancementView}
+    {path: "/usine/view", name: "usineView", component: ViewUsineView,},
+    {path: "/avancement/saisie", name: "avancementSaisie", component: AvancementView},
+    {path: "/list/stock/sortie", name: "stockSortie", component: ListStockSortieView}
 ];
 
 const router = createRouter({

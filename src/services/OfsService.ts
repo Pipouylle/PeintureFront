@@ -91,3 +91,14 @@ export const updateAvancementOf = async (of: Of): Promise<Of> => {
         throw error;
     }
 }
+
+export const getOfForSortie = async (): Promise<Of[]> => {
+    try {
+        //TODO: faire en sorte que ce soit 6 mois
+        const response = await apiClient.get<Ofs[]>('/ofsForSortieStock');
+        return Ofsmapper.mapArrayOf(response.data);
+    } catch (error) {
+        console.error('Erreur lors de la récupération des ofs:', error);
+        throw error;
+    }
+}

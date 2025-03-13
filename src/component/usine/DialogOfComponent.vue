@@ -9,7 +9,7 @@ import {getStockForSortie, getStockNotSortie} from "@/services/StockService"
 import {Stock} from "@/models/types/stock"
 import {User, createDefaultUser} from "@/models/types/user"
 import {listUserStore} from "@/stores/UserStore";
-import type { VTextField } from 'vuetify/components';
+import type {VTextField} from 'vuetify/components';
 import NotificationHandler from "@/services/NotificationHandler";
 import {OperateurViewStore} from "@/stores/UsineStore";
 import {listDemandeStore} from "@/stores/DemandeStore";
@@ -26,7 +26,7 @@ export default class DialogOfComponent extends Vue {
    private listStock: Stock[] = [];
    private scanne: string = "";
    private stockSelect: Stock[] = [];
-   private listUsersStore = listUserStore();
+   private userSelected: number = -1;
    private sortieSelect: boolean = false;
    private textFieldRef!: VTextField;
 
@@ -35,8 +35,8 @@ export default class DialogOfComponent extends Vue {
       this.listStock = await getStockNotSortie();
    }
 
-   async sortieStock(user: User) {
-      if (await this.store.sortirStock(this.stockSelect, user, this.item)){
+   async sortieStock() {
+      if (await this.store.sortirStock(this.stockSelect, this.userStore.listUser.users[this.userSelected], this.item)) {
          this.stockSelect = [];
          this.selectedCouche = -1;
          NotificationHandler.showNewNotification("la sortie de stock a bine été effectuer");
@@ -46,10 +46,12 @@ export default class DialogOfComponent extends Vue {
    }
 
    async scanneArticle() {
-      const index = this.listStock.findIndex((stock: Stock) => stock.id === parseInt(this.scanne));
+      const index = this.store.listStock.findIndex((stock: Stock) => stock.id === parseInt(this.scanne));
+      console.log(index);
       if (index != -1) {
-         if (!this.stockSelect.find((stock: Stock) => stock.id === parseInt(this.scanne))){
-            this.stockSelect.push(this.listStock[index]);
+         if (!this.stockSelect.find((stock: Stock) => stock.id === parseInt(this.scanne))) {
+            console.log('je vais push')
+            this.stockSelect.push(this.store.listStock[index]);
          } else {
             NotificationHandler.showNewNotification("le stock a déjà été selectionner", true);
          }
@@ -66,95 +68,74 @@ export default class DialogOfComponent extends Vue {
 
 <template>
    <v-card class="container">
-      <v-card-title> Demande :
-         {{ demandeStore.listDemande.demandes.find((demande: Demande) => demande.id === item.demande.id)?.numero }}
+      <v-card-title class="ma-3 pa 3">
+         <v-row >
+            <span class="text-h1"> Demande : {{
+                  demandeStore.listDemande.demandes.find((demande: Demande) => demande.id === item.demande.id)?.numero
+               }} </span>
+            <v-spacer></v-spacer>
+            <v-btn size="x-large" color="primary" @click="this.store.dialog = false" class="ma-5"> Fermer</v-btn>
+         </v-row>
       </v-card-title>
       <v-btn-group
-          v-if="selectedCouche === -1"
-          v-for="(couche: AvancementSurfaceCouche, index) in this.item.avancements"
+          class="ma-3"
+          v-if="userSelected === -1"
+          v-for="(user , index) in this.userStore.listUser.users"
           :key="index"
-
       >
-         <v-btn @click="selectCouche(couche)" size="x-large" class="ma-1 buttonCouche "> {{ couche.surfaceCouches.articleCouche.couche.nom }}</v-btn>
+         <v-btn @click="userSelected = index" size="x-large" class="ma-1 buttonCouche text-h5"> {{ user.name }}</v-btn>
       </v-btn-group>
-      <v-card v-else-if="selectedCouche !== -1 && !this.sortieSelect">
-         <v-card-title> {{
-               this.item.avancements[selectedCouche].surfaceCouches.articleCouche.couche.nom
-            }}
-         </v-card-title>
-         <v-card-text>
-            <v-text-field
-                label="surface pour cette couche"
-                v-model="this.item.avancements[selectedCouche].surfaceCouches.surface"
-                readonly
-                density="comfortable"
-            ></v-text-field>
-            <v-text-field
-                readonly
-                density="comfortable"
-                label="epaisseur pour cette couche"
-                v-model="this.item.avancements[selectedCouche].surfaceCouches.articleCouche.couche.epaisseur"
-            ></v-text-field>
-            <v-row
-                v-for="(article: Article, index) in this.item.avancements[selectedCouche].surfaceCouches.articleCouche.articles"
-                :key="index"
-            >
-               <v-col>
-                  <v-text-field
-                      readonly
-                      density="comfortable"
-                      v-model="article.descriptif"
-                  ></v-text-field>
-               </v-col>
-               <v-col>
-                  <v-text-field
-                      readonly
-                      density="comfortable"
-                      v-model="article.ral"
-                  ></v-text-field>
-               </v-col>
-            </v-row>
-            <v-row>
-               <v-col>
-                  <v-text-field
-                      ref="textFieldRef"
-                      autofocus
-                      label="scanne"
-                      v-model="scanne"
-                      density="comfortable"
-                      @update:model-value="scanneArticle"
-                  ></v-text-field>
-               </v-col>
-               <v-col>
-                  <v-btn color="error" prepend-icon="mdi-delete" @click="scanne = ''" size="x-large"> Supprimer selection</v-btn>
-               </v-col>
-            </v-row>
-            <v-row>
-               <v-list>
-                  <v-list-subheader> Stock Selectionner </v-list-subheader>
-                  <v-list-item v-for="(stock, index) in this.stockSelect"
-                  :key="index"
-                  >
-                     <span> {{stock.id}} - {{stock.article.id}} </span>
-                  </v-list-item>
-               </v-list>
-            </v-row>
-            <v-row>
-               <v-btn color="error" prepend-icon="mdi-arrow-left-thick" @click="this.sortieSelect = true" size="x-large"> Sortie des stock </v-btn>
-            </v-row>
-         </v-card-text>
-         <v-btn prepend-icon="mdi-arrow-left-thick" @click="selectedCouche = -1" size="x-large"> Retour a la selection des couches</v-btn>
-      </v-card>
-      <v-card v-else>
-         <v-btn-group v-for="(user: User, index) in userStore.listUser.users" :key="index">
-            <v-btn size="x-large" @click="sortieStock(user)"> {{ user.name }} </v-btn>
-         </v-btn-group>
+      <v-card v-else-if="userSelected !== -1" class="pa-5">
+         <v-row v-for="(couche: AvancementSurfaceCouche, index) in item.avancements" :key="couche.id">
+            <v-col>
+               <span class="ma-15 text-h4"> {{ couche.surfaceCouches.articleCouche.couche.nom }} </span>
+            </v-col>
+            <v-col>
+               <span class="ma-15 text-h4"> {{ couche.surfaceCouches.articleCouche.couche.epaisseur }} m² </span>
+            </v-col>
+         </v-row>
+         <v-row>
+            <v-col>
+               <v-text-field
+                   ref="textFieldRef"
+                   autofocus
+                   label="scanne"
+                   v-model="scanne"
+                   density="comfortable"
+                   @update:model-value="scanneArticle"
+               ></v-text-field>
+            </v-col>
+            <v-col>
+               <v-btn color="error" prepend-icon="mdi-delete" @click="scanne = ''" size="x-large"> Supprimer selection
+               </v-btn>
+            </v-col>
+         </v-row>
+         <v-row>
+            <v-list>
+               <v-list-subheader> Stock Selectionner</v-list-subheader>
+               <v-list-item v-for="(stock, index) in this.stockSelect"
+                            :key="index"
+               >
+                  <v-row>
+                     <span class="text-h3 ma-5"> {{ stock.id }} - {{ stock.article.id }} </span>
+                     <v-btn size="x-large" color="error" class="text-h4 ma-5" @click="this.stockSelect.splice(index, 1)"
+                            prepend-icon="mdi-trash"> enlever
+                     </v-btn>
+                  </v-row>
+               </v-list-item>
+            </v-list>
+         </v-row>
+         <v-row>
+            <v-btn color="primary" append-icon="mdi-arrow-right-thick" @click="sortieStock"
+                   size="x-large"> Sortie des stock
+            </v-btn>
+         </v-row>
       </v-card>
    </v-card>
 </template>
 
 <style scoped>
-.buttonCouche{
+.buttonCouche {
    border: #0b0e0d solid 1px;
 }
 </style>

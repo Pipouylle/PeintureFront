@@ -70,7 +70,7 @@ export default class ListAffaireComponent extends Vue {
              :headers="this.header"
              :items="list"
              v-model:search="this.store.listAffaire.filter"
-             :filter-keys="['numero']"
+             :filter-keys="['numero','nom']"
              variant="outlined"
              class="tableList"
              :fixed-header="true"

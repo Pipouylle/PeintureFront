@@ -165,10 +165,12 @@ export default class CreerDemandeForm extends Vue {
                             variant="outlined"
                             dense
                         ></v-number-input>
+                        <!--
                         <div v-for="surfaceCouche in this.store.demandeForm.demande.surfaceCouches"
                              :key="surfaceCouche.id">
                            <ModifDemandeCouche :surface-couche="surfaceCouche"/>
                         </div>
+                         -->
                         <v-btn
                             color="primary"
                             class="mt-4"

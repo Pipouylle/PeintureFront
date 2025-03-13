@@ -3,6 +3,7 @@ import {Vue, Component} from 'vue-facing-decorator';
 import {VueDraggableNext} from 'vue-draggable-next'
 import DemandeCalendarDraggableComponent from "@/component/calendar2_0/DemandeCalendarDraggableComponent.vue";
 import {planingStore} from "@/stores/PlainingStore";
+import {listDemandeStore} from "@/stores/DemandeStore";
 
 @Component({
    components: {
@@ -13,10 +14,15 @@ import {planingStore} from "@/stores/PlainingStore";
 
 export default class ListDemandeCalendarComponent extends Vue {
    private store = planingStore();
+   private demandeStore = listDemandeStore();
 
    cloneDemande(demande: any) {
       this.store.planingModel.demandeClone = demande;
-      return { ...demande };
+      return {...demande};
+   }
+
+   get formatedDemande() {
+      return this.demandeStore.listDemande.demandes.filter(demande => demande.etat !== 'terminé');
    }
 
 
@@ -33,10 +39,10 @@ export default class ListDemandeCalendarComponent extends Vue {
                </v-col>
             </v-row>
          </v-card>
-         <v-card>
+         <v-card class="list">
             <v-list-item class="">
                <draggable
-                   :list="store.planingModel.listDemande"
+                   :list="formatedDemande"
                    :group="{ name: 'demande', pull: 'clone', put: false }"
                    :clone="cloneDemande"
                    @start="dragging = true"
@@ -56,5 +62,9 @@ export default class ListDemandeCalendarComponent extends Vue {
 <style scoped>
 .calendar-container {
    left: 10px;
+}
+
+.list {
+   overflow: scroll;
 }
 </style>

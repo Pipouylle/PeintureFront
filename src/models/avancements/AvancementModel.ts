@@ -15,7 +15,10 @@ export interface AvancementModel {
     listDemande: Demande[];
     listSysteme: Systeme[];
     listPrevious: {demandeId: number, avancement: number}[];
+    cabines: string[];
+    cabine: string;
     temps: string[];
+    temp: string;
 }
 
 export function createDefaultAvancementModel(overrides: Partial<AvancementModel> = {}): AvancementModel {
@@ -30,7 +33,10 @@ export function createDefaultAvancementModel(overrides: Partial<AvancementModel>
         listDemande: [],
         listSysteme: [],
         listPrevious: [],
+        cabines:["cabine 1", "cabine 2"],
+        cabine: '',
         temps: ["matin","après-midi","nuit"],
+        temp: '',
         ...overrides
     }
 }

@@ -32,7 +32,7 @@ export const listAffaireStore = defineStore("listAffaireStore", {
         async delete(affaire: Affaire): Promise<boolean> {
             try {
                 await deleteAffaire(affaire);
-                const index = this.listAffaire.affaires.findIndex((affaire: Affaire) => affaire.id === affaire.id);
+                const index = this.listAffaire.affaires.findIndex((a: Affaire) => a.id === affaire.id);
                 this.listAffaire.affaires.splice(index, 1);
                 listCommandeStore().unLoad();
                 return true;

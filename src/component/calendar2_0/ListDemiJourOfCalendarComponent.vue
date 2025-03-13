@@ -8,6 +8,7 @@ import {listSystemeStore} from "@/stores/SystemeStore";
 import {createDefaultDemande, Demande} from "@/models/types/demande";
 import {createDefaultOf, Of} from "@/models/types/of";
 import NotificationHandler from "@/services/NotificationHandler";
+import {listDemandeStore} from "@/stores/DemandeStore";
 
 @Component({
    components: {OFCalendarDraggableComponent}
@@ -20,6 +21,7 @@ export default class ListDemiJourOfCalendarComponent extends Vue {
    private commandeStore = listCommandeStore();
    private affaireStore = listAffaireStore();
    private systemeStore = listSystemeStore();
+   private demandeStore = listDemandeStore();
 
    get getOfForDay(): Of[] {
       return this.store.getOfByDemiJour(this.jour, this.temp);

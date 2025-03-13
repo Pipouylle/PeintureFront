@@ -40,6 +40,20 @@ export default class SelectJourComponent extends Vue {
             <v-icon>mdi-arrow-right-bold</v-icon>
          </v-btn>
          <v-spacer></v-spacer>
+         <v-btn-group v-for="(cabine, index) in this.store.avancementModel.cabines" :key="index">
+            <v-btn @click="this.store.avancementModel.cabine = cabine"
+                   variant="outlined"
+                   :color="this.store.avancementModel.cabine === cabine ? 'blue' : 'grey'"
+            >{{cabine}}</v-btn>
+         </v-btn-group>
+         <v-spacer></v-spacer>
+         <v-btn-group v-for="(temp, index) in this.store.avancementModel.temps" :key="index">
+            <v-btn @click="this.store.avancementModel.temp = temp"
+                   variant="outlined"
+                   :color="this.store.avancementModel.temp === temp ? 'blue' : 'grey'"
+            >{{temp}}</v-btn>
+         </v-btn-group>
+         <v-spacer></v-spacer>
          <v-btn size="x-large" color="primary" @click="update"> mettre a jour</v-btn>
          <v-spacer></v-spacer>
          <v-btn size="x-large" color="primary" @click="retour"> Retour</v-btn>

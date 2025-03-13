@@ -11,14 +11,19 @@ import {listSystemeStore} from "@/stores/SystemeStore";
 import {listFournisseurStore} from "@/stores/FournisseurStore";
 import {listGrenaillageStore} from "@/stores/GrenaillageStore";
 import NotificationHandler from "@/services/NotificationHandler";
+import {listDemandeStore} from "@/stores/DemandeStore";
+import {avancementStore} from "../../stores/AvancementStore";
 
-@Component({})
+@Component({
+   methods: {avancementStore}
+})
 
 export default class ListCommandeComponent extends Vue {
    private store = listCommandeStore();
    private affaireStore = listAffaireStore();
    private systemeStore = listSystemeStore();
    private modifStore = updateCommandeStore();
+   private demandeStore = listDemandeStore();
    private router = useRouter();
    private header = [
       {title: 'Eureka', value: 'eureka'},
@@ -55,6 +60,16 @@ export default class ListCommandeComponent extends Vue {
          await this.reload();
       }
    }
+
+   get formatedCommande() {
+      return this.store.listCommande.commandes.map(commande => ({
+         ...commande,
+         nomAffaire: this.affaireStore.listAffaire.affaires.find(affaire => affaire.id === commande.affaire.id)?.nom,
+         numAffaire: this.affaireStore.listAffaire.affaires.find(affaire => affaire.id === commande.affaire.id)?.numero,
+         nomSysteme: this.systemeStore.listSysteme.systemes.find(systeme => systeme.id === commande.systeme.id)?.nom,
+         surface : parseInt(String(commande.surface * (this.store.listAvancement.filter(avancement => this.demandeStore.listDemande.demandes.some(demande => demande.id === avancement.demandeId && demande.commande.id === commande.id)).reduce((sum :number, avancement) => sum + avancement.avancement, 0)) / 100)) + ' / ' + commande.surface
+      }))
+   }
 }
 </script>
 
@@ -80,43 +95,25 @@ export default class ListCommandeComponent extends Vue {
          </router-link>
       </v-card-title>
       <v-card-text>
-         <v-data-table
+         <v-data-table-virtual
              :headers="this.header"
-             :items="this.store.listCommande.commandes"
+             :items="formatedCommande"
              v-model:search="store.listCommande.filter"
-             :filter-keys="['eureka', 'affaire.nom', 'systeme.nom', 'commentaire']"
+             :filter-keys="['eureka','numAffaire', 'nomAffaire', 'nomSysteme']"
              variant="outlined"
              class="tableList"
          >
-            <template v-slot:[`item.nomAffaire`]="{ item }">
-               <span> {{
-                     this.affaireStore.listAffaire.affaires.find(affaire => affaire.id === item.affaire.id)?.nom
-                  }} </span>
-            </template>
-            <template v-slot:[`item.numAffaire`]="{ item }">
-               <span> {{
-                     this.affaireStore.listAffaire.affaires.find(affaire => affaire.id === item.affaire.id)?.numero
-                  }} </span>
-            </template>
-            <template v-slot:[`item.nomSysteme`]="{ item }">
-               <span> {{
-                     this.systemeStore.listSysteme.systemes.find(systeme => systeme.id === item.systeme.id)?.nom
-                  }}</span>
-            </template>
             <template v-slot:[`item.ficheH`]="{ item }">
-               <v-icon v-if="item.ficheH" color="green">mdi-check</v-icon>
-               <v-icon v-else color="red">mdi-close</v-icon>
+               <v-icon v-if="item.ficheH" color="red">mdi-close</v-icon>
             </template>
             <template v-slot:[`item.pvPeinture`]="{ item }">
-               <v-icon v-if="item.pvPeinture" color="green">mdi-check</v-icon>
-               <v-icon v-else color="red">mdi-close</v-icon>
+               <v-icon v-if="item.pvPeinture" color="red">mdi-close</v-icon>
             </template>
             <template v-slot:[`item.actions`]="{ item }">
                <v-icon size="x-large" color="primary" @click="editCommande(item)">mdi-pencil</v-icon>
                <v-icon size="x-large" color="error" @click="deleteCommande(item)">mdi-delete</v-icon>
             </template>
-
-         </v-data-table>
+         </v-data-table-virtual>
       </v-card-text>
    </v-card>
 </template>

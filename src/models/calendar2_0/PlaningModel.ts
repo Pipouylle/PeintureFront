@@ -7,7 +7,6 @@ import {Semaine, createDefaultSemaine} from "@/models/types/semaine";
 export interface PlaningModel {
     headerListOf: {title: string, value: string}[];
     headerListDemande: {title: string, value: string}[];
-    listDemande: Demande[];
     listOf: Of[];
     demandeClone: Demande;
     ofClone: Of;
@@ -39,7 +38,6 @@ export function createDefaultPlaningModel(override: Partial<PlaningModel> = {}):
             {title: "date besoin", value: "dateDemande"},
         ],
         listOf: [],
-        listDemande: [],
         demandeClone: createDefaultDemande(),
         ofClone: createDefaultOf(),
         temp: ["matin","après-midi","nuit"],

@@ -23,7 +23,7 @@ export default class ListSystemeComponent extends Vue {
    private header = [
       {title: 'Nom', value: 'nom'},
       {title: 'Fournisseur', value: 'nomFournisseur'},
-      {title: 'Grenaillage', value: 'grenaillage.nom'},
+      {title: 'Grenaillage', value: 'nomGrenaillage'},
       {title: 'Type', value: 'type'},
       {title: 'Couche', value: 'couches'},
       {title: 'Detail Couche', value: 'detailCouche'},
@@ -58,6 +58,14 @@ export default class ListSystemeComponent extends Vue {
    onCoucheSelected(systemeId: number, couche: Couche) {
       this.selectedCouches[systemeId] = couche; // Stockage de la sélection
    }
+
+   get formatedSysteme(){
+      return this.store.listSysteme.systemes.map(systeme => ({
+         ...systeme,
+         nomFournisseur: this.fournisseurStore.listFournisseur.fournisseurs.find(fournisseur => fournisseur.id === systeme.fournisseur.id)?.nom,
+         nomGrenaillage: systeme.grenaillage?.nom || 'AUCUN',
+      }));
+   }
 }
 </script>
 
@@ -84,18 +92,13 @@ export default class ListSystemeComponent extends Vue {
       <v-card-text>
          <v-data-table-virtual
              :headers="header"
-             :items="store.listSysteme.systemes"
+             :items="formatedSysteme"
              v-model:search="this.store.listSysteme.filter"
-             :filter-keys="['nom', 'fournisseur', 'grenaillage.id', 'type']"
+             :filter-keys="['nom', 'nomFournisseur', 'nomGrenaillage', 'type']"
              variant="outlined"
              class="tableList"
              :fixed-header="true"
          >
-            <template v-slot:[`item.nomFournisseur`]="{ item }">
-               <span> {{
-                     this.fournisseurStore.listFournisseur.fournisseurs.find(fournisseur => fournisseur.id === item.fournisseur.id)?.nom
-                  }} </span>
-            </template>
             <template v-slot:[`item.couches`]="{ item }">
                <v-select
                    :items="item.couches"

@@ -80,7 +80,7 @@ export const avancementStore = defineStore('avancementStore',{
                 const of = this.avancementModel.listOF.filter(of => of.demande.id === demande.id)[0];
                 if (of) {
                     try {
-                        this.avancementModel.listPrevious.push(await getPreviousAvancement(of));
+                        this.avancementModel.listPrevious.push(await getPreviousAvancement(of.demande.id));
                     } catch (e) {
                         NotificationHandler.showNewNotification('je n\'ai pas pu récupérer les avancements précédents', true);
                     }
@@ -126,6 +126,7 @@ export const avancementStore = defineStore('avancementStore',{
                 for (const of of this.avancementModel.listOF) {
                     await updateAvancementOf(of);
                 }
+                listCommandeStore().unLoad();
                 return true;
             } catch (e) {
                 return false;

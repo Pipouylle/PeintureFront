@@ -4,6 +4,7 @@ import {planingStore} from "@/stores/PlainingStore";
 import {listCommandeStore} from "@/stores/CommandeStore";
 import {listAffaireStore} from "@/stores/AffaireStore";
 import {listSystemeStore} from "@/stores/SystemeStore";
+import {listDemandeStore} from "@/stores/DemandeStore";
 
 @Component({})
 export default class OFCalendarDraggableComponent extends Vue {
@@ -14,6 +15,7 @@ export default class OFCalendarDraggableComponent extends Vue {
    private commandeStore = listCommandeStore();
    private affaireStore = listAffaireStore();
    private systemeStore = listSystemeStore();
+   private demandeStore = listDemandeStore();
    private deleteOfCalendar() {
       this.store.deleteOf(this.item.id);
    }
@@ -27,22 +29,22 @@ export default class OFCalendarDraggableComponent extends Vue {
          <v-col v-for="(head, index) in header" :key="index" class="col">
             <v-icon v-if="head.value == 'drag'" class="colIcon"> mdi-drag-vertical</v-icon>
             <span v-else-if="head.value == 'idDemandeOf.numeroAffaire'" >{{
-                  affaireStore.listAffaire.affaires.find(affaire => affaire.id === commandeStore.listCommande.commandes.find(commande => commande.id === store.planingModel.listDemande.find(demande => demande.id === item.demande.id)?.commande.id)?.affaire.id)?.numero
+                  affaireStore.listAffaire.affaires.find(affaire => affaire.id === commandeStore.listCommande.commandes.find(commande => commande.id === demandeStore.listDemande.demandes.find(demande => demande.id === item.demande.id)?.commande.id)?.affaire.id)?.numero
             }}</span>
             <span v-else-if="head.value == 'idDemandeOf.nomAffaire'" >{{
-                  affaireStore.listAffaire.affaires.find(affaire => affaire.id === commandeStore.listCommande.commandes.find(commande => commande.id === store.planingModel.listDemande.find(demande => demande.id === item.demande.id)?.commande.id)?.affaire.id)?.nom
+                  affaireStore.listAffaire.affaires.find(affaire => affaire.id === commandeStore.listCommande.commandes.find(commande => commande.id === demandeStore.listDemande.demandes.find(demande => demande.id === item.demande.id)?.commande.id)?.affaire.id)?.nom
                }}</span>
             <span v-else-if="head.value == 'idDemandeOf.numeroDemande'" >{{
-                  store.planingModel.listDemande.find(demande => demande.id === item.demande.id)?.numero
+                  demandeStore.listDemande.demandes.find(demande => demande.id === item.demande.id)?.numero
             }}</span>
             <span v-else-if="head.value == 'idDemandeOf.nomSysteme'" >{{
-                  systemeStore.listSysteme.systemes.find(systeme => systeme.id === commandeStore.listCommande.commandes.find(commande => commande.id === store.planingModel.listDemande.find(demande => demande.id === item.demande.id)?.commande.id)?.systeme.id)?.nom
+                  systemeStore.listSysteme.systemes.find(systeme => systeme.id === commandeStore.listCommande.commandes.find(commande => commande.id === demandeStore.listDemande.demandes.find(demande => demande.id === item.demande.id)?.commande.id)?.systeme.id)?.nom
             }}</span>
             <span v-else-if="head.value == 'idDemandeOf.surfaceDemande'" >{{
-                  store.planingModel.listDemande.find(demande => demande.id === item.demande.id)?.surface
+                  demandeStore.listDemande.demandes.find(demande => demande.id === item.demande.id)?.surface
                }}</span>
             <span v-else-if="head.value == 'idDemandeOf.dateDemande'" >{{
-                  new Date(store.planingModel.listDemande.find(demande => demande.id === item.demande.id)?.date ?? new Date().toISOString()).toLocaleDateString()
+                  new Date(demandeStore.listDemande.demandes.find(demande => demande.id === item.demande.id)?.date ?? new Date().toISOString()).toLocaleDateString()
                }}</span>
          </v-col>
          <v-col>

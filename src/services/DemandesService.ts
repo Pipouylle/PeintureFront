@@ -91,13 +91,13 @@ export const updateEtatDemande = async (demande: Demande): Promise<Demande> => {
     }
 }
 
-export const getPreviousAvancement = async (of: Of): Promise<any> => {
+export const getPreviousAvancement = async (demandeId: number): Promise<any> => {
     try {
         const response =await apiClient.get<{
             demandeId: number,
-            avancement: number
-        }>(`/previousAvancement/${of.demande.id}/${of.id}`);
-        return response.data;
+            avancement: string
+        }>(`/previousAvancement/${demandeId}`);
+        return {demandeId: response.data.demandeId, avancement: parseInt(response.data.avancement)};
     } catch (e) {
         throw e;
     }

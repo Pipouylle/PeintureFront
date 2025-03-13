@@ -22,6 +22,8 @@ export const OperateurViewStore = defineStore('OperateurViewStore', {
         listStock: [] as Stock[],
         usineModel: createDefaultViewUsineModel() as ViewUsineModel,
         isLoad: false,
+        dialog: false,
+        fetchDate: new Date(),
     }),
     actions: {
         async load() {
@@ -31,17 +33,23 @@ export const OperateurViewStore = defineStore('OperateurViewStore', {
             await listDemandeStore().load();
             if (!this.isLoad) {
                 await this.setJour(new Date().toISOString());
+                this.isLoad = true;
             }
         },
         unLoad() {
             this.isLoad = false;
         },
         async setJour(date: string) {
+            if (new Date().toISOString().split('T')[0] > this.fetchDate.toISOString().split('T')[0]) {
+                date = new Date().toISOString();
+                this.fetchDate = new Date();
+            }
             this.usineModel.date = date;
             this.usineModel.semaine =  listSemaineStore().getSemaine(date) ?? createDefaultSemaine();
             this.usineModel.jour = this.usineModel.jours[new Date(date).getDay()];
-            await this.setOf();
             this.listStock = await getStockNotSortie();
+            await this.setOf();
+
         },
         async setOf() {
             this.listOf = await getAllOfbySemaine(this.usineModel.semaine);

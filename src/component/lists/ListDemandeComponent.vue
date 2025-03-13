@@ -73,7 +73,14 @@ export default class ListDemandeComponent extends Vue {
       }
    }
 
-
+   get formatedDemande() {
+      return this.store.listDemande.demandes.map(demande => ({
+         ...demande,
+         numAffaire: this.affaireStore.listAffaire.affaires.find(affaire => affaire.id === this.commandeStore.listCommande.commandes.find(commande => commande.id === demande.commande.id)?.affaire.id)?.numero,
+         nomAffaire: this.affaireStore.listAffaire.affaires.find(affaire => affaire.id === this.commandeStore.listCommande.commandes.find(commande => commande.id === demande.commande.id)?.affaire.id)?.nom,
+         nomSysteme: this.systemeStore.listSysteme.systemes.find(systeme => systeme.id === this.commandeStore.listCommande.commandes.find(commande => commande.id === demande.commande.id)?.systeme.id)?.nom
+      }))
+   }
 
 }
 </script>
@@ -99,39 +106,26 @@ export default class ListDemandeComponent extends Vue {
       <v-card-text>
          <v-data-table-virtual
              :headers="this.header"
-             :items="this.store.listDemande.demandes"
+             :items="formatedDemande"
              v-model:search="this.store.listDemande.filter"
-             :filter-keys="['numero', 'etat', 'surface', 'date']"
+             :filter-keys="['numero','numAffaire','nomAffaire','nomSysteme', 'etat', 'surface']"
              variant="outlined"
              class="tableList"
              :fixed-header="true"
          >
-            <template v-slot:[`item.numAffaire`]="{ item }">
-               <span> {{
-                     affaireStore.listAffaire.affaires.find(affaire => affaire.id === commandeStore.listCommande.commandes.find(commande => commande.id === item.commande.id)?.affaire.id)?.numero
-                  }} </span>
-            </template>
-            <template v-slot:[`item.nomAffaire`]="{ item }">
-               <span> {{
-                     affaireStore.listAffaire.affaires.find(affaire => affaire.id === commandeStore.listCommande.commandes.find(commande => commande.id === item.commande.id)?.affaire.id)?.nom
-                  }} </span>
-            </template>
-            <template v-slot:[`item.nomSysteme`]="{ item }">
-               <span> {{
-                    systemeStore.listSysteme.systemes.find(systeme => systeme.id === commandeStore.listCommande.commandes.find(commande => commande.id === item.commande.id)?.systeme.id)?.nom
-                  }} </span>
-            </template>
             <template v-slot:[`item.ral`]="{ item }">
             <span> {{
                   commandeStore.listCommande.commandes.find(commande => commande.id === item.commande.id)?.ral
                }} </span>
             </template>
+            <template v-slot:[`item.surface`]="{ item }">
+               <span> {{ parseInt(String(item.surface * (this.commandeStore.listAvancement.find(a => a.demandeId === item .id)?.avancement ?? 0) / 100)) }} / {{ item.surface }} </span>
+            </template>
             <template v-slot:[`item.date`]="{ item }">
                <span> {{ new Date(item.date).toLocaleDateString() }} </span>
             </template>
             <template v-slot:[`item.reservation`]="{ item }">
-               <v-icon v-if="item.reservation" color="green">mdi-check</v-icon>
-               <v-icon v-else color="red">mdi-close</v-icon>
+               <v-icon v-if="item.reservation" color="red">mdi-close</v-icon>
             </template>
             <template v-slot:[`item.actions`]="{ item }">
                <v-btn v-if="!(item.etat === 'terminé')" color="primary" @click="finish(item)">Terminer</v-btn>

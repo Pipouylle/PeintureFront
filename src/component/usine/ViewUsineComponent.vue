@@ -9,12 +9,13 @@ import {listCommandeStore} from "@/stores/CommandeStore";
 import {listAffaireStore} from "@/stores/AffaireStore";
 import {listSystemeStore} from "@/stores/SystemeStore";
 import {listDemandeStore} from "@/stores/DemandeStore";
+import {useRoute} from "vue-router"
 
 @Component({
    components: {DialogOfComponent, SelectSemaine}
 })
 
-//TODO : ça bug sur le dimanche quand je click sur les fleche
+//TODO : faire en sorte que le unmount marche
 export default class ViewUsineComponent extends Vue {
    private store = OperateurViewStore();
    private demandeStore = listDemandeStore();
@@ -27,16 +28,31 @@ export default class ViewUsineComponent extends Vue {
       {title: "Num demande", value: "numDemande", sortable: false},
       {title: "Nom Systeme", value: "nomSysteme", sortable: false},
       {title: "Ral", value: "ral", sortable: false},
-      {title: "Surface", value: "surface", sortable: false},
-      {title: "Nb pièce", value: "nbPiece", sortable: false},
+      {title: 'Pv', value: "pvPeinture", sortable: false},
       {title: "Commentaire", value: "commentaire", sortable: false},
       {title: "date", value: "dateDemande", sortable: false},
    ]
-   private dialog: boolean = false;
    private selectedOf = createDefaultOf();
+   private route = useRoute();
+   private intervalId: number | null = null;
 
    mounted() {
-      this.store.load();
+      this.fetchData();
+      this.store.usineModel.cabine = 'cabine ' + this.route.query.cabine;
+      this.intervalId = window.setInterval(this.fetchData, 60000);
+   }
+
+   unmounted() {
+      console.log("Unmounted");
+      if (this.intervalId) {
+         clearInterval(this.intervalId);
+         this.intervalId = null;
+      }
+   }
+   private async fetchData() {
+      console.log('je fait un fetch')
+      await this.store.load();
+      await this.store.setJour(new Date(this.store.usineModel.date).toISOString());
    }
 
    get getJour() {
@@ -64,7 +80,7 @@ export default class ViewUsineComponent extends Vue {
 
       if (index !== undefined && index >= 0) {
          this.selectedOf = this.getOf[index - 2];
-         this.dialog = true;
+         this.store.dialog = true;
       } else {
          console.error("❌ Impossible de récupérer l'élément");
       }
@@ -74,7 +90,7 @@ export default class ViewUsineComponent extends Vue {
 
 <template>
    <v-dialog
-       v-model="dialog"
+       v-model="this.store.dialog"
        max-height="1000px"
        min-height="700px"
    >
@@ -101,16 +117,7 @@ export default class ViewUsineComponent extends Vue {
                </v-row>
             </v-col>
             <v-spacer></v-spacer>
-            <v-btn-group v-for="(cabine, index) in this.store.usineModel.cabines" :key="index"
-                         class="buttonGroup">
-               <v-btn
-                   :color="this.store.usineModel.cabine === cabine ? 'blue' : 'grey'"
-                   variant="outlined"
-                   @click="this.setOfCabine(cabine)"
-                   class="text-h5"
-               >{{ cabine }}
-               </v-btn>
-            </v-btn-group>
+            <span class="text-h2 buttonGroup">{{ this.store.usineModel.cabine }}</span>
             <v-spacer si></v-spacer>
             <v-btn-group v-for="(temp, index) in store.usineModel.temps" :key="index" class="buttonGroup">
                <v-btn
@@ -157,15 +164,8 @@ export default class ViewUsineComponent extends Vue {
                      this.commandeStore.listCommande.commandes.find(commande => commande.id === this.demandeStore.listDemande.demandes.find(demande => demande.id === item.demande.id)?.commande.id)?.ral
                   }} </span>
             </template>
-            <template v-slot:[`item.surface`]="{ item }">
-               <span> {{
-                     this.demandeStore.listDemande.demandes.find(demande => demande.id === item.demande.id)?.surface
-                  }} </span>
-            </template>
-            <template v-slot:[`item.nbPiece`]="{ item }">
-               <span> {{
-                     this.demandeStore.listDemande.demandes.find(demande => demande.id === item.demande.id)?.nombrePiece
-                  }} </span>
+            <template v-slot:[`item.pvPeinture`]="{ item }">
+               <v-icon v-if="this.demandeStore.listDemande.demandes.find(demande => demande.id === item.demande.id)?.reservation" color="red" size="x-large">mdi-close</v-icon>
             </template>
             <template v-slot:[`item.commentaire`]="{ item }">
                <span> {{

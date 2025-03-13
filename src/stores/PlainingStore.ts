@@ -25,15 +25,16 @@ export const planingStore = defineStore("planingStore", {
     actions: {
         async load() {
             await listSemaineStore().load();
+            if (!this.isLoad) {
+                this.planingModel.semaine = listSemaineStore().getCurrentSemaine() ?? createDefaultSemaine();
+                console.log(this.planingModel.semaine);
+                this.isLoad = true;
+            }
             await listAffaireStore().load();
             await listUserStore().load();
             await listSystemeStore().load();
             await listCommandeStore().load();
             await listDemandeStore().load();
-            if (this.isLoad) {
-                this.planingModel.semaine = listSemaineStore().getCurrentSemaine() ?? createDefaultSemaine();
-                this.isLoad = true;
-            }
         },
         unLoad() {
             this.isLoad = false;
@@ -41,10 +42,7 @@ export const planingStore = defineStore("planingStore", {
             avancementStore().unLoad();
         },
         async setSemaine() {
-            this.planingModel.listDemande = listDemandeStore().listDemande.demandes.filter(demande => demande.etat !== 'terminé');
             this.planingModel.listOf = await getAllOfbySemaine(this.planingModel.semaine);
-            console.log(this.planingModel.listDemande);
-            console.log(this.planingModel.listOf);
         },
         async creerOfCalendar(demandeId: number, jour: string, temp: string): Promise<boolean> {
             try {
@@ -108,7 +106,8 @@ export const planingStore = defineStore("planingStore", {
                 try {
                     await deleteOf(createDefaultOf({id: ofId}));
                     this.planingModel.listOf.splice(index, 1);
-                    //TODO: faire unLoad de cabine et saisie
+                    OperateurViewStore().unLoad();
+                    avancementStore().unLoad();
                 } catch (e) {
                     console.error('erreur lors de la suppression de l\'of', e);
                 }

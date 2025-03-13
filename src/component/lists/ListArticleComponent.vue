@@ -9,8 +9,7 @@ import {listFournisseurStore} from "@/stores/FournisseurStore";
 
 @Component({})
 
-//TODO: mettre les nouvelle champs
-//TODO: mettre la quantiter de stock
+//TODO: mise a jour de la quantiter quand ça marche et aussi fermer et clear la veleru de la sorti
 export default class ListArticleComponent extends Vue {
    private store = listArticleStore();
    private modifStore = updateArticleStore();
@@ -26,7 +25,7 @@ export default class ListArticleComponent extends Vue {
    ];
    private stock = false;
    private entreeStockArticle: Article = createDefaultArticle();
-   private quEntreeStock = 0;
+   private quEntreeStock: number = 0;
 
    async mounted() {
       await this.store.load();
@@ -58,14 +57,30 @@ export default class ListArticleComponent extends Vue {
 
    async faireEntreeStock() {
       try {
-         //TODO: il ne disparait pas
+
          await entreeStock(this.entreeStockArticle, this.quEntreeStock);
-         this.store.listArticle.stock[this.entreeStockArticle.id].quantite += this.quEntreeStock;
-         this.stock = false;
-         NotificationHandler.showNewNotification('Stock mis a jour');
+         const index = this.store.listArticle.stock.findIndex(stock => stock.idArticle === this.entreeStockArticle.id);
+         if (index >= 0) {
+            //TODO: ça fait de la merde
+            const test = this.store.listArticle.stock[index]
+            test.quantite += this.quEntreeStock;
+            this.quEntreeStock = 0;
+            this.stock = false;
+            NotificationHandler.showNewNotification('Stock mis a jour');
+            return;
+         }
+         NotificationHandler.showNewNotification('Erreur lors de l\'entrée de stock', true);
       } catch (e) {
-         NotificationHandler.showNewNotification('Erreur lors de l\'entrée de stock');
+         console.error(e);
+         NotificationHandler.showNewNotification('Erreur lors de l\'entrée de stock', true);
       }
+   }
+
+   get formatedArticle() {
+      return this.store.listArticle.articles.map(article => ({
+         ...article,
+         Nomfournisseur: this.fournisseurStore.listFournisseur.fournisseurs.find(fournisseur => fournisseur.id === article.fournisseur.id)?.nom
+      }));
    }
 }
 </script>
@@ -78,10 +93,12 @@ export default class ListArticleComponent extends Vue {
          <v-card-title>
             Entree de Stock
          </v-card-title>
-         <v-text-field
+         <v-number-input
+             variant="outlined"
              label="Quantité a entrer"
+             class="ma-5"
              v-model="quEntreeStock"
-         ></v-text-field>
+         ></v-number-input>
          <v-btn @click="faireEntreeStock">
             Valider
          </v-btn>
@@ -109,18 +126,13 @@ export default class ListArticleComponent extends Vue {
       <v-card-text>
          <v-data-table-virtual
              :headers="this.header"
-             :items="this.store.listArticle.articles"
+             :items="formatedArticle"
              v-model:search="this.store.listArticle.filter"
-             :filter-keys="['id','descriptif']"
+             :filter-keys="['id','descriptif','ral','Nomfournisseur']"
              variant="outlined"
              class="tableList"
              :fixed-header="true"
          >
-            <template v-slot:[`item.Nomfournisseur`]="{ item }">
-               <span> {{
-                     this.fournisseurStore.listFournisseur.fournisseurs.find(fournisseur => fournisseur.id === item.fournisseur.id)?.nom
-                  }} </span>
-            </template>
             <template v-slot:[`item.quantiter`]="{ item }">
                <span> {{ this.store.listArticle.stock.find(stock => stock.idArticle === item.id)?.quantite ?? 0 }} </span>
             </template>
