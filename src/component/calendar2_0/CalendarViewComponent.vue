@@ -5,6 +5,7 @@ import ListCommandeComponent from "@/component/lists/ListCommandeComponent.vue";
 import ListsOfCalendarComponent from "@/component/calendar2_0/ListsOfCalendarComponent.vue";
 import ListDemandeCalendarComponent from "@/component/calendar2_0/ListDemandeCalendarComponent.vue";
 import {planingStore} from "@/stores/PlainingStore";
+import {getSemaineByInfo} from "@/services/SemainesService";
 
 @Component({
    components: {
@@ -14,7 +15,10 @@ import {planingStore} from "@/stores/PlainingStore";
 export default class CalendarViewComponent extends Vue {
    private store = planingStore();
    async mounted() {
-      await this.store.load()
+      await this.store.load();
+      this.store.planingModel.cabine = 'cabine 1';
+      this.store.planingModel.semaine = await getSemaineByInfo(this.store.planingModel.semaine);
+      await this.store.setSemaine();
    }
 }
 </script>

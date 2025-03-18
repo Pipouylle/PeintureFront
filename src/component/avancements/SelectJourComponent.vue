@@ -12,10 +12,6 @@ export default class SelectJourComponent extends Vue {
       return this.store.avancementModel.jour + ' - ' + new Date(this.store.avancementModel.date).toLocaleDateString();
    }
 
-   update() {
-      this.$emit('updateOf');
-   };
-
    retour() {
       this.router.back();
    };
@@ -53,8 +49,6 @@ export default class SelectJourComponent extends Vue {
                    :color="this.store.avancementModel.temp === temp ? 'blue' : 'grey'"
             >{{temp}}</v-btn>
          </v-btn-group>
-         <v-spacer></v-spacer>
-         <v-btn size="x-large" color="primary" @click="update"> mettre a jour</v-btn>
          <v-spacer></v-spacer>
          <v-btn size="x-large" color="primary" @click="retour"> Retour</v-btn>
       </v-row>

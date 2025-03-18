@@ -21,7 +21,7 @@ export function createDefaultDemande(overrides: Partial<Demande> = {}): Demande 
     return {
         id: 0,
         numero: "",
-        etat: "pas commencé",
+        etat: "Créée",
         surface: 0,
         date: "",
         nombrePiece: 0,

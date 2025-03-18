@@ -15,7 +15,6 @@ import {useRoute} from "vue-router"
    components: {DialogOfComponent, SelectSemaine}
 })
 
-//TODO : faire en sorte que le unmount marche
 export default class ViewUsineComponent extends Vue {
    private store = OperateurViewStore();
    private demandeStore = listDemandeStore();
@@ -129,6 +128,10 @@ export default class ViewUsineComponent extends Vue {
                >{{ temp }}
                </v-btn>
             </v-btn-group>
+            <v-spacer si></v-spacer>
+            <v-col cols="2" class="buttonGroup">
+               <v-btn size="x-large" variant="outlined" @click="fetchData()">Relancer</v-btn>
+            </v-col>
          </v-row>
       </v-card>
       <v-card class="table">

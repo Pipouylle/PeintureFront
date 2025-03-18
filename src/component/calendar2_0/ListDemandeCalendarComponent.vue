@@ -39,8 +39,8 @@ export default class ListDemandeCalendarComponent extends Vue {
                </v-col>
             </v-row>
          </v-card>
-         <v-card class="list">
-            <v-list-item class="">
+         <v-card>
+            <v-list-item class="list" :max-height="800">
                <draggable
                    :list="formatedDemande"
                    :group="{ name: 'demande', pull: 'clone', put: false }"
@@ -65,6 +65,6 @@ export default class ListDemandeCalendarComponent extends Vue {
 }
 
 .list {
-   overflow: scroll;
+   overflow: auto;
 }
 </style>

@@ -68,6 +68,7 @@ export default class ListSortieStockComponent extends Vue {
    }
 
    get listRecap(){
+      //TODO: refaire car ça marche pas
       //Trier d'bort les affaires(le faire dans le store)
       //ensuite pour chaque affaire faire le regroupe ment des semiane
       //pour finir regouper les article poar apport au truc au dessus
@@ -75,13 +76,17 @@ export default class ListSortieStockComponent extends Vue {
           this.commandeStore.listCommande.commandes.some(commande => commande.affaire.id === affaire.id &&
               this.demandeStore.listDemande.demandes.some(demande => demande.commande.id === commande.id &&
                   this.listOf.some(of => of.demande.id === demande.id &&
-                      this.listStock.some(stock => true)))));
+                      this.listStock.some(stock => stock.of.id === of.id)))));
       const items: {codeAffaire?: string ,semaine?: number, articleCode?: number, articleDesignation?: string, quantite?: number}[] = [];
       affaires = affaires.sort((a, b) => b.id - a.id);
       for (const affaire of affaires) {
          items.push({codeAffaire: affaire.numero});
          let semaines: {semaine: Semaine, stocks: {article: Article, quantiter: number}[]}[] = [];
-         for (const stock of this.listStock) {
+         const stocks = this.listStock.filter((stock: Stock) => this.listOf.some(of => stock.of.id === of.id &&
+            this.demandeStore.listDemande.demandes.some(demande => demande.id === of.demande.id &&
+               this.commandeStore.listCommande.commandes.some(commande => commande.id === demande.commande.id &&
+                  affaire.id === commande.affaire.id))));
+         for (const stock of stocks) {
             const semaine = this.semaineStore.getSemaine(new Date(stock.dateSortie).toISOString()) ?? createDefaultSemaine();
             const index = semaines.findIndex(item => item.semaine.id === semaine.id);
             if (index == -1) {

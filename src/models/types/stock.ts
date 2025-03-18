@@ -9,6 +9,7 @@ export interface Stock {
   article : Article;
   user: User;
   of: Of;
+  unique: boolean;
 }
 
 export function createDefaultStock(overrides: Partial<Stock> = {}): Stock {
@@ -19,6 +20,7 @@ export function createDefaultStock(overrides: Partial<Stock> = {}): Stock {
     article: createDefaultArticle(),
     user: createDefaultUser(),
     of: createDefaultOf(),
+    unique: true,
     ...overrides
   };
 }

@@ -129,7 +129,7 @@ export default class ListDemandeComponent extends Vue {
             </template>
             <template v-slot:[`item.actions`]="{ item }">
                <v-btn v-if="!(item.etat === 'terminé')" color="primary" @click="finish(item)">Terminer</v-btn>
-               <v-btn v-else color="primary" @click="notFinish(item)">Pas terminer</v-btn>
+               <v-btn v-else color="primary" @click="notFinish(item)">Réouvrir</v-btn>
                <v-icon size="x-large" color="primary" @click="editDemande(item)">mdi-pencil</v-icon>
                <v-icon size="x-large" color="error" @click="deleteDemande(item)">mdi-delete</v-icon>
             </template>

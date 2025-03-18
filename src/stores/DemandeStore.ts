@@ -61,7 +61,7 @@ export const listDemandeStore = defineStore('listDemandeStore', {
             try {
                 const index = this.listDemande.demandes.findIndex(d => d.id === demande.id)
                 if (index !== -1) {
-                    demande.etat = "terminé"
+                    demande.etat = "Terminée"
                     await updateEtatDemande(demande);
                     return true;
                 }
@@ -75,7 +75,7 @@ export const listDemandeStore = defineStore('listDemandeStore', {
             try {
                 const index = this.listDemande.demandes.findIndex(d => d.id === demande.id)
                 if (index !== -1) {
-                    demande.etat = "en cour"
+                    demande.etat = "En cours"
                     await updateEtatDemande(demande);
                     return true;
                 }

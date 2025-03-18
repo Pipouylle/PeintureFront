@@ -12,7 +12,8 @@ export default class Stockmapper {
             dateSortie: data.dateSortieStock,
             article: data.articleStock ? createDefaultArticle({id : parseInt(data.articleStock.split('/')[3])}) : createDefaultArticle(),
             user: data.userStock ? createDefaultUser({id : parseInt(data.userStock.split('/')[3])}) : createDefaultUser(),
-            of: data.ofStock ? createDefaultOf({id : parseInt(data.ofStock.split('/')[3])}) : createDefaultOf()
+            of: data.ofStock ? createDefaultOf({id : parseInt(data.ofStock.split('/')[3])}) : createDefaultOf(),
+            unique: data.isUniqueStock
         }
     }
 
@@ -27,7 +28,8 @@ export default class Stockmapper {
             dateSortieStock: data.dateSortie,
             articleStock: data.article ? "/api/articles/" + data.article.id : null,
             userStock: data.user ? "/api/users/" + data.user.id : null,
-            ofStock: data.of ? "/api/o_fs/" + data.of.id : null
+            ofStock: data.of ? "/api/o_fs/" + data.of.id : null,
+            isUniqueStock: data.unique
         }
     }
 

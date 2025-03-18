@@ -116,7 +116,7 @@ export default class CreerCommandeForm extends Vue {
                <v-card-text>
                   <v-form>
                      <v-combobox
-                         label="Affaires"
+                         label="Affaire"
                          :items="formatedAffaire"
                          item-title="title"
                          item-value="value"
@@ -125,7 +125,7 @@ export default class CreerCommandeForm extends Vue {
                          return-object
                      ></v-combobox>
                      <v-combobox
-                         label="Systemes"
+                         label="Systeme"
                          :items="formatedSysteme"
                          item-title="title"
                          item-value="value"
@@ -169,7 +169,7 @@ export default class CreerCommandeForm extends Vue {
                      ></v-number-input>
                      <v-textarea
                          clearable
-                         label="commentaire"
+                         label="Commentire"
                          variant="outlined"
                          v-model="this.store.commandeFrom.commande.commentaire"
                      ></v-textarea>
@@ -180,7 +180,7 @@ export default class CreerCommandeForm extends Vue {
                      ></v-checkbox>
                      <v-checkbox
                          v-model="this.store.commandeFrom.commande.pvPeinture"
-                         label="pv Peinture"
+                         label="PV peinture"
                      ></v-checkbox>
                      <v-btn
                          color="primary"

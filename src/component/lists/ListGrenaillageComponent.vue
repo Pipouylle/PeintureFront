@@ -36,7 +36,7 @@ export default class ListGrenaillageComponent extends Vue {
 <template>
    <v-card class="containerList">
       <v-card-title class="d-flex justify-space-between align-center titleList">
-         <span> Liste des Grenaillage </span>
+         <span> Liste des Grenaillages </span>
       </v-card-title>
       <v-card-text>
          <v-data-table-virtual

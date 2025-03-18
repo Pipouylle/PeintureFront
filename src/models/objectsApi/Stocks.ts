@@ -5,4 +5,5 @@ export interface Stocks {
     articleStock: string | null;
     userStock: string | null;
     ofStock: string | null;
+    isUniqueStock: boolean;
 }

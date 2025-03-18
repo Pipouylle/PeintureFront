@@ -57,7 +57,7 @@ export default class CreerArticleForm extends Vue {
                          required
                      ></v-text-field>
                      <v-text-field
-                         label="descriptif de l'article"
+                         label="Description de l'article"
                          v-model="this.store.articleForm.article.descriptif"
                          outlined
                          dense

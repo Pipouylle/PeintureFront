@@ -34,7 +34,7 @@ export default class AvancementComponent extends Vue {
       <v-card-title>
          <SelectJourComponent @updateOf="handleUpdateOf"/>
       </v-card-title>
-      <v-card-text>
+      <v-card-text class="overflow-auto card">
          <v-list>
             <v-list-item v-for="(affaire: Affaire) in store.avancementModel.listAffaire.filter(affaire =>
           store.avancementModel.listCommande.some(commande =>
@@ -76,8 +76,17 @@ export default class AvancementComponent extends Vue {
          </v-list>
       </v-card-text>
    </v-card>
+   <v-card class="bottom-0 w-100 ma-3" position="absolute">
+      <v-row class="w-100" align-content="left">
+         <v-col cols="12" class="right-0">
+            <v-btn color="green" @click="handleUpdateOf" size="x-large" class="right-0 bottom-0 pa-5 ma-5"> Valider </v-btn>
+         </v-col>
+      </v-row>
+   </v-card>
 </template>
 
 <style scoped>
-
+.card{
+   max-height: 76vh;
+}
 </style>

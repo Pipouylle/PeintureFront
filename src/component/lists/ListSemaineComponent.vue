@@ -38,7 +38,7 @@ export default class ListSemaineComponent extends Vue {
 <template>
    <v-card class="containerList">
       <v-card-title class="d-flex justify-space-between align-center titleList">
-         <span> Liste des semaine </span>
+         <span> Liste des semaines </span>
          <v-spacer></v-spacer>
          <v-text-field
              label="Rechercher"
