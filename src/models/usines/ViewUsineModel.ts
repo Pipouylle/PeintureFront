@@ -18,7 +18,7 @@ export function createDefaultViewUsineModel(overrides: Partial<ViewUsineModel> =
         semaine : createDefaultSemaine(),
         jour: "",
         temp: "",
-        date: "",
+        date: new Date().toISOString(),
         cabines: ["cabine 1", "cabine 2"],
         jours: ["dimanche","lundi","mardi","mercredi","jeudi","vendredi","samedi"],
         temps: ["matin","après-midi","nuit"],

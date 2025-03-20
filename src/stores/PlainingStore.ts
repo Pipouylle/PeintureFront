@@ -38,7 +38,6 @@ export const planingStore = defineStore("planingStore", {
         },
         unLoad() {
             this.isLoad = false;
-            OperateurViewStore().unLoad();
             avancementStore().unLoad();
         },
         async setSemaine() {
@@ -65,7 +64,6 @@ export const planingStore = defineStore("planingStore", {
                     responseOf.avancements.push(await creerAvancementSurfaceCouche(avancement));
                 }
                 this.planingModel.listOf.push(responseOf);
-                OperateurViewStore().unLoad();
                 avancementStore().unLoad();
                 return true;
             } catch (e) {
@@ -106,7 +104,6 @@ export const planingStore = defineStore("planingStore", {
                 try {
                     await deleteOf(createDefaultOf({id: ofId}));
                     this.planingModel.listOf.splice(index, 1);
-                    OperateurViewStore().unLoad();
                     avancementStore().unLoad();
                 } catch (e) {
                     console.error('erreur lors de la suppression de l\'of', e);

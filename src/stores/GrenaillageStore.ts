@@ -21,7 +21,8 @@ export const listGrenaillageStore = defineStore("listGrenallageStore", {
         },
         async getAll(): Promise<boolean> {
             try {
-                this.listGrenaillage = await getAllGrenaillage();
+                const response = await getAllGrenaillage();
+                this.listGrenaillage = response.sort((a, b) => b.id - b.id);
                 return true;
             } catch (e) {
                 return false;

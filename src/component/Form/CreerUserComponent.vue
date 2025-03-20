@@ -11,11 +11,11 @@ export default class CreerUserComponent extends Vue {
    private router = useRouter();
    async submitForm() {
       if (await this.store.create()) {
-         NotificationHandler.showNewNotification('Utilisateur créé avec succès.');
+         NotificationHandler.showNewNotification('Opérateur créé avec succès.');
          this.store.clear();
          this.router.push({name: 'listUser'});
       } else {
-         NotificationHandler.showNewNotification('Erreur lors de la création de l\'utilisateur.', true);
+         NotificationHandler.showNewNotification('Erreur lors de la création de l\'opérateur.', true);
       }
    }
 }
@@ -30,7 +30,7 @@ export default class CreerUserComponent extends Vue {
                <v-card-text>
                   <v-form>
                      <v-text-field
-                         label="Nom de l'utilisateur"
+                         label="Nom de l'opérateur"
                          v-model="this.store.user.name"
                          outlined
                          dense
@@ -44,7 +44,7 @@ export default class CreerUserComponent extends Vue {
                          @click="submitForm"
                      >
                         <v-icon left>mdi-check-circle</v-icon>
-                        Créer un utilisateur
+                        Créer un opérateur
                      </v-btn>
                   </v-form>
                </v-card-text>

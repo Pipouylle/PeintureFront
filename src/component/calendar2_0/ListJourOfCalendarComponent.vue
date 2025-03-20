@@ -17,7 +17,7 @@ export default class ListJourOfCalendarComponent extends Vue {
    <v-card>
       <v-card-title>
          {{ jour }}
-         <span v-if="jour === 'lundi'"> {{new Date(this.store.planingModel.semaine.dateDebut).toLocaleDateString()}} </span>
+         <span> {{new Date(new Date(this.store.planingModel.semaine.dateDebut).setDate(new Date(this.store.planingModel.semaine.dateDebut).getDate() + store.planingModel.jour.indexOf(jour))).toLocaleDateString()}} </span>
       </v-card-title>
       <v-card-item>
          <v-card v-for="(temp, index) in store.planingModel.temp" :key="index">

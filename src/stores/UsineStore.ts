@@ -7,9 +7,9 @@ import {getAllOfbySemaine} from "@/services/OfsService";
 import {getAvancementSurfaceCoucheByOf} from "@/services/AvancementSurfaceCoucheService";
 import {getArticleCoucheForDemande} from "@/services/ArticleCoucheService";
 import {createDefaultCommande} from "@/models/types/commande";
-import {Stock} from "@/models/types/stock";
+import {Stock, createDefaultStock} from "@/models/types/stock";
 import {User} from "@/models/types/user";
-import {getStockNotSortie, SortieStock} from "@/services/StockService";
+import {getStockById, getStockNotSortie, SortieStock} from "@/services/StockService";
 import {listSemaineStore} from "@/stores/SemaineStore";
 import {listAffaireStore} from "@/stores/AffaireStore";
 import {listSystemeStore} from "@/stores/SystemeStore";
@@ -19,9 +19,7 @@ import {listDemandeStore} from "@/stores/DemandeStore";
 export const OperateurViewStore = defineStore('OperateurViewStore', {
     state: () => ({
         listOf: [] as Of[],
-        listStock: [] as Stock[],
         usineModel: createDefaultViewUsineModel() as ViewUsineModel,
-        isLoad: false,
         dialog: false,
         fetchDate: new Date(),
     }),
@@ -31,13 +29,11 @@ export const OperateurViewStore = defineStore('OperateurViewStore', {
             await listUserStore().load();
             listUserStore().archived = false;
             await listDemandeStore().load();
-            if (!this.isLoad) {
-                await this.setJour(new Date().toISOString());
-                this.isLoad = true;
-            }
+            await this.setJour(this.usineModel.date);
         },
         unLoad() {
-            this.isLoad = false;
+            listAffaireStore().unLoad();
+            listUserStore().unLoad();
         },
         async setJour(date: string) {
             if (new Date().toISOString().split('T')[0] > this.fetchDate.toISOString().split('T')[0]) {
@@ -47,7 +43,6 @@ export const OperateurViewStore = defineStore('OperateurViewStore', {
             this.usineModel.date = date;
             this.usineModel.semaine =  listSemaineStore().getSemaine(date) ?? createDefaultSemaine();
             this.usineModel.jour = this.usineModel.jours[new Date(date).getDay()];
-            this.listStock = await getStockNotSortie();
             await this.setOf();
 
         },
@@ -88,6 +83,13 @@ export const OperateurViewStore = defineStore('OperateurViewStore', {
             } catch (e) {
                 return false;
             }
+        },
+        async getStock(id: number): Promise<Stock> {
+          try {
+              return await getStockById(id);
+          } catch (e) {
+              return createDefaultStock();
+          }
         },
         clearAll() {
             this.clearListOf();

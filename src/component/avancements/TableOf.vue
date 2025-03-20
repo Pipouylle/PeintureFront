@@ -22,9 +22,6 @@ export default class TableOf extends Vue {
       {title: 'Pièce aujoud\'hui', key: 'pieceCurent', sortable: false},
       {title: 'Surface Total après validation', key: 'surfaceDemandeAfter', sortable: false},
    ]
-   //TODO: remplir la listPresious
-   //TODO: mettre la cabine et le temp
-   //TODO :trier par temp
 }
 </script>
 
@@ -52,10 +49,10 @@ export default class TableOf extends Vue {
             <span>{{ store.avancementModel.listPrevious.find(previous => previous.demandeId === item.demande.id)?.avancement + ' %' }}</span>
          </template>
          <template v-slot:[`item.surfaceDemandePrevious`]="{ item }">
-            <span>{{ ((store.avancementModel.listPrevious.find(previous => previous.demandeId === item.demande.id)?.avancement ?? 0) * (store.avancementModel.listDemande.find(demande => demande.id === item.demande.id)?.surface ?? 0) / 100) + " m²" }}</span>
+            <span>{{ Math.floor((store.avancementModel.listPrevious.find(previous => previous.demandeId === item.demande.id)?.avancement ?? 0) * (store.avancementModel.listDemande.find(demande => demande.id === item.demande.id)?.surface ?? 0) / 100) + " m²" }}</span>
          </template>
          <template v-slot:[`item.piecePrevious`]="{ item }">
-            <span>{{ ((store.avancementModel.listPrevious.find(previous => previous.demandeId === item.demande.id)?.avancement ?? 0) * (store.avancementModel.listDemande.find(demande => demande.id === item.demande.id)?.nombrePiece ?? 0) / 100) + " nb" }}</span>
+            <span>{{ Math.floor((store.avancementModel.listPrevious.find(previous => previous.demandeId === item.demande.id)?.avancement ?? 0) * (store.avancementModel.listDemande.find(demande => demande.id === item.demande.id)?.nombrePiece ?? 0) / 100) + " nb" }}</span>
          </template>
          <template v-slot:[`item.pourcentageCurent`]="{ item }">
             <v-number-input
@@ -81,13 +78,13 @@ export default class TableOf extends Vue {
             ></v-number-input>
          </template>
          <template v-slot:[`item.surfaceCurent`]="{ item }">
-           <span>{{  (item.avancement * (store.avancementModel.listDemande.find(demande => demande.id === item.demande.id)?.surface ?? 0) / 100) }}</span>
+           <span>{{  Math.floor(item.avancement * (store.avancementModel.listDemande.find(demande => demande.id === item.demande.id)?.surface ?? 0) / 100) }}</span>
          </template>
          <template v-slot:[`item.pieceCurent`]="{ item }">
-            <span>{{ (item.avancement * (store.avancementModel.listDemande.find(demande => demande.id === item.demande.id)?.nombrePiece ?? 0) / 100) }}</span>
+            <span>{{ Math.floor(item.avancement * (store.avancementModel.listDemande.find(demande => demande.id === item.demande.id)?.nombrePiece ?? 0) / 100) }}</span>
          </template>
          <template v-slot:[`item.surfaceDemandeAfter`]="{ item }">
-            <span>{{ (store.avancementModel.listPrevious.find(previous => previous.demandeId === item.demande.id)?.avancement + item.avancement) * (store.avancementModel.listDemande.find(demande => demande.id === item.demande.id)?.surface ?? 0) / 100 }}</span>
+            <span>{{ Math.floor((store.avancementModel.listPrevious.find(previous => previous.demandeId === item.demande.id)?.avancement + item.avancement) * (store.avancementModel.listDemande.find(demande => demande.id === item.demande.id)?.surface ?? 0) / 100) }}</span>
          </template>
       </v-data-table-virtual>
    </v-card>

@@ -37,16 +37,12 @@ export default class AvancementComponent extends Vue {
       <v-card-text class="overflow-auto card">
          <v-list>
             <v-list-item v-for="(affaire: Affaire) in store.avancementModel.listAffaire.filter(affaire =>
-          store.avancementModel.listCommande.some(commande =>
-              commande.affaire.id === affaire.id && store.avancementModel.listDemande.some(demande =>
-                  demande.commande.id === commande.id && store.avancementModel.listOF.some(of =>
+               store.avancementModel.listCommande.some(commande => commande.affaire.id === affaire.id &&
+                  store.avancementModel.listDemande.some(demande => demande.commande.id === commande.id &&
+                     store.avancementModel.listOF.some(of =>
                       of.demande.id === demande.id &&
                       of.cabine === store.avancementModel.cabine &&
-                      of.temp === store.avancementModel.temp
-                  )
-              )
-          )
-      )"
+                      of.temp === store.avancementModel.temp))))"
                          :key="affaire.id">
                <v-list-group variant="outlined">
                   <template v-slot:activator="{ props }">

@@ -5,9 +5,7 @@ import {Of} from "@/models/types/of";
 import {AvancementSurfaceCouche} from "@/models/types/avancementSurfaceCouche";
 import {Demande} from "@/models/types/demande";
 import {Article} from "@/models/types/article";
-import {getStockForSortie, getStockNotSortie} from "@/services/StockService"
 import {Stock} from "@/models/types/stock"
-import {User, createDefaultUser} from "@/models/types/user"
 import {listUserStore} from "@/stores/UserStore";
 import type {VTextField} from 'vuetify/components';
 import NotificationHandler from "@/services/NotificationHandler";
@@ -21,7 +19,6 @@ export default class DialogOfComponent extends Vue {
    private store = OperateurViewStore();
    private demandeStore = listDemandeStore();
    private userStore = listUserStore();
-   private listStock: Stock[] = [];
    private scanne: string = "";
    private stockSelect: Stock[] = [];
    private userSelected: number = -1;
@@ -40,20 +37,22 @@ export default class DialogOfComponent extends Vue {
    }
 
    async scanneArticle() {
-      const index = this.store.listStock.findIndex((stock: Stock) => stock.id === parseInt(this.scanne));
-      if (index != -1) {
-         if (!this.stockSelect.find((stock: Stock) => stock.id === parseInt(this.scanne))) {
-            this.stockSelect.push(this.store.listStock[index]);
+      const stock = await this.store.getStock(parseInt(this.scanne));
+      if (stock.id != 0 && stock.dateSortie === undefined) {
+         if (!this.stockSelect.find((s: Stock) => s.id === stock.id)) {
+            this.stockSelect.push(stock);
          } else {
             NotificationHandler.showNewNotification("le stock a déjà été selectionner", true);
          }
-         this.scanne = "";
-         await nextTick();
-         (this.$refs.textFieldRef as VTextField)?.blur();
-         setTimeout(() => {
-            (this.$refs.textFieldRef as VTextField)?.focus();
-         }, 10);
+      } else {
+         NotificationHandler.showNewNotification("le stock est inexistant ou est déjà sortie", true);
       }
+      this.scanne = "";
+      await nextTick();
+      (this.$refs.textFieldRef as VTextField)?.blur();
+      setTimeout(() => {
+         (this.$refs.textFieldRef as VTextField)?.focus();
+      }, 10);
    }
 }
 </script>
@@ -94,7 +93,7 @@ export default class DialogOfComponent extends Vue {
                    label="scanne"
                    v-model="scanne"
                    density="comfortable"
-                   @update:model-value="scanneArticle"
+                   @keyup.enter="scanneArticle"
                ></v-text-field>
             </v-col>
             <v-col>

@@ -56,9 +56,9 @@ export default class ListUserComponent extends Vue {
 
    private async updateUser(user: User) {
       if (await this.store.updateUser(user)) {
-         NotificationHandler.showNewNotification('User modifié avec succès !');
+         NotificationHandler.showNewNotification('Opérateur modifié avec succès !');
       } else {
-         NotificationHandler.showNewNotification('Erreur lors de la modification du user.', true);
+         NotificationHandler.showNewNotification('Erreur lors de la modification de l\'opérateur.', true);
          await this.reload();
       }
    };
@@ -68,7 +68,7 @@ export default class ListUserComponent extends Vue {
 <template>
    <v-card class="containerList">
       <v-card-title class="d-flex justify-space-between align-center titleList">
-         <span> Liste des Users </span>
+         <span> Liste des Opéarateur </span>
          <v-spacer></v-spacer>
          <v-text-field
              label="Rechercher"
@@ -94,7 +94,7 @@ export default class ListUserComponent extends Vue {
          <v-spacer></v-spacer>
          <router-link to="/creer/user" class="ml-auto">
             <v-btn class="bntLink">
-               Creer un User
+               Creer un Opérateur
             </v-btn>
          </router-link>
       </v-card-title>

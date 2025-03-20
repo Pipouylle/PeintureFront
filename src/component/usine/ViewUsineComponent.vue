@@ -9,7 +9,7 @@ import {listCommandeStore} from "@/stores/CommandeStore";
 import {listAffaireStore} from "@/stores/AffaireStore";
 import {listSystemeStore} from "@/stores/SystemeStore";
 import {listDemandeStore} from "@/stores/DemandeStore";
-import {useRoute} from "vue-router"
+import {useRoute} from "vue-router";
 
 @Component({
    components: {DialogOfComponent, SelectSemaine}
@@ -27,7 +27,7 @@ export default class ViewUsineComponent extends Vue {
       {title: "Num demande", value: "numDemande", sortable: false},
       {title: "Nom Systeme", value: "nomSysteme", sortable: false},
       {title: "Ral", value: "ral", sortable: false},
-      {title: 'Pv', value: "pvPeinture", sortable: false},
+      {title: 'Réservation', value: "pvPeinture", sortable: false},
       {title: "Commentaire", value: "commentaire", sortable: false},
       {title: "date", value: "dateDemande", sortable: false},
    ]
@@ -50,6 +50,7 @@ export default class ViewUsineComponent extends Vue {
    }
    private async fetchData() {
       console.log('je fait un fetch')
+      this.store.unLoad();
       await this.store.load();
       await this.store.setJour(new Date(this.store.usineModel.date).toISOString());
    }

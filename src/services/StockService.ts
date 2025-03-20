@@ -22,6 +22,18 @@ export const getAllStock = async (): Promise<Stock[]> => {
     }
 }
 
+export const getStockById = async (id: number): Promise<Stock> => {
+    try {
+        const response = await apiClient.get<Stocks>(`/stocks/${id}`);
+        const stock = Stockmapper.mapStock(response.data);
+        console.log(stock);
+        return stock;
+    } catch (error) {
+        console.error(error);
+        throw error;
+    }
+}
+
 /**
  * permet de creer un stock avec l'information necessaire est seulment l'article, la date de stock est automatique mise par l'api
  * @public

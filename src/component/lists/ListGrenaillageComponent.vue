@@ -54,7 +54,7 @@ export default class ListGrenaillageComponent extends Vue {
                ></v-text-field>
             </template>
             <template v-slot:[`item.actions`]="{ item }">
-               <v-icon size="x-large" color="primary" @click="editGrenaillage(item)">mdi-pensil</v-icon>
+               <v-icon size="x-large" color="primary" @click="editGrenaillage(item)">mdi-pencil</v-icon>
             </template>
          </v-data-table-virtual>
       </v-card-text>
