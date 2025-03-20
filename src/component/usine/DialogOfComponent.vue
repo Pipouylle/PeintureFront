@@ -55,13 +55,13 @@ export default class DialogOfComponent extends Vue {
       }, 10);
    }
 }
+//TODO : mettre les couche en v-list avec un header
 </script>
-
 <template>
    <v-card class="container">
       <v-card-title class="ma-3 pa 3">
          <v-row >
-            <span class="text-h1"> Demande : {{
+            <span class="text-h2"> Demande : {{
                   demandeStore.listDemande.demandes.find((demande: Demande) => demande.id === item.demande.id)?.numero
                }} </span>
             <v-spacer></v-spacer>
@@ -79,6 +79,9 @@ export default class DialogOfComponent extends Vue {
       <v-card v-else-if="userSelected !== -1" class="pa-5">
          <v-row v-for="(couche: AvancementSurfaceCouche, index) in item.avancements" :key="couche.id">
             <v-col>
+               <span class="ma-15 text-h4"> couche n°{{ index + 1 }} = </span>
+            </v-col>
+            <v-col>
                <span class="ma-15 text-h4"> {{ couche.surfaceCouches.articleCouche.couche.nom }} </span>
             </v-col>
             <v-col>
@@ -86,24 +89,8 @@ export default class DialogOfComponent extends Vue {
             </v-col>
          </v-row>
          <v-row>
-            <v-col>
-               <v-text-field
-                   ref="textFieldRef"
-                   autofocus
-                   label="scanne"
-                   v-model="scanne"
-                   density="comfortable"
-                   @keyup.enter="scanneArticle"
-               ></v-text-field>
-            </v-col>
-            <v-col>
-               <v-btn color="error" prepend-icon="mdi-delete" @click="scanne = ''" size="x-large"> Supprimer selection
-               </v-btn>
-            </v-col>
-         </v-row>
-         <v-row>
             <v-list>
-               <v-list-subheader> Stock Selectionner</v-list-subheader>
+               <v-list-subheader class="text-h4"> Liste des bibon scanés </v-list-subheader>
                <v-list-item v-for="(stock, index) in this.stockSelect"
                             :key="index"
                >
@@ -117,6 +104,16 @@ export default class DialogOfComponent extends Vue {
             </v-list>
          </v-row>
          <v-row>
+            <v-col cols="3">
+               <v-text-field
+                   ref="textFieldRef"
+                   autofocus
+                   label="scan"
+                   v-model="scanne"
+                   density="comfortable"
+                   @keyup.enter="scanneArticle"
+               ></v-text-field>
+            </v-col>
             <v-btn color="primary" append-icon="mdi-arrow-right-thick" @click="sortieStock"
                    size="100" class="w-25"> Valider sortie stock
             </v-btn>

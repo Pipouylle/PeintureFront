@@ -1,10 +1,12 @@
 <script lang="ts">
 import {Vue, Component} from 'vue-facing-decorator';
-
+import { useRoute } from "vue-router";
+import { ref, watch } from "vue";
 @Component({})
 
 //TODO: modif les lien pour mettre des / a la place des majuscule
 export default class Menu extends Vue {
+   private route = useRoute();
    private list: { path?: string, name: string, children?: any[] }[] = [
       {path: "", name: "Home"},
       {
@@ -37,7 +39,41 @@ export default class Menu extends Vue {
       //{path: "calendar", name: "Planing"},
       //{path: "calendarUsineCabine1", name: "Planing Atelier Cabine 1"},
       //{path: "calendarUsineCabine2", name: "Planing Atelier Cabine 2"},
-   ]
+   ];
+
+   private openedGroups = ref<Record<string, boolean>>({});
+
+   // Vérifie si un groupe doit être ouvert
+   private isGroupOpened(children: any[]): boolean {
+      return children.some((item) =>
+          this.route.path.includes(item.path.replace(/\?.*/, ""))
+      );
+   }
+
+   // ✅ Vérifie si `openedGroups` est bien défini avant de l'utiliser
+   private updateOpenedGroups() {
+      if (!this.openedGroups.value) {
+         this.openedGroups.value = {}; // Assure que c'est bien un objet
+      }
+
+      this.list.forEach((group) => {
+         if (group.children) {
+            // ✅ Vérifie si `group.name` est bien défini avant de l'utiliser
+            if (typeof group.name === "string") {
+               this.openedGroups.value[group.name] = this.isGroupOpened(group.children);
+            }
+         }
+      });
+   }
+
+   mounted() {
+      this.updateOpenedGroups();
+
+      // Écoute les changements de route et met à jour les groupes ouverts
+      watch(() => this.route.path, () => {
+         this.updateOpenedGroups();
+      });
+   }
 }
 </script>
 
@@ -45,7 +81,7 @@ export default class Menu extends Vue {
    <v-container class="menu">
       <v-list>
          <v-list-item v-for="(item, index) in list" :key="index">
-            <v-list-group v-if="item.children">
+            <v-list-group v-if="item.children" v-model:opened="openedGroups[item.name]">
                <template v-slot:activator="{ props }">
                   <v-list-item
                       v-bind="props"
