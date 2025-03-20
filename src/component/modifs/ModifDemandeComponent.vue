@@ -39,7 +39,6 @@ export default class ModifDemandeComponent extends Vue {
             value: commande.id
          }
       })[0];
-      //TODO: mettre la surface car je la récup pas
       this.store.modifDemande.demande.surfaceCouches = [];
       const ArticlesCouches = await getArticleCoucheForDemande(this.store.modifDemande.demande.commande);
       this.store.modifDemande.demande.surfaceCouches = await getSurfaceCoucheByDemande(this.store.modifDemande.demande.id);
@@ -142,10 +141,12 @@ export default class ModifDemandeComponent extends Vue {
                             variant="outlined"
                             dense
                         ></v-number-input>
+                        <!--
                         <div v-for="surfaceCouche in this.store.modifDemande.demande.surfaceCouches"
                              :key="surfaceCouche.id">
                            <ModifDemandeCouche :surface-couche="surfaceCouche"/>
                         </div>
+                        -->
                         <v-btn
                             color="primary"
                             class="mt-4"

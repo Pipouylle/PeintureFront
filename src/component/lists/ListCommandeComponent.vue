@@ -12,7 +12,7 @@ import {listFournisseurStore} from "@/stores/FournisseurStore";
 import {listGrenaillageStore} from "@/stores/GrenaillageStore";
 import NotificationHandler from "@/services/NotificationHandler";
 import {listDemandeStore} from "@/stores/DemandeStore";
-import {avancementStore} from "../../stores/AvancementStore";
+import {avancementStore} from "@/stores/AvancementStore";
 
 @Component({
    methods: {avancementStore}
@@ -67,7 +67,7 @@ export default class ListCommandeComponent extends Vue {
          nomAffaire: this.affaireStore.listAffaire.affaires.find(affaire => affaire.id === commande.affaire.id)?.nom,
          numAffaire: this.affaireStore.listAffaire.affaires.find(affaire => affaire.id === commande.affaire.id)?.numero,
          nomSysteme: this.systemeStore.listSysteme.systemes.find(systeme => systeme.id === commande.systeme.id)?.nom,
-         surface : parseInt(String(commande.surface * (this.store.listAvancement.filter(avancement => this.demandeStore.listDemande.demandes.some(demande => demande.id === avancement.demandeId && demande.commande.id === commande.id)).reduce((sum :number, avancement) => sum + avancement.avancement, 0)) / 100)) + ' / ' + commande.surface
+         surface : parseInt(String((this.store.listAvancement.filter(avancement => this.demandeStore.listDemande.demandes.some(demande => demande.id === avancement.demandeId && demande.commande.id === commande.id)).reduce((sum :number, avancement) => sum + ((avancement.avancement * (this.demandeStore.listDemande.demandes.find(demande => demande.id === avancement.demandeId)?.surface ?? 0)) / 100), 0)))) + ' / ' + commande.surface
       }))
    }
 }
