@@ -131,7 +131,7 @@ export default class ModifDemandeComponent extends Vue {
                             v-model="this.store.modifDemande.demande.surface"
                             label="surface"
                             :min="0"
-                            outlined
+                            variant="outlined"
                             dense
                         ></v-number-input>
                         <v-number-input

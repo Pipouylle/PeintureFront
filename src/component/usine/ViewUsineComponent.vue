@@ -85,6 +85,10 @@ export default class ViewUsineComponent extends Vue {
          console.error("❌ Impossible de récupérer l'élément");
       }
    }
+
+   private async forceReload() {
+      window.location.reload();
+   }
 }
 </script>
 

@@ -25,6 +25,7 @@ export default class ListCommandeComponent extends Vue {
    private modifStore = updateCommandeStore();
    private demandeStore = listDemandeStore();
    private router = useRouter();
+   private dialogDelete = false;
    private header = [
       {title: 'Eureka', value: 'eureka'},
       {title: 'Numéro affaire', value: 'numAffaire'},
@@ -49,6 +50,7 @@ export default class ListCommandeComponent extends Vue {
 
    editCommande(item: Commande) {
       this.modifStore.commandeModif.commande = JSON.parse(JSON.stringify(item));
+
       this.router.push({name: 'modifCommande'});
    }
 
@@ -67,13 +69,18 @@ export default class ListCommandeComponent extends Vue {
          nomAffaire: this.affaireStore.listAffaire.affaires.find(affaire => affaire.id === commande.affaire.id)?.nom,
          numAffaire: this.affaireStore.listAffaire.affaires.find(affaire => affaire.id === commande.affaire.id)?.numero,
          nomSysteme: this.systemeStore.listSysteme.systemes.find(systeme => systeme.id === commande.systeme.id)?.nom,
-         surface : parseInt(String((this.store.listAvancement.filter(avancement => this.demandeStore.listDemande.demandes.some(demande => demande.id === avancement.demandeId && demande.commande.id === commande.id)).reduce((sum :number, avancement) => sum + ((avancement.avancement * (this.demandeStore.listDemande.demandes.find(demande => demande.id === avancement.demandeId)?.surface ?? 0)) / 100), 0)))) + ' / ' + commande.surface
       }))
    }
 }
 </script>
 
 <template>
+   <v-dialog v-model="dialogDelete">
+      <v-card>
+         <v-btn size="x-large" color="primary" @click="dialogDelete = !dialogDelete">annuler</v-btn>
+         <v-btn size="x-large" color="error" @click="deleteCommande(item)">confirmer la supression</v-btn>
+      </v-card>
+   </v-dialog>
    <v-card class="containerList">
       <v-card-title class="d-flex justify-space-between align-center titleList">
          <span> Liste des Commandes </span>
@@ -109,9 +116,13 @@ export default class ListCommandeComponent extends Vue {
             <template v-slot:[`item.pvPeinture`]="{ item }">
                <v-icon v-if="item.pvPeinture" color="red">mdi-close</v-icon>
             </template>
+            <template v-slot:[`item.surface`]="{ item }">
+               <span> {{ parseInt(String((this.store.listAvancement.filter(avancement => this.demandeStore.listDemande.demandes.some(demande => demande.id === avancement.demandeId && demande.commande.id === item.id)).reduce((sum :number, avancement) => sum + ((avancement.avancement * (this.demandeStore.listDemande.demandes.find(demande => demande.id === avancement.demandeId)?.surface ?? 0)) / 100), 0)))) + ' / ' + item.surface}} </span>
+            </template>
             <template v-slot:[`item.actions`]="{ item }">
                <v-icon size="x-large" color="primary" @click="editCommande(item)">mdi-pencil</v-icon>
-               <v-icon size="x-large" color="error" @click="deleteCommande(item)">mdi-delete</v-icon>
+
+               <v-icon size="x-large" color="error" @click="dialogDelete = !dialogDelete">mdi-delete</v-icon>
             </template>
          </v-data-table-virtual>
       </v-card-text>

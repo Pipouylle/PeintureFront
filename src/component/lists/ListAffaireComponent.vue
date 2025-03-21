@@ -11,6 +11,7 @@ export default class ListAffaireComponent extends Vue {
    private store = listAffaireStore();
    private storeModif = updateAffaireStore();
    private router = useRouter();
+   private dialogDelete = false;
    private header = [
       {title: 'Numero Affaire', value: 'numero'},
       {title: 'Nom Affaire', value: 'nom'},
@@ -46,6 +47,12 @@ export default class ListAffaireComponent extends Vue {
 </script>
 
 <template>
+   <v-dialog v-model="dialogDelete">
+      <v-card>
+         <v-btn size="x-large" color="primary" @click="dialogDelete = !dialogDelete">annuler</v-btn>
+         <v-btn size="x-large" color="error" @click="deleteAffaire(item)">confirmer la supression</v-btn>
+      </v-card>
+   </v-dialog>
    <v-card class="containerList">
       <v-card-title class="d-flex justify-space-between align-center titleList">
          <span> Liste des affaires </span>
@@ -77,7 +84,7 @@ export default class ListAffaireComponent extends Vue {
          >
             <template v-slot:[`item.actions`]="{ item }">
                <v-icon size="x-large" color="primary" @click="editAffaire(item)">mdi-pencil</v-icon>
-               <v-icon size="x-large" color="error" @click="deleteAffaire(item)">mdi-delete</v-icon>
+               <v-icon size="x-large" color="error" @click="dialogDelete = !dialogDelete">mdi-delete</v-icon>
             </template>
          </v-data-table-virtual>
       </v-card-text>

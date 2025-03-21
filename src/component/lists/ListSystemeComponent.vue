@@ -19,6 +19,7 @@ export default class ListSystemeComponent extends Vue {
    private grenaillageStore = listGrenaillageStore();
    private modifStore = updateSystemeStore();
    private router = useRouter();
+   private dialogDelete = false;
    private selectedCouches: Record<number, Couche> = {};
    private header = [
       {title: 'Nom', value: 'nom'},
@@ -70,6 +71,12 @@ export default class ListSystemeComponent extends Vue {
 </script>
 
 <template>
+   <v-dialog v-model="dialogDelete">
+      <v-card>
+         <v-btn size="x-large" color="primary" @click="dialogDelete = !dialogDelete">annuler</v-btn>
+         <v-btn size="x-large" color="error" @click="deleteSysteme(item)">confirmer la supression</v-btn>
+      </v-card>
+   </v-dialog>
    <v-card class="containerList">
       <v-card-title class="d-flex justify-space-between align-center titleList">
          <span> Liste des systemes </span>
@@ -118,7 +125,7 @@ export default class ListSystemeComponent extends Vue {
             </template>
             <template v-slot:[`item.actions`]="{ item }">
                <v-icon size="x-large" color="primary" @click="editSysteme(item)">mdi-pencil</v-icon>
-               <v-icon size="x-large" color="error" @click="deleteSysteme(item)">mdi-delete</v-icon>
+               <v-icon size="x-large" color="error" @click="dialogDelete = !dialogDelete">mdi-delete</v-icon>
             </template>
          </v-data-table-virtual>
       </v-card-text>

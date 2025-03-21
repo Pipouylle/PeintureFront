@@ -7,6 +7,7 @@ import NotificationHandler from "@/services/NotificationHandler";
 
 export default class ListFournisseurComponent extends Vue {
    private store = listFournisseurStore();
+   private dialogDelete = false;
    private header = [
       {title: 'Nom', value: 'nom'},
       {title: 'Action', value: 'actions', align: 'end'}

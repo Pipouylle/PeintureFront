@@ -46,7 +46,7 @@ export default class ModifCoucheForCommande extends Vue {
       //TODO: faire en sorte que ça propose pas deux fois
       return this.articleStore.listArticle.articles.filter(article => !this.modifCommandeCouche.articles.some(modif => modif.article?.value === article.id )).map((article: Article) => {
          return {
-            title: article.descriptif + ' - ' + article.ral,
+            title: article.id + ' - ' + article.descriptif + ' - ral: ' + article.ral,
             value: article.id
          }
       })

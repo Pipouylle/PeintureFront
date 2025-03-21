@@ -15,6 +15,7 @@ export default class ListArticleComponent extends Vue {
    private modifStore = updateArticleStore();
    private fournisseurStore = listFournisseurStore();
    private router = useRouter();
+   private dialogDelete = false;
    private header = [
       {title: "Code", value: "id"},
       {title: "Description", value: "descriptif"},

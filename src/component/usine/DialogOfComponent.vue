@@ -72,7 +72,6 @@ export default class DialogOfComponent extends Vue {
       }, 10);
    }
 }
-//TODO: mettre une verif avec les article des couche
 </script>
 <template>
    <v-card class="container">

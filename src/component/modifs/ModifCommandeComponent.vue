@@ -132,7 +132,6 @@ export default class ModifCommandeComponent extends Vue {
                           :key="ModifCommandeCouche.id">
                         <ModifCommandeCouche :modifCommandeCouche="ModifCommandeCouche"></ModifCommandeCouche>
                      </div>
-
                      <v-divider class="mt-4"></v-divider>
                      <v-text-field
                          clearable
@@ -144,6 +143,7 @@ export default class ModifCommandeComponent extends Vue {
                          v-model="this.store.commandeModif.commande.surface"
                          label="Surface"
                          variant="outlined"
+                         :min="0"
                          dense
                      ></v-number-input>
                      <v-number-input
