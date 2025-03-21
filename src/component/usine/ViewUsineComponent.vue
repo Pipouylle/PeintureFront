@@ -119,19 +119,8 @@ export default class ViewUsineComponent extends Vue {
             <v-spacer></v-spacer>
             <span class="text-h2 buttonGroup">{{ this.store.usineModel.cabine }}</span>
             <v-spacer si></v-spacer>
-            <v-btn-group v-for="(temp, index) in store.usineModel.temps" :key="index" class="buttonGroup">
-               <v-btn
-                   :color="store.usineModel.temp === temp ? 'blue' : 'grey'"
-                   @click="setOf(temp)"
-                   variant="outlined"
-                   :active="this.store.usineModel.temp === temp"
-                   class="text-h5"
-               >{{ temp }}
-               </v-btn>
-            </v-btn-group>
-            <v-spacer si></v-spacer>
             <v-col cols="2" class="buttonGroup">
-               <v-btn size="x-large" variant="outlined" @click="fetchData()">Relancer</v-btn>
+               <v-btn size="x-large" variant="outlined" @click="window.location.reload(true)">Relancer</v-btn>
             </v-col>
          </v-row>
       </v-card>

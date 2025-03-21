@@ -70,16 +70,6 @@ export default class SelectSemaine extends Vue {
                 @update:model-value="this.store.usineModel.cabine = ''"
             ></v-select>
          </v-col>
-         <v-col cols="2">
-            <v-row v-for="(cabine, index) in this.store.usineModel.cabines" :key="index">
-               <v-btn
-                   :disabled="this.store.usineModel.cabine === cabine || this.store.usineModel.jour === ''"
-                   :active="this.store.usineModel.cabine === cabine"
-                   variant="outlined"
-                   @click="this.setOf(cabine)"
-               >{{cabine}}</v-btn>
-            </v-row>
-         </v-col>
       </v-row>
    </v-card>
 </template>

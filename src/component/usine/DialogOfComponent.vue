@@ -2,7 +2,7 @@
 import {Vue, Component, Prop} from 'vue-facing-decorator';
 import {ref, nextTick} from 'vue'
 import {Of} from "@/models/types/of";
-import {AvancementSurfaceCouche} from "@/models/types/avancementSurfaceCouche";
+import {AvancementSurfaceCouche, createDefaultAvancementSurfaceCouche} from "@/models/types/avancementSurfaceCouche";
 import {Demande} from "@/models/types/demande";
 import {Article} from "@/models/types/article";
 import {Stock} from "@/models/types/stock"
@@ -11,14 +11,18 @@ import type {VTextField} from 'vuetify/components';
 import NotificationHandler from "@/services/NotificationHandler";
 import {OperateurViewStore} from "@/stores/UsineStore";
 import {listDemandeStore} from "@/stores/DemandeStore";
+import {listArticleStore} from "@/stores/ArticleStore";
 
-@Component({})
+@Component({
+   methods: {createDefaultAvancementSurfaceCouche}
+})
 
 export default class DialogOfComponent extends Vue {
    @Prop({required: true}) private item!: Of;
    private store = OperateurViewStore();
    private demandeStore = listDemandeStore();
    private userStore = listUserStore();
+   private articleStore = listArticleStore();
    private scanne: string = "";
    private stockSelect: Stock[] = [];
    private userSelected: number = -1;
@@ -38,9 +42,22 @@ export default class DialogOfComponent extends Vue {
 
    async scanneArticle() {
       const stock = await this.store.getStock(parseInt(this.scanne));
+      let test = false;
       if (stock.id != 0 && stock.dateSortie === undefined) {
          if (!this.stockSelect.find((s: Stock) => s.id === stock.id)) {
-            this.stockSelect.push(stock);
+            console.log(this.item.avancements);
+            for (const avancement of this.item.avancements) {
+               for (const article of avancement.surfaceCouches.articleCouche.articles) {
+                  if (article.id === stock.article.id) {
+                     test = true;
+                  }
+               }
+            }
+            if (!test){
+               NotificationHandler.showNewNotification("mauvais article", true);
+            } else {
+               this.stockSelect.push(stock);
+            }
          } else {
             NotificationHandler.showNewNotification("le stock a déjà été selectionner", true);
          }
@@ -55,7 +72,7 @@ export default class DialogOfComponent extends Vue {
       }, 10);
    }
 }
-//TODO : mettre les couche en v-list avec un header
+//TODO: mettre une verif avec les article des couche
 </script>
 <template>
    <v-card class="container">
@@ -77,17 +94,22 @@ export default class DialogOfComponent extends Vue {
                    variant="outlined"> {{ user.name }}</v-btn>
       </div>
       <v-card v-else-if="userSelected !== -1" class="pa-5">
-         <v-row v-for="(couche: AvancementSurfaceCouche, index) in item.avancements" :key="couche.id">
-            <v-col>
-               <span class="ma-15 text-h4"> couche n°{{ index + 1 }} = </span>
-            </v-col>
-            <v-col>
-               <span class="ma-15 text-h4"> {{ couche.surfaceCouches.articleCouche.couche.nom }} </span>
-            </v-col>
-            <v-col>
-               <span class="ma-15 text-h4"> {{ couche.surfaceCouches.articleCouche.couche.epaisseur }} μ </span>
-            </v-col>
-         </v-row>
+         <v-list >
+            <v-list-subheader class="text-h4"> Liste des couches </v-list-subheader>
+            <v-list-item v-for="(couche: AvancementSurfaceCouche, index) in item.avancements" :key="couche.id">
+               <v-row>
+                  <v-col cols="4">
+                     <span class="ma-10 text-h4"> couche n°{{ index + 1 }} = </span>
+                  </v-col>
+                  <v-col cols="5">
+                     <span class="ma-10 text-h4"> {{ couche.surfaceCouches.articleCouche.couche.nom }} </span>
+                  </v-col>
+                  <v-col cols="2">
+                     <span class="ma-10 text-h4"> {{ couche.surfaceCouches.articleCouche.couche.epaisseur }} μ </span>
+                  </v-col>
+               </v-row>
+            </v-list-item>
+         </v-list>
          <v-row>
             <v-list>
                <v-list-subheader class="text-h4"> Liste des bibon scanés </v-list-subheader>
@@ -95,7 +117,7 @@ export default class DialogOfComponent extends Vue {
                             :key="index"
                >
                   <v-row>
-                     <span class="text-h3 ma-5"> {{ stock.id }} - {{ stock.article.id }} </span>
+                     <span class="text-h4 ma-5"> {{ stock.id }} - {{ stock.article.id }} - couche n°{{ this.item.avancements.indexOf(this.item.avancements.find(avancement => avancement.surfaceCouches.articleCouche.articles.some(article => article.id === stock.article.id)) ?? createDefaultAvancementSurfaceCouche()) + 1 }} </span>
                      <v-btn size="x-large" color="error" class="text-h4 ma-5" @click="this.stockSelect.splice(index, 1)"
                             prepend-icon="mdi-trash"> enlever
                      </v-btn>

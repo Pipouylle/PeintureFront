@@ -44,9 +44,9 @@ export default class ModifCoucheForCommande extends Vue {
 
    get formatedArticle() {
       //TODO: faire en sorte que ça propose pas deux fois
-      return this.articleStore.listArticle.articles.map((article: Article) => {
+      return this.articleStore.listArticle.articles.filter(article => !this.modifCommandeCouche.articles.some(modif => modif.article?.value === article.id )).map((article: Article) => {
          return {
-            title: article.descriptif,
+            title: article.descriptif + ' - ' + article.ral,
             value: article.id
          }
       })
@@ -71,19 +71,12 @@ export default class ModifCoucheForCommande extends Vue {
                                variant="outlined"
                                label="Article"
                                :items="formatedArticle"
+                               clearable
                                item-title="title"
                                item-value="value"
                                v-model="articleSelect.article"
                                @update:model-value="onArticleSelected(articleSelect.id)"
                            ></v-combobox>
-                           <v-text-field
-                               label="RAL"
-                               outlined
-                               dense
-                               :model-value="articleSelect.article ? this.articleStore.listArticle.articles.find((article :Article) => article.id === articleSelect.article?.value)?.ral : ''"
-                               readonly
-                               disabled
-                           ></v-text-field>
                            <v-text-field
                                label="Fournisseur"
                                outlined

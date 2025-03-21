@@ -7,9 +7,7 @@ export interface ViewUsineModel {
     jour: string;
     temp: string;
     date: string;
-    cabines: string[];
     jours: string[];
-    temps: string[];
 }
 
 export function createDefaultViewUsineModel(overrides: Partial<ViewUsineModel> = {}): ViewUsineModel {
@@ -19,9 +17,7 @@ export function createDefaultViewUsineModel(overrides: Partial<ViewUsineModel> =
         jour: "",
         temp: "",
         date: new Date().toISOString(),
-        cabines: ["cabine 1", "cabine 2"],
         jours: ["dimanche","lundi","mardi","mercredi","jeudi","vendredi","samedi"],
-        temps: ["matin","après-midi","nuit"],
         ...overrides
     };
 }

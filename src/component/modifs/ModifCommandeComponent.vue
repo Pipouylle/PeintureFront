@@ -143,7 +143,6 @@ export default class ModifCommandeComponent extends Vue {
                      <v-number-input
                          v-model="this.store.commandeModif.commande.surface"
                          label="Surface"
-                         :min="0"
                          variant="outlined"
                          dense
                      ></v-number-input>

@@ -43,13 +43,13 @@ export const planingStore = defineStore("planingStore", {
         async setSemaine() {
             this.planingModel.listOf = await getAllOfbySemaine(this.planingModel.semaine);
         },
-        async creerOfCalendar(demandeId: number, jour: string, temp: string): Promise<boolean> {
+        async creerOfCalendar(demandeId: number, jour: string): Promise<boolean> {
             try {
                 const Of = createDefaultOf({
                     demande: createDefaultDemande({
                         id: demandeId,
                     }),
-                    temp: temp,
+                    temp: "matin",
                     jour: jour,
                     cabine: this.planingModel.cabine,
                     semaine: this.planingModel.semaine,
@@ -70,12 +70,12 @@ export const planingStore = defineStore("planingStore", {
                 return false;
             }
         },
-        async updateOfCalendar(ofId: number, jour: string, temp: string): Promise<boolean> {
+        async updateOfCalendar(ofId: number, jour: string): Promise<boolean> {
             const of = this.planingModel.listOf.find((of: Of) => of.id === ofId);
             if (of) {
                 of.jour = jour;
                 of.cabine = this.planingModel.cabine;
-                of.temp = temp;
+                of.temp = "matin";
                 try {
                     await updateOF(of);
                     return true;
@@ -112,8 +112,8 @@ export const planingStore = defineStore("planingStore", {
                 console.error('of introuvable');
             }
         },
-        getOfByDemiJour(jour: string, temp: string): Of[] {
-            return this.planingModel.listOf.filter(of => of.jour === jour && of.cabine === this.planingModel.cabine && of.temp === temp).sort((a, b) => a.order - b.order);
+        getOfByDemiJour(jour: string): Of[] {
+            return this.planingModel.listOf.filter(of => of.jour === jour /*&& of.cabine === this.planingModel.cabine*/).sort((a, b) => a.order - b.order);
         }
     },
 });

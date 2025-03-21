@@ -22,7 +22,7 @@ export default class ListDemiJourOfCalendarComponent extends Vue {
    private affaireStore = listAffaireStore();
    private systemeStore = listSystemeStore();
    private demandeStore = listDemandeStore();
-
+   /*
    get getOfForDay(): Of[] {
       return this.store.getOfByDemiJour(this.jour, this.temp);
    }
@@ -55,10 +55,12 @@ export default class ListDemiJourOfCalendarComponent extends Vue {
       await this.store.updateOrderOfCalendar(this.jour, newList);
       NotificationHandler.showNewNotification('Ordre mise a jour');
    }
+   */
 }
 </script>
 
 <template>
+   <!--
    <v-card>
       <v-card-title>{{ temp }}</v-card-title>
       <v-card-item>
@@ -80,6 +82,7 @@ export default class ListDemiJourOfCalendarComponent extends Vue {
          </v-card>
       </v-card-item>
    </v-card>
+   -->
 </template>
 
 <style scoped>

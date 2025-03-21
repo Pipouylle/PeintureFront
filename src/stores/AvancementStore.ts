@@ -13,6 +13,7 @@ import {listDemandeStore} from "@/stores/DemandeStore";
 import {getPreviousAvancement} from "@/services/DemandesService";
 import NotificationHandler from "@/services/NotificationHandler";
 import {listSemaineStore} from "@/stores/SemaineStore";
+import {Semaine} from "@/models/types/semaine"
 
 export const avancementStore = defineStore('avancementStore',{
     state: () => ({

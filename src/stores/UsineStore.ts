@@ -15,6 +15,7 @@ import {listAffaireStore} from "@/stores/AffaireStore";
 import {listSystemeStore} from "@/stores/SystemeStore";
 import {listCommandeStore} from "@/stores/CommandeStore";
 import {listDemandeStore} from "@/stores/DemandeStore";
+import {listArticleStore} from "@/stores/ArticleStore";
 
 export const OperateurViewStore = defineStore('OperateurViewStore', {
     state: () => ({
@@ -27,6 +28,7 @@ export const OperateurViewStore = defineStore('OperateurViewStore', {
         async load() {
             await listSemaineStore().load();
             await listUserStore().load();
+            await listArticleStore().load();
             listUserStore().archived = false;
             await listDemandeStore().load();
             await this.setJour(this.usineModel.date);
@@ -57,7 +59,7 @@ export const OperateurViewStore = defineStore('OperateurViewStore', {
             }
         },
         getOfBytempAndJour(): Of[] {
-            return this.listOf.filter(of => of.jour === this.usineModel.jour && of.temp === this.usineModel.temp && of.cabine === this.usineModel.cabine).sort((a, b) => a.order - b.order);
+            return this.listOf.filter(of => of.jour === this.usineModel.jour).sort((a, b) => a.order - b.order);
         },
         async nextJour() {
             const newDate = new Date(this.usineModel.date);
