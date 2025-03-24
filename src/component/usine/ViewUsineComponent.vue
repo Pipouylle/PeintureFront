@@ -124,7 +124,7 @@ export default class ViewUsineComponent extends Vue {
             <span class="text-h2 buttonGroup">{{ this.store.usineModel.cabine }}</span>
             <v-spacer si></v-spacer>
             <v-col cols="2" class="buttonGroup">
-               <v-btn size="x-large" variant="outlined" @click="window.location.reload(true)">Relancer</v-btn>
+               <v-btn size="x-large" variant="outlined" @click="forceReload">Relancer</v-btn>
             </v-col>
          </v-row>
       </v-card>

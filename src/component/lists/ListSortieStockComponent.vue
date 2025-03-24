@@ -72,38 +72,28 @@ export default class ListSortieStockComponent extends Vue {
    }
 
    get listRecap() {
-      //TODO: refaire semaine avat affaire
-      //Trier d'bort les affaires(le faire dans le store)
-      //ensuite pour chaque affaire faire le regroupe ment des semiane
-      //pour finir regouper les article poar apport au truc au dessus
       let listSemaines = this.semaineStore.listSemaine.semaines.filter((semaine: Semaine) =>
-          this.listOf.some(of => of.semaine === semaine.id));
+          this.listOf.some((of: Of) => of.semaine.id === semaine.id &&
+            this.listStock.some((stock: Stock) => stock.of.id === of.id))).sort((a, b) => b.id - a.id);
       let items: {
-         codeAffaire?: string,
          semaine?: string,
+         codeAffaire?: string,
          articleCode?: number,
          articleDesignation?: string,
          quantite?: number
       }[] = [];
-      //trier les semiane avec d'abort les anner puis les numéro semaine et gros les 2025 doivent être avnt les 2026
-      listSemaines = listSemaines.sort((a, b) => {
-         if (a.annee !== b.annee) {
-            return b.annee - a.annee;
-         }
-         return b.semaine - a.semaine;
-      });
 
       for (const semaine of listSemaines) {
          items.push({semaine: semaine.annee + '-' + semaine.semaine});
          let listAffaires = this.affaireStore.listAffaire.affaires.filter((affaire: Affaire) =>
              this.commandeStore.listCommande.commandes.some(commande => commande.affaire.id === affaire.id &&
                  this.demandeStore.listDemande.demandes.some(demande => demande.commande.id === commande.id &&
-                     this.listOf.some(of => of.demande.id === demande.id && of.semaine === semaine.id))));
-         listAffaires = listAffaires.sort((a, b) => b.id - a.id);
+                     this.listOf.some(of => of.demande.id === demande.id && of.semaine.id === semaine.id &&
+                        this.listStock.some(stock => stock.of.id === of.id))))).sort((a, b) => b.id - a.id);
          for (const affaire of listAffaires) {
             items.push({semaine: semaine.annee + '-' + semaine.semaine, codeAffaire: affaire.numero});
             let stocks: { article: Article, quantiter: number }[] = [];
-            const listStock = this.listStock.filter(stock => this.listOf.some(of => of.id === stock.of.id && of.semaine === semaine.id &&
+            const listStock = this.listStock.filter(stock => this.listOf.some(of => of.id === stock.of.id && of.semaine.id === semaine.id &&
                 this.demandeStore.listDemande.demandes.some(demande => demande.id === of.demande.id &&
                     this.commandeStore.listCommande.commandes.some(commande => commande.id === demande.commande.id &&
                         affaire.id === commande.affaire.id))));
@@ -120,8 +110,8 @@ export default class ListSortieStockComponent extends Vue {
             }
             for (const stock of stocks) {
                items.push({
-                  codeAffaire: affaire.numero,
                   semaine: semaine.annee + '-' + semaine.semaine,
+                  codeAffaire: affaire.numero,
                   articleCode: stock.article.id,
                   articleDesignation: stock.article.descriptif,
                   quantite: stock.quantiter
@@ -129,60 +119,6 @@ export default class ListSortieStockComponent extends Vue {
             }
          }
       }
-
-      /*
-      let affaires = this.affaireStore.listAffaire.affaires.filter(affaire =>
-          this.commandeStore.listCommande.commandes.some(commande => commande.affaire.id === affaire.id &&
-              this.demandeStore.listDemande.demandes.some(demande => demande.commande.id === commande.id &&
-                  this.listOf.some(of => of.demande.id === demande.id &&
-                      this.listStock.some(stock => stock.of.id === of.id)))));
-
-      items = [];
-      affaires = affaires.sort((a, b) => b.id - a.id);
-      for (const affaire of affaires) {
-         items.push({codeAffaire: affaire.numero});
-         let semaines: { semaine: Semaine, stocks: { article: Article, quantiter: number }[] }[] = [];
-         const stocks = this.listStock.filter((stock: Stock) => this.listOf.some(of => stock.of.id === of.id &&
-             this.demandeStore.listDemande.demandes.some(demande => demande.id === of.demande.id &&
-                 this.commandeStore.listCommande.commandes.some(commande => commande.id === demande.commande.id &&
-                     affaire.id === commande.affaire.id))));
-         for (const stock of stocks) {
-            const semaine = this.semaineStore.getSemaine(new Date(stock.dateSortie).toISOString()) ?? createDefaultSemaine();
-            const index = semaines.findIndex(item => item.semaine.id === semaine.id);
-            if (index == -1) {
-               semaines.push({
-                  semaine: semaine,
-                  stocks: [{
-                     article: this.articleStore.listArticle.articles.find(article => article.id === stock.article.id) ?? createDefaultArticle(),
-                     quantiter: 1
-                  }]
-               });
-            } else {
-               const indexArticle = semaines[index].stocks.findIndex(item => item.article.id === stock.article.id);
-               if (indexArticle == -1) {
-                  semaines[index].stocks.push({
-                     article: this.articleStore.listArticle.articles.find(article => article.id === stock.article.id) ?? createDefaultArticle(),
-                     quantiter: 1
-                  });
-               } else {
-                  semaines[index].stocks[indexArticle].quantiter++;
-               }
-            }
-         }
-         semaines = semaines.sort((a, b) => b.semaine.id - a.semaine.id);
-         for (const item of semaines) {
-            items.push({codeAffaire: affaire.numero, semaine: item.semaine.semaine})
-            for (const itemStock of item.stocks) {
-               items.push({
-                  codeAffaire: affaire.numero,
-                  semaine: item.semaine.semaine,
-                  articleCode: itemStock.article.id,
-                  articleDesignation: itemStock.article.descriptif,
-                  quantite: itemStock.quantiter
-               })
-            }
-         }
-      }*/
       return items;
    }
 
@@ -245,7 +181,7 @@ export default class ListSortieStockComponent extends Vue {
              :fixed-header="true"
          >
             <template v-slot:[`item.semaine`]="{ item }">
-               <span v-if="!item.articleCode && !item.semaine"> {{
+               <span v-if="!item.articleCode && !item.codeAffaire"> {{
                      item.semaine
                   }} </span>
             </template>

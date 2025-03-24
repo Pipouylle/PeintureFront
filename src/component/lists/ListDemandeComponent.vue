@@ -87,12 +87,7 @@ export default class ListDemandeComponent extends Vue {
 </script>
 
 <template>
-   <v-dialog v-model="dialogDelete">
-      <v-card>
-         <v-btn size="x-large" color="primary" @click="dialogDelete = !dialogDelete">annuler</v-btn>
-         <v-btn size="x-large" color="error" @click="deleteDemande(item)">confirmer la supression</v-btn>
-      </v-card>
-   </v-dialog>
+
    <v-card class="containerList">
       <v-card-title class="d-flex justify-space-between align-center titleList">
          <span> Liste des Demandes </span>
@@ -138,6 +133,12 @@ export default class ListDemandeComponent extends Vue {
                <v-btn v-if="!(item.etat === 'terminé')" color="primary" @click="finish(item)">Terminer</v-btn>
                <v-btn v-else color="primary" @click="notFinish(item)">Réouvrir</v-btn>
                <v-icon size="x-large" color="primary" @click="editDemande(item)">mdi-pencil</v-icon>
+               <v-dialog v-model="dialogDelete">
+                  <v-card>
+                     <v-btn size="x-large" color="primary" @click="dialogDelete = !dialogDelete">annuler</v-btn>
+                     <v-btn size="x-large" color="error" @click="deleteDemande(item)">confirmer la supression</v-btn>
+                  </v-card>
+               </v-dialog>
                <v-icon size="x-large" color="error" @click="dialogDelete = !dialogDelete">mdi-delete</v-icon>
             </template>
          </v-data-table-virtual>

@@ -1,12 +1,14 @@
 <script lang="ts">
-import {Vue, Component} from 'vue-facing-decorator';
+import {Component, Vue} from 'vue-facing-decorator';
 import {useRouter} from "vue-router";
 import {Article, createDefaultArticle} from "@/models/types/article";
-import {entreeStock} from "@/services/StockService";
+import {creerMultipleStock, creerStock, deleteStock, generationBarCode,} from "@/services/StockService";
 import {listArticleStore, updateArticleStore} from "@/stores/ArticleStore";
 import NotificationHandler from "@/services/NotificationHandler";
 import {listFournisseurStore} from "@/stores/FournisseurStore";
-
+import {Stock, createDefaultStock} from "@/models/types/stock";
+import {nextTick} from "vue";
+import {VNumberInput} from "vuetify/labs/VNumberInput";
 @Component({})
 
 //TODO: mise a jour de la quantiter quand ça marche et aussi fermer et clear la veleru de la sorti
@@ -25,8 +27,13 @@ export default class ListArticleComponent extends Vue {
       {title: "Action", value: "actions", sortable: false, align: "end"}
    ];
    private stock = false;
+   private stockDelete = false;
+   private scanne = 0;
+   private vNumberRef!: VNumberInput
    private entreeStockArticle: Article = createDefaultArticle();
-   private quEntreeStock: number = 0;
+   private quEntreeStock: number = 1;
+   private boolVerif = false;
+   private listBarCode: Stock[] = [];
 
    async mounted() {
       await this.store.load();
@@ -56,24 +63,35 @@ export default class ListArticleComponent extends Vue {
       this.stock = true;
    }
 
+   async faireGenerationBarCode() {
+      try {
+         this.listBarCode = await generationBarCode(this.entreeStockArticle, this.quEntreeStock);
+         this.boolVerif = true;
+         NotificationHandler.showNewNotification('Bonne génération des bars code');
+      } catch (e) {
+         console.error(e);
+         NotificationHandler.showNewNotification('Erreur lors de la génération des bars code', true);
+      }
+   }
+
    async faireEntreeStock() {
       try {
-
-         await entreeStock(this.entreeStockArticle, this.quEntreeStock);
+         await creerMultipleStock(this.listBarCode);
          const index = this.store.listArticle.stock.findIndex(stock => stock.idArticle === this.entreeStockArticle.id);
          if (index >= 0) {
-            //TODO: ça fait de la merde
             const test = this.store.listArticle.stock[index]
             test.quantite += this.quEntreeStock;
             this.quEntreeStock = 0;
             this.stock = false;
             NotificationHandler.showNewNotification('Stock mis a jour');
-            return;
+         } else {
+            NotificationHandler.showNewNotification('Stock non mis a jour', true);
          }
-         NotificationHandler.showNewNotification('Erreur lors de l\'entrée de stock', true);
+         this.boolVerif = false;
+         this.listBarCode = [];
       } catch (e) {
          console.error(e);
-         NotificationHandler.showNewNotification('Erreur lors de l\'entrée de stock', true);
+         NotificationHandler.showNewNotification('Erreur lors de l\'entrée en stock', true);
       }
    }
 
@@ -83,6 +101,21 @@ export default class ListArticleComponent extends Vue {
          Nomfournisseur: this.fournisseurStore.listFournisseur.fournisseurs.find(fournisseur => fournisseur.id === article.fournisseur.id)?.nom
       }));
    }
+
+   async supprimerStock(){
+      try {
+         await deleteStock(createDefaultStock({id: this.scanne}));
+         NotificationHandler.showNewNotification('Stock supprimé');
+      } catch (e) {
+         NotificationHandler.showNewNotification('Stock non supprimé', true);
+      }
+      this.scanne = 0;
+      await nextTick();
+      (this.$refs.vNumberRef as VNumberInput)?.blur();
+      setTimeout(() => {
+         (this.$refs.vNumberRef as VNumberInput)?.focus();
+      }, 10);
+   }
 }
 </script>
 
@@ -90,19 +123,53 @@ export default class ListArticleComponent extends Vue {
    <v-dialog
        v-model="stock"
    >
-      <v-card>
+      <v-card v-if="!boolVerif">
          <v-card-title>
             Entree de Stock
          </v-card-title>
          <v-number-input
              variant="outlined"
              label="Quantité a entrer"
+             :min="0"
              class="ma-5"
              v-model="quEntreeStock"
          ></v-number-input>
-         <v-btn @click="faireEntreeStock">
+         <v-btn @click="faireGenerationBarCode">
             Valider
          </v-btn>
+      </v-card>
+      <v-card v-else>
+         <v-card-title>
+            Entree de Stock
+         </v-card-title>
+         <v-row>
+            <span class="ma-5"> Est-ce que l'impression c'est bien passée </span>
+         </v-row>
+         <v-row>
+            <v-btn size="x-large" color="primary" @click="faireEntreeStock" class="ma-5">
+               OUI
+            </v-btn>
+            <v-btn size="x-large" color="error" @click="boolVerif = false; listBarCode = []" class="ma-5">
+               NON
+            </v-btn>
+         </v-row>
+      </v-card>
+   </v-dialog>
+   <v-dialog v-model="stockDelete" >
+      <v-card>
+         <v-card-title>
+            Suppression de Stock
+         </v-card-title>
+         <v-card-text>
+            <span class="ma-5"> Scaner les stock a supprimer</span>
+            <v-number-input
+               label="scan"
+               ref="vNumberRef"
+               autofocus
+               v-model="scanne"
+               @keyup.enter="supprimerStock"
+            ></v-number-input>
+         </v-card-text>
       </v-card>
    </v-dialog>
    <v-card class="containerList">
@@ -117,6 +184,10 @@ export default class ListArticleComponent extends Vue {
              variant="outlined"
              class="textFilter"
          ></v-text-field>
+         <v-spacer></v-spacer>
+         <v-btn class="bntLink" @click="stockDelete = true">
+            Supprimer un Stock
+         </v-btn>
          <v-spacer></v-spacer>
          <router-link to="/creer/article" class="ml-auto">
             <v-btn class="bntLink">

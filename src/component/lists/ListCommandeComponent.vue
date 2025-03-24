@@ -1,7 +1,7 @@
 <script lang="ts">
 import {Vue, Component} from 'vue-facing-decorator';
 import {useRouter} from "vue-router";
-import {Commande} from "@/models/types/commande";
+import {Commande, createDefaultCommande} from "@/models/types/commande";
 import {deleteCommande} from "@/services/CommandesService";
 import {createDefaultSysteme} from "@/models/types/systeme";
 import {createDefaultAffaire} from "@/models/types/affaire";
@@ -57,6 +57,7 @@ export default class ListCommandeComponent extends Vue {
    async deleteCommande(item: Commande) {
       if (await this.store.delete(item)) {
          NotificationHandler.showNewNotification('Commande supprimée avec succès !');
+         this.dialogDelete = false;
       } else {
          NotificationHandler.showNewNotification('Erreur lors de la suppression de la commande.', true);
          await this.reload();
@@ -78,7 +79,7 @@ export default class ListCommandeComponent extends Vue {
    <v-dialog v-model="dialogDelete">
       <v-card>
          <v-btn size="x-large" color="primary" @click="dialogDelete = !dialogDelete">annuler</v-btn>
-         <v-btn size="x-large" color="error" @click="deleteCommande(item)">confirmer la supression</v-btn>
+         <v-btn size="x-large" color="error" @click="deleteCommande()">confirmer la supression</v-btn>
       </v-card>
    </v-dialog>
    <v-card class="containerList">
@@ -121,7 +122,12 @@ export default class ListCommandeComponent extends Vue {
             </template>
             <template v-slot:[`item.actions`]="{ item }">
                <v-icon size="x-large" color="primary" @click="editCommande(item)">mdi-pencil</v-icon>
-
+               <v-dialog v-model="dialogDelete">
+                  <v-card>
+                     <v-btn size="x-large" color="primary" @click="dialogDelete = !dialogDelete">annuler</v-btn>
+                     <v-btn size="x-large" color="error" @click="deleteCommande(item)">confirmer la supression</v-btn>
+                  </v-card>
+               </v-dialog>
                <v-icon size="x-large" color="error" @click="dialogDelete = !dialogDelete">mdi-delete</v-icon>
             </template>
          </v-data-table-virtual>

@@ -53,6 +53,25 @@ export const creerStock = async (stock: Stock): Promise<Stock> => {
     }
 }
 
+export const creerMultipleStock = async (stock: Stock[]): Promise<Stock[]> => {
+    try {
+        const stocks = Stockmapper.mapArrayStocks(stock);
+        const responseReturn: Stock[] = [];
+        for (const stock of stocks) {
+            const envoi = {
+                id: String(stock.id),
+                articleStock: stock.articleStock,
+            }
+            const response = await apiClient.post<Stocks>("/stocks", envoi);
+            responseReturn.push(Stockmapper.mapStock(response.data));
+        }
+        return responseReturn;
+    } catch (error) {
+        console.error(error);
+        throw error;
+    }
+}
+
 /**
  * permet de faire la sortie de stock les infomation necessaire dans stock sont la date et l'heure de sortie, le user et l'of
  * @public
@@ -72,9 +91,9 @@ export const SortieStock = async (stock: Stock): Promise<Stock> => {
     }
 }
 
-export const entreeStock = async (article: Article, nombre: number): Promise<Stock[]> => {
+export const generationBarCode = async (article: Article, nombre: number): Promise<Stock[]> => {
     try {
-        const response = await apiClient.post<Stocks[]>('/stockCreate/' + article.id + '/' + nombre);
+        const response = await apiClient.get<Stocks[]>('/stockCreate/' + article.id + '/' + nombre);
         return Stockmapper.mapArrayStock(response.data);
     } catch (error) {
         console.error(error);
@@ -127,5 +146,14 @@ export const getStockNotSortieByArticle = async (article: Article): Promise<Stoc
         return Stockmapper.mapArrayStock(response.data.member);
     } catch (e) {
         throw e;
+    }
+}
+
+export const deleteStock = async (stock: Stock) => {
+    try {
+        await apiClient.delete(`/stocks/${stock.id}`);
+    } catch (error) {
+        console.error(error);
+        throw error;
     }
 }

@@ -30,6 +30,7 @@ export const OperateurViewStore = defineStore('OperateurViewStore', {
             await listUserStore().load();
             await listArticleStore().load();
             listUserStore().archived = false;
+            listUserStore().notArchived = true;
             await listDemandeStore().load();
             await this.setJour(this.usineModel.date);
         },
