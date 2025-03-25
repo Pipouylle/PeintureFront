@@ -12,7 +12,7 @@ export default class NotificationComponent extends Vue {
   <div class="notification">
     <v-chip variant="flat" :color="notification.onerror ? 'red' : 'green'"
             :prepend-icon="notification.onerror ? 'mdi-alert-circle' : 'mdi-checkbox-marked-circle'"
-            class="text-h4 ma-2">
+            class="text-h4 ma-2 pa-5">
       {{ notification.message }}
     </v-chip>
   </div>

@@ -12,8 +12,10 @@ import NotificationHandler from "@/services/NotificationHandler";
 import {OperateurViewStore} from "@/stores/UsineStore";
 import {listDemandeStore} from "@/stores/DemandeStore";
 import {listArticleStore} from "@/stores/ArticleStore";
+import NotificationHandlerComponent from "@/component/common/NotificationHandlerComponent.vue";
 
 @Component({
+   components: {NotificationHandlerComponent},
    methods: {createDefaultAvancementSurfaceCouche}
 })
 
@@ -34,7 +36,7 @@ export default class DialogOfComponent extends Vue {
          this.stockSelect = [];
          this.userSelected = -1;
          this.store.dialog = false;
-         NotificationHandler.showNewNotification("la sortie de stock a bine été effectuer");
+         NotificationHandler.showNewNotification("la sortie de stock a bien été effectuer");
       } else {
          NotificationHandler.showNewNotification("la sortie de stock n'a pas été effectuer", true);
       }
@@ -43,26 +45,29 @@ export default class DialogOfComponent extends Vue {
    async scanneArticle() {
       const stock = await this.store.getStock(parseInt(this.scanne));
       let test = false;
-      if (stock.id != 0 && stock.dateSortie === undefined) {
-         if (!this.stockSelect.find((s: Stock) => s.id === stock.id)) {
-            console.log(this.item.avancements);
-            for (const avancement of this.item.avancements) {
-               for (const article of avancement.surfaceCouches.articleCouche.articles) {
-                  if (article.id === stock.article.id) {
-                     test = true;
+      if (stock.id != 0) {
+         if (stock.dateSortie === undefined){
+            if (!this.stockSelect.find((s: Stock) => s.id === stock.id)) {
+               for (const avancement of this.item.avancements) {
+                  for (const article of avancement.surfaceCouches.articleCouche.articles) {
+                     if (article.id === stock.article.id) {
+                        test = true;
+                     }
                   }
                }
-            }
-            if (!test){
-               NotificationHandler.showNewNotification("mauvais article", true);
+               if (test){
+                  this.stockSelect.push(stock);
+               } else {
+                  NotificationHandler.showNewNotification("mauvais article", true);
+               }
             } else {
-               this.stockSelect.push(stock);
+               NotificationHandler.showNewNotification("le stock a déjà été selectionner", true);
             }
          } else {
-            NotificationHandler.showNewNotification("le stock a déjà été selectionner", true);
+            NotificationHandler.showNewNotification("le stock est déjà sortie", true);
          }
       } else {
-         NotificationHandler.showNewNotification("le stock est inexistant ou est déjà sortie", true);
+         NotificationHandler.showNewNotification("le stock est inexistant", true);
       }
       this.scanne = "";
       await nextTick();
@@ -75,6 +80,7 @@ export default class DialogOfComponent extends Vue {
 </script>
 <template>
    <v-card class="container">
+      <NotificationHandlerComponent/>
       <v-card-title class="ma-3 pa 3">
          <v-row >
             <span class="text-h2"> Demande : {{
@@ -111,14 +117,12 @@ export default class DialogOfComponent extends Vue {
          </v-list>
          <v-row>
             <v-list>
-               <v-list-subheader class="text-h4"> Liste des bibon scanés </v-list-subheader>
-               <v-list-item v-for="(stock, index) in this.stockSelect"
-                            :key="index"
-               >
+               <v-list-subheader class="text-h4"> Liste des bidons scanés </v-list-subheader>
+               <v-list-item v-for="(stock, index) in this.stockSelect" :key="index">
                   <v-row>
                      <span class="text-h4 ma-5"> {{ stock.id }} - {{ stock.article.id }} - couche n°{{ this.item.avancements.indexOf(this.item.avancements.find(avancement => avancement.surfaceCouches.articleCouche.articles.some(article => article.id === stock.article.id)) ?? createDefaultAvancementSurfaceCouche()) + 1 }} </span>
                      <v-btn size="x-large" color="error" class="text-h4 ma-5" @click="this.stockSelect.splice(index, 1)"
-                            prepend-icon="mdi-trash"> enlever
+                            prepend-icon="mdi-delete-outline"> enlever
                      </v-btn>
                   </v-row>
                </v-list-item>
@@ -136,7 +140,7 @@ export default class DialogOfComponent extends Vue {
                ></v-text-field>
             </v-col>
             <v-btn color="primary" append-icon="mdi-arrow-right-thick" @click="sortieStock"
-                   size="100" class="w-25"> Valider sortie stock
+                   size="100" class="w-25 text-h3"> Valider
             </v-btn>
          </v-row>
       </v-card>

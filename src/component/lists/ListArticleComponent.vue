@@ -8,7 +8,7 @@ import NotificationHandler from "@/services/NotificationHandler";
 import {listFournisseurStore} from "@/stores/FournisseurStore";
 import {Stock, createDefaultStock} from "@/models/types/stock";
 import {nextTick} from "vue";
-import {VNumberInput} from "vuetify/labs/VNumberInput";
+import type {VTextField} from 'vuetify/components';
 @Component({})
 
 //TODO: mise a jour de la quantiter quand ça marche et aussi fermer et clear la veleru de la sorti
@@ -23,13 +23,13 @@ export default class ListArticleComponent extends Vue {
       {title: "Description", value: "descriptif"},
       {title: "RAL", value: "ral"},
       {title: "Fournisseur", value: "Nomfournisseur"},
-      {title: "quantiter", value: "quantiter"},
+      {title: "Stock", value: "quantiter"},
       {title: "Action", value: "actions", sortable: false, align: "end"}
    ];
    private stock = false;
    private stockDelete = false;
-   private scanne = 0;
-   private vNumberRef!: VNumberInput
+   private scanne = "";
+   private vNumberRef!: VTextField
    private entreeStockArticle: Article = createDefaultArticle();
    private quEntreeStock: number = 1;
    private boolVerif = false;
@@ -104,25 +104,23 @@ export default class ListArticleComponent extends Vue {
 
    async supprimerStock(){
       try {
-         await deleteStock(createDefaultStock({id: this.scanne}));
+         await deleteStock(createDefaultStock({id: parseInt(this.scanne)}));
          NotificationHandler.showNewNotification('Stock supprimé');
       } catch (e) {
          NotificationHandler.showNewNotification('Stock non supprimé', true);
       }
-      this.scanne = 0;
+      this.scanne = "";
       await nextTick();
-      (this.$refs.vNumberRef as VNumberInput)?.blur();
+      (this.$refs.vNumberRef as VTextField)?.blur();
       setTimeout(() => {
-         (this.$refs.vNumberRef as VNumberInput)?.focus();
+         (this.$refs.vNumberRef as VTextField)?.focus();
       }, 10);
    }
 }
 </script>
 
 <template>
-   <v-dialog
-       v-model="stock"
-   >
+   <v-dialog v-model="stock">
       <v-card v-if="!boolVerif">
          <v-card-title>
             Entree de Stock
@@ -162,13 +160,13 @@ export default class ListArticleComponent extends Vue {
          </v-card-title>
          <v-card-text>
             <span class="ma-5"> Scaner les stock a supprimer</span>
-            <v-number-input
+            <v-text-field
                label="scan"
                ref="vNumberRef"
                autofocus
                v-model="scanne"
                @keyup.enter="supprimerStock"
-            ></v-number-input>
+            ></v-text-field>
          </v-card-text>
       </v-card>
    </v-dialog>

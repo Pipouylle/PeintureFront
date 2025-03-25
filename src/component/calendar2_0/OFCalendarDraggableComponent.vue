@@ -49,7 +49,7 @@ export default class OFCalendarDraggableComponent extends Vue {
          </v-col>
          <v-col>
             <v-btn color="error" @click="deleteOfCalendar">
-               <v-icon >mdi-trash</v-icon>
+               <v-icon >mdi-delete-outline</v-icon>
             </v-btn>
          </v-col>
       </v-row>
