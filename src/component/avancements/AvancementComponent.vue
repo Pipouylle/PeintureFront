@@ -64,7 +64,7 @@ export default class AvancementComponent extends Vue {
                                :title="demande.numero + ' - ' + this.store.avancementModel.listSysteme.find(systeme => systeme.id === this.store.avancementModel.listCommande.find(commande => commande.id === demande.commande.id)?.systeme.id)?.nom"
                            ></v-list-item>
                         </template>
-                        <TableOf :items="this.store.avancementModel.listOF.filter(of => of.demande.id === demande.id && of.cabine === store.avancementModel.cabine && of.temp === store.avancementModel.temp)"/>
+                        <TableOf :items="[this.store.avancementModel.listOF.filter(of => of.demande.id === demande.id && of.cabine === store.avancementModel.cabine && of.temp === store.avancementModel.temp)[0]]"/>
                      </v-list-group>
                   </v-list-item>
                </v-list-group>

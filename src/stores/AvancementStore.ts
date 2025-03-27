@@ -2,7 +2,7 @@ import {defineStore} from 'pinia'
 import {listAffaireStore} from "@/stores/AffaireStore"
 import {listCommandeStore} from "@/stores/CommandeStore"
 import {AvancementModel, createDefaultAvancementModel} from "@/models/avancements/AvancementModel"
-import {getOfBySemaineAndJour, updateAvancementOf} from "@/services/OfsService";
+import {getOfBySemaine, updateAvancementOf} from "@/services/OfsService";
 import {createDefaultSemaine} from "@/models/types/semaine";
 import {getAvancementSurfaceCoucheByOf} from "@/services/AvancementSurfaceCoucheService";
 import {AvancementSurfaceCouche} from "@/models/types/avancementSurfaceCouche";
@@ -24,8 +24,8 @@ export const avancementStore = defineStore('avancementStore',{
         async load(){
             await listSemaineStore().load();
             await listDemandeStore().load();
-            if(!this.isLoad || this.avancementModel.date != new Date().toISOString()){
-                await this.setJour(new Date().toISOString());
+            if(!this.isLoad){
+                await this.setSemaine(listSemaineStore().getCurrentSemaine() ?? createDefaultSemaine());
                 this.isLoad = true;
             }
         },
@@ -34,7 +34,7 @@ export const avancementStore = defineStore('avancementStore',{
         },
         async getOf(): Promise<Boolean>{
             try{
-                this.avancementModel.listOF = await getOfBySemaineAndJour(this.avancementModel.jour, this.avancementModel.semaine);
+                this.avancementModel.listOF = await getOfBySemaine(this.avancementModel.semaine);
                 for (const of of this.avancementModel.listOF) {
                     of.avancements = await getAvancementSurfaceCoucheByOf(of.id);
                 }
@@ -43,10 +43,8 @@ export const avancementStore = defineStore('avancementStore',{
                 return false;
             }
         },
-        async setJour(date: string){
-            this.avancementModel.date = date;
-            this.avancementModel.semaine = listSemaineStore().getSemaine(date) ?? createDefaultSemaine();
-            this.avancementModel.jour = this.avancementModel.jours[new Date(date).getDay()];
+        async setSemaine(semaine: Semaine){
+            this.avancementModel.semaine = semaine;
 
             if (!await this.getOf()) {
                 console.error("et merde")
@@ -105,15 +103,12 @@ export const avancementStore = defineStore('avancementStore',{
             }
             console.log(this.avancementModel.listPrevious);
         },
-        async previousJour(){
-            const newDate = new Date(this.avancementModel.date);
-            newDate.setDate(newDate.getDate() - 1);
-            await this.setJour(newDate.toISOString());
+
+        async previousSemaine(){
+            await this.setSemaine(listSemaineStore().listSemaine.semaines.find(semaine => semaine.id === (this.avancementModel.semaine.id - 1)) ?? createDefaultSemaine());
         },
-        async nextJour(){
-            const newDate = new Date(this.avancementModel.date);
-            newDate.setDate(newDate.getDate() + 1);
-            await this.setJour(newDate.toISOString());
+        async nextSemaine(){
+            await this.setSemaine(listSemaineStore().listSemaine.semaines.find(semaine => semaine.id === (this.avancementModel.semaine.id + 1)) ?? createDefaultSemaine());
         },
         async getSurfaceCoucheByAvancementSurfaceCouche(avancementSurfaceCouche: AvancementSurfaceCouche){
             try {

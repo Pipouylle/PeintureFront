@@ -34,9 +34,9 @@ export function createDefaultAvancementModel(overrides: Partial<AvancementModel>
         listSysteme: [],
         listPrevious: [],
         cabines:["cabine 1", "cabine 2"],
-        cabine: '',
+        cabine: 'cabine 1',
         temps: ["matin","après-midi","nuit"],
-        temp: '',
+        temp: 'matin',
         ...overrides
     }
 }

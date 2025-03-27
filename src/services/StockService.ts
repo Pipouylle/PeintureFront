@@ -82,8 +82,7 @@ export const creerMultipleStock = async (stock: Stock[]): Promise<Stock[]> => {
 export const SortieStock = async (stock: Stock): Promise<Stock> => {
     try {
         const stocks = Stockmapper.mapStocks(stock);
-        console.log(stocks);
-        const response = await apiClientPatch.patch(`/stockSortie/${stock.id}`, stocks);
+        const response = await apiClientPatch.patch(`/stockLeave/${stock.id}`, stocks);
         return Stockmapper.mapStock(response.data);
     } catch (error) {
         console.error(error);
@@ -152,6 +151,16 @@ export const getStockNotSortieByArticle = async (article: Article): Promise<Stoc
 export const deleteStock = async (stock: Stock) => {
     try {
         await apiClient.delete(`/stocks/${stock.id}`);
+    } catch (error) {
+        console.error(error);
+        throw error;
+    }
+}
+
+export const unLeaveStock = async (stockId: number): Promise<Stock> => {
+    try {
+        const response = await apiClientPatch.get<Stocks>(`/stockUnLeave/${stockId}`);
+        return Stockmapper.mapStock(response.data);
     } catch (error) {
         console.error(error);
         throw error;

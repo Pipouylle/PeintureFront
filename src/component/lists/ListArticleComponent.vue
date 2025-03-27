@@ -105,6 +105,7 @@ export default class ListArticleComponent extends Vue {
    async supprimerStock(){
       try {
          await deleteStock(createDefaultStock({id: parseInt(this.scanne)}));
+         this.store.setStock();
          NotificationHandler.showNewNotification('Stock supprimé');
       } catch (e) {
          NotificationHandler.showNewNotification('Stock non supprimé', true);
@@ -209,7 +210,13 @@ export default class ListArticleComponent extends Vue {
             <template v-slot:[`item.actions`]="{ item }">
                <v-btn  color="primary" @click="ActiveEntreeStock(item)">Entrée de Stock</v-btn>
                <v-icon size="x-large" color="primary" @click="editArticle(item)">mdi-pencil</v-icon>
-               <v-icon size="x-large" color="error" @click="deleteArticle(item)">mdi-delete</v-icon>
+               <v-dialog v-model="dialogDelete">
+                  <v-card>
+                     <v-btn size="x-large" color="primary" @click="dialogDelete = !dialogDelete">annuler</v-btn>
+                     <v-btn size="x-large" color="error" @click="deleteArticle(item)">confirmer la supression</v-btn>
+                  </v-card>
+               </v-dialog>
+               <v-icon size="x-large" color="error" @click="dialogDelete = !dialogDelete">mdi-delete</v-icon>
             </template>
          </v-data-table-virtual>
       </v-card-text>

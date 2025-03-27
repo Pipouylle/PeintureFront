@@ -32,10 +32,13 @@ export const listArticleStore = defineStore("listArticleStore", {
         },
         async setStock() {
             const response = await getStockNotSortie();
+            this.listArticle.stock = [];
             for (const article of this.listArticle.articles) {
                 const number = response.filter((stock) => stock.article.id === article.id).length;
                 if (number > 0) {
                     this.listArticle.stock.push({idArticle: article.id, quantite: number});
+                } else {
+                    this.listArticle.stock.push({idArticle: article.id, quantite: 0});
                 }
             }
         },

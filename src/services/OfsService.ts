@@ -81,6 +81,16 @@ export const getOfBySemaineAndJour = async (jour: string, semaine: Semaine): Pro
     }
 }
 
+export const getOfBySemaine = async (semaine: Semaine): Promise<Of[]> => {
+    try {
+        const response = await apiClient.get<ApiResponseCollection>(`/o_fs?semaine_of=${semaine.id}`);
+        return Ofsmapper.mapArrayOf(response.data.member);
+    } catch (e) {
+        console.error('Erreur lors de la récupération des ofs par la semaine et le jour:', e);
+        throw e;
+    }
+}
+
 export const updateAvancementOf = async (of: Of): Promise<Of> => {
     try {
         const ofs = Ofsmapper.mapOfs(of);
@@ -94,7 +104,6 @@ export const updateAvancementOf = async (of: Of): Promise<Of> => {
 
 export const getOfForSortie = async (): Promise<Of[]> => {
     try {
-        //TODO: faire en sorte que ce soit 6 mois
         const response = await apiClient.get<Ofs[]>('/ofsForSortieStock');
         return Ofsmapper.mapArrayOf(response.data);
     } catch (error) {

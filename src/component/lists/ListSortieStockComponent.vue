@@ -2,7 +2,7 @@
 import {Vue, Component} from 'vue-facing-decorator';
 import {listArticleStore} from "@/stores/ArticleStore";
 import {listUserStore} from "@/stores/UserStore";
-import {getStockForSortie} from "@/services/StockService";
+import {getStockForSortie, unLeaveStock} from "@/services/StockService";
 import NotificationHandler from "@/services/NotificationHandler";
 import {listCommandeStore} from "@/stores/CommandeStore";
 import {listAffaireStore} from "@/stores/AffaireStore";
@@ -38,6 +38,7 @@ export default class ListSortieStockComponent extends Vue {
       {title: 'designation', value: 'designationArticle'},
       {title: 'Ral', value: 'ral'},
       {title: 'Opérateur', value: 'nomOperateur'},
+      {title: 'Annuler sortie', value: 'action'},
    ];
    private headerRecap = [
       {title: 'Semaine', value: 'semaine'},
@@ -146,6 +147,15 @@ export default class ListSortieStockComponent extends Vue {
          }
       });
    }
+
+   private async unLeave(item: any) {
+      try {
+         const response = await unLeaveStock(item.id);
+         this.listStock.splice(this.listStock.findIndex(stock => stock.id === response.id), 1);
+      } catch (e) {
+         NotificationHandler.showNewNotification('Erreur lors de l\'annulation de la sortie.', true);
+      }
+   }
 }
 </script>
 
@@ -205,6 +215,9 @@ export default class ListSortieStockComponent extends Vue {
                <span> {{
                      this.articleStore.listArticle.articles.find(article => article.id === item.article.id)?.ral
                   }} </span>
+            </template>
+            <template v-slot:[`item.action`]="{ item }">
+               <v-icon size="x-large" color="error" @click="unLeave(item)">mdi-delete</v-icon>
             </template>
          </v-data-table-virtual>
       </v-card-text>
