@@ -77,6 +77,14 @@ export default class ModifCoucheForCommande extends Vue {
                                @update:model-value="onArticleSelected(articleSelect.id)"
                            ></v-combobox>
                            <v-text-field
+                               label="Ral"
+                               outlined
+                               dense
+                               :model-value="articleSelect.article ? this.articleStore.listArticle.articles.find((article :Article) => article.id === articleSelect.article?.value)?.ral : ''"
+                               readonly
+                               disabled
+                           ></v-text-field>
+                           <v-text-field
                                label="Fournisseur"
                                outlined
                                dense

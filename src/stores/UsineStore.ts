@@ -40,6 +40,7 @@ export const OperateurViewStore = defineStore('OperateurViewStore', {
         },
         async setJour(date: string) {
             if (new Date().toISOString().split('T')[0] > this.fetchDate.toISOString().split('T')[0]) {
+                window.location.reload();
                 date = new Date().toISOString();
                 this.fetchDate = new Date();
             }

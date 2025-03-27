@@ -19,6 +19,7 @@ import NotificationHandlerComponent from "@/component/common/NotificationHandler
    methods: {createDefaultAvancementSurfaceCouche}
 })
 
+//TODO: faire une validation pour la sortie
 export default class DialogOfComponent extends Vue {
    @Prop({required: true}) private item!: Of;
    private store = OperateurViewStore();
@@ -140,7 +141,7 @@ export default class DialogOfComponent extends Vue {
                ></v-text-field>
             </v-col>
             <v-btn color="primary" append-icon="mdi-arrow-right-thick" @click="sortieStock"
-                   size="100" class="w-25 text-h3"> Valider
+                   size="100" class="w-25 text-h3"> Valider {{this.stockSelect.length}} bidons
             </v-btn>
          </v-row>
       </v-card>
