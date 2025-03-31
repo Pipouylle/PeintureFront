@@ -82,7 +82,13 @@ export default class ListFournisseurComponent extends Vue {
             </template>
             <template v-slot:[`item.actions`]="{ item }">
                <v-icon size="x-large" color="primary" @click="editFournisseur(item)">mdi-pencil</v-icon>
-               <v-icon size="x-large" color="error" @click="deleteFournisseur(item)">mdi-delete</v-icon>
+               <v-dialog v-model="dialogDelete">
+                  <v-card>
+                     <v-btn size="x-large" color="primary" @click="dialogDelete = !dialogDelete">annuler</v-btn>
+                     <v-btn size="x-large" color="error" @click="deleteFournisseur(item)">confirmer la supression</v-btn>
+                  </v-card>
+               </v-dialog>
+               <v-icon size="x-large" color="error" @click="dialogDelete = !dialogDelete">mdi-delete</v-icon>
             </template>
          </v-data-table-virtual>
       </v-card-text>

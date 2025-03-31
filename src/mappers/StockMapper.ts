@@ -1,19 +1,22 @@
 import {Stocks} from "@/models/objectsApi/Stocks";
 import {Stock} from "@/models/types/stock";
-import {createDefaultArticle} from "@/models/types/article";
-import {createDefaultUser} from "@/models/types/user";
-import {createDefaultOf} from "@/models/types/of";
+import {createDefaultArticle, Article} from "@/models/types/article";
+import {createDefaultUser, User} from "@/models/types/user";
+import {createDefaultOf, Of} from "@/models/types/of";
+import Articlemapper from "@/mappers/Articlemapper";
+import Usermapper from "@/mappers/Usermapper";
+import Ofsmapper from "@/mappers/Ofsmapper";
 
 export default class Stockmapper {
-    public static mapStock(data: Stocks): Stock {
+    public static mapStock(obj: Stocks): Stock {
         return {
-            id: data.id,
-            dateStock: data.dateStockStock ? data.dateStockStock : "",
-            dateSortie: data.dateSortieStock,
-            article: data.articleStock ? createDefaultArticle({id : parseInt(data.articleStock.split('/')[3])}) : createDefaultArticle(),
-            user: data.userStock ? createDefaultUser({id : parseInt(data.userStock.split('/')[3])}) : createDefaultUser(),
-            of: data.ofStock ? createDefaultOf({id : parseInt(data.ofStock.split('/')[3])}) : createDefaultOf(),
-            unique: data.isUniqueStock
+            id: obj?.id ?? 0,
+            dateStock: obj?.dateStockStock ? obj.dateStockStock : new Date().toISOString(),
+            dateSortie: obj.dateSortieStock ? obj.dateSortieStock : "",
+            article: obj?.articleStock ? typeof obj.articleStock === 'object' ? Articlemapper.mapArticle(obj.articleStock) : createDefaultArticle({id : parseInt(obj.articleStock.split('/')[3])}) : createDefaultArticle(),
+            user: obj?.userStock ? typeof obj.userStock === 'object' ? Usermapper.mapUser(obj.userStock) : createDefaultUser({id : parseInt(obj.userStock.split('/')[3])}) : createDefaultUser(),
+            of: obj?.ofStock ? typeof obj.ofStock === 'object' ? Ofsmapper.mapOf(obj.ofStock) : createDefaultOf({id : parseInt(obj.ofStock.split('/')[3])}) : createDefaultOf(),
+            unique: obj?.isUniqueStock ?? false,
         }
     }
 
@@ -21,15 +24,15 @@ export default class Stockmapper {
         return data.map(Stockmapper.mapStock);
     }
 
-    public static mapStocks(data: Stock): Stocks {
+    public static mapStocks(obj: Stock): Stocks {
         return {
-            id: data.id,
-            dateStockStock: data.dateStock === "" ? null : data.dateStock,
-            dateSortieStock: data.dateSortie,
-            articleStock: data.article ? "/api/articles/" + data.article.id : null,
-            userStock: data.user ? "/api/users/" + data.user.id : null,
-            ofStock: data.of ? "/api/o_fs/" + data.of.id : null,
-            isUniqueStock: data.unique
+            id: obj.id,
+            dateStockStock: obj.dateStock,
+            dateSortieStock: obj.dateSortie ?? null,
+            articleStock: "/api/articles/" + obj.article.id,
+            userStock: obj.user.id !== 0 ? "/api/users/" + obj.user.id : null,
+            ofStock: obj.of.id !== 0 ? "/api/o_fs/" + obj.of.id : null,
+            isUniqueStock: obj.unique
         }
     }
 

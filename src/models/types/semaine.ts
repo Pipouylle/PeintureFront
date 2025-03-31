@@ -1,3 +1,4 @@
+import {Of} from "@/models/types/of";
 export interface Semaine {
     id: number;
     annee: number;
@@ -5,6 +6,7 @@ export interface Semaine {
     semaine: number;
     dateDebut: string;
     dateFin: string;
+    ofs: Of[];
 }
 
 export function createDefaultSemaine(overrides: Partial<Semaine> = {}): Semaine {
@@ -15,6 +17,7 @@ export function createDefaultSemaine(overrides: Partial<Semaine> = {}): Semaine 
         semaine: 0,
         dateDebut: "",
         dateFin: "",
+        ofs: [],
         ...overrides
     }
 }

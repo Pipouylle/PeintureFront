@@ -1,7 +1,8 @@
 export interface Semaines {
-    "id": number,
-    "annees": number,
-    "semaine": number,
-    "mois": number,
-    "dateDebutSemaine": string,
+    "id"?: number,
+    "annees"?: number,
+    "semaine"?: number,
+    "mois"?: number,
+    "dateDebutSemaine"?: string,
+    "ofsSemaine"?: any[],
 }

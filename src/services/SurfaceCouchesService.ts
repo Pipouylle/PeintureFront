@@ -1,7 +1,7 @@
 import {apiClient, apiClientPatch} from "@/stores/apiClient";
 import {SurfaceCouche} from "@/models/types/surfaceCouche";
 import {ApiResponseCollection} from "@/models/common/ApiResponseCollection";
-import {SurfaceCouchemapper} from "@/mappers/SurfaceCouchemapper";
+import SurfaceCouchemapper from "@/mappers/SurfaceCouchemapper";
 import {SurfaceCouches} from "@/models/objectsApi/surfaceCouches";
 
 export const getAllSurfaceCouches = async (): Promise<SurfaceCouche[]> => {

@@ -1,7 +1,7 @@
 import {apiClient, apiClientPatch} from "@/stores/apiClient";
 import {ArticleCouche} from "@/models/types/articleCouche";
 import {ArticleCouches} from "@/models/objectsApi/ArticleCouches";
-import {ArticleCouchemapper} from "@/mappers/ArticleCouchemapper";
+import ArticleCouchemapper from "@/mappers/ArticleCouchemapper";
 import {ApiResponseCollection} from "@/models/common/ApiResponseCollection";
 import {Commande} from "@/models/types/commande";
 import {ArticlesArticleCouche} from "@/models/objectsApi/articlesArticleCouche";
@@ -25,7 +25,7 @@ export const creerArticleCouche = async (articleCouche: ArticleCouche): Promise<
     try {
         const articleCouches = ArticleCouchemapper.mapArticleCouches(articleCouche);
         const response = await apiClient.post<ArticleCouches>("/article_couches", articleCouches);
-        articleCouche.id = response.data.id;
+        articleCouche.id = response.data?.id ?? 0;
         await putArticles(articleCouche);
         return ArticleCouchemapper.mapArticleCouche(response.data);
     } catch (error) {

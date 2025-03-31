@@ -6,7 +6,6 @@ export interface Affaire {
     numero: string;
     nom: string;
     commandes: Commande[];
-    systemes: Systeme[];
 }
 
 export function createDefaultAffaire (overrides: Partial<Affaire> = {}): Affaire {
@@ -15,7 +14,6 @@ export function createDefaultAffaire (overrides: Partial<Affaire> = {}): Affaire
         numero: "",
         nom: "",
         commandes: [],
-        systemes: [],
         ...overrides
     };
 }

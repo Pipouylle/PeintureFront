@@ -9,7 +9,7 @@ export enum Jour {
     AUTRE = "Autre",
 }
 
-export function getJourEnumValue(day: string): Jour | undefined {
+export function getJourEnumValue(day: string): Jour {
     switch (day.toLowerCase()) {
         case "lundi":
             return Jour.lundi;
@@ -26,6 +26,6 @@ export function getJourEnumValue(day: string): Jour | undefined {
         case "dimanche":
             return Jour.dimanche;
         default:
-            return undefined;
+            return Jour.AUTRE;
     }
 }

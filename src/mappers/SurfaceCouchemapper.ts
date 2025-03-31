@@ -1,15 +1,17 @@
 import {SurfaceCouches} from "@/models/objectsApi/surfaceCouches";
 import {SurfaceCouche} from "@/models/types/surfaceCouche";
-import {createDefaultDemande} from "@/models/types/demande";
-import {createDefaultArticleCouche} from "@/models/types/articleCouche";
+import {createDefaultDemande, Demande} from "@/models/types/demande";
+import {createDefaultArticleCouche, ArticleCouche} from "@/models/types/articleCouche";
+import ArticleCouchemapper from "@/mappers/ArticleCouchemapper";
+import DemandeMapper from "@/mappers/Demandesmapper";
 
-export class SurfaceCouchemapper {
+export default class SurfaceCouchemapper {
     static mapSurfaceCouche(obj: SurfaceCouches): SurfaceCouche {
         return {
-            id: obj.id,
-            articleCouche: createDefaultArticleCouche({id : parseInt(obj.articleCoucheSurfaceCouche.split("/")[3]),}),
-            demande: createDefaultDemande({id : parseInt(obj.demandeSurfaceCouche.split("/")[3]),}),
-            surface: parseFloat(obj.surface),
+            id: obj?.id ?? 0,
+            articleCouche: obj?.articleCoucheSurfaceCouche ? typeof obj.articleCoucheSurfaceCouche === 'object' ? ArticleCouchemapper.mapArticleCouche(obj.articleCoucheSurfaceCouche) : createDefaultArticleCouche({id : parseInt(obj.articleCoucheSurfaceCouche.split("/")[3]),}) : createDefaultArticleCouche(),
+            demande: obj?.demandeSurfaceCouche ? typeof obj.demandeSurfaceCouche === 'object' ? DemandeMapper.mapDemande(obj.demandeSurfaceCouche) : createDefaultDemande({id : parseInt(obj.demandeSurfaceCouche.split("/")[3]),}) : createDefaultDemande(),
+            surface: parseFloat(obj?.surface ?? "0"),
         }
     }
 

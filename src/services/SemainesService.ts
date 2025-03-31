@@ -1,6 +1,6 @@
 import {apiClient} from "@/stores/apiClient";
 import {ApiResponseCollection} from "@/models/common/ApiResponseCollection";
-import {Semainemapper} from "@/mappers/Semainemapper";
+import Semainemapper from "@/mappers/Semainemapper";
 import {Semaine} from "@/models/types/semaine";
 
 export const getAllSemaines = async (): Promise<Semaine[]> => {

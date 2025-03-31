@@ -23,9 +23,7 @@ import NotificationHandlerComponent from "@/component/common/NotificationHandler
 export default class DialogOfComponent extends Vue {
    @Prop({required: true}) private item!: Of;
    private store = OperateurViewStore();
-   private demandeStore = listDemandeStore();
    private userStore = listUserStore();
-   private articleStore = listArticleStore();
    private scanne: string = "";
    private stockSelect: Stock[] = [];
    private userSelected: number = -1;
@@ -47,7 +45,7 @@ export default class DialogOfComponent extends Vue {
       const stock = await this.store.getStock(parseInt(this.scanne));
       let test = false;
       if (stock.id != 0) {
-         if (stock.dateSortie === undefined){
+         if (stock.dateSortie === ""){
             if (!this.stockSelect.find((s: Stock) => s.id === stock.id)) {
                for (const avancement of this.item.avancements) {
                   for (const article of avancement.surfaceCouches.articleCouche.articles) {
@@ -85,7 +83,7 @@ export default class DialogOfComponent extends Vue {
       <v-card-title class="ma-3 pa 3">
          <v-row >
             <span class="text-h2"> Demande : {{
-                  demandeStore.listDemande.demandes.find((demande: Demande) => demande.id === item.demande.id)?.numero
+                  item.demande.numero
                }} </span>
             <v-spacer></v-spacer>
             <v-btn size="x-large" color="primary" @click="this.store.dialog = false" class="ma-5"> Fermer</v-btn>

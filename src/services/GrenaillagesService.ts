@@ -1,6 +1,6 @@
 import {ApiResponseCollection} from "@/models/common/ApiResponseCollection";
 import {Grenaillage} from "@/models/types/Grenaillage";
-import {Grenaillagemapper} from "@/mappers/Grenaillagemapper";
+import Grenaillagemapper from "@/mappers/Grenaillagemapper";
 
 import {apiClient, apiClientPatch} from "@/stores/apiClient";
 

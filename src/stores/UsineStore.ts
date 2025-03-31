@@ -3,7 +3,7 @@ import {Of} from "@/models/types/of";
 import {createDefaultViewUsineModel, ViewUsineModel} from "@/models/usines/ViewUsineModel";
 import {listUserStore, useUserStore} from "@/stores/UserStore";
 import {createDefaultSemaine} from "@/models/types/semaine";
-import {getAllOfbySemaine} from "@/services/OfsService";
+import {getAllOfbySemaine, getOfForUsineView} from "@/services/OfsService";
 import {getAvancementSurfaceCoucheByOf} from "@/services/AvancementSurfaceCoucheService";
 import {getArticleCoucheForDemande} from "@/services/ArticleCoucheService";
 import {createDefaultCommande} from "@/models/types/commande";
@@ -16,6 +16,7 @@ import {listSystemeStore} from "@/stores/SystemeStore";
 import {listCommandeStore} from "@/stores/CommandeStore";
 import {listDemandeStore} from "@/stores/DemandeStore";
 import {listArticleStore} from "@/stores/ArticleStore";
+import {getJourEnumValue, Jour} from "@/enums/Jour";
 
 export const OperateurViewStore = defineStore('OperateurViewStore', {
     state: () => ({
@@ -28,14 +29,11 @@ export const OperateurViewStore = defineStore('OperateurViewStore', {
         async load() {
             await listSemaineStore().load();
             await listUserStore().load();
-            await listArticleStore().load();
             listUserStore().archived = false;
             listUserStore().notArchived = true;
-            await listDemandeStore().load();
             await this.setJour(this.usineModel.date);
         },
         unLoad() {
-            listAffaireStore().unLoad();
             listUserStore().unLoad();
         },
         async setJour(date: string) {
@@ -51,14 +49,10 @@ export const OperateurViewStore = defineStore('OperateurViewStore', {
 
         },
         async setOf() {
-            this.listOf = await getAllOfbySemaine(this.usineModel.semaine);
-            for (const of of this.listOf) {
-                of.avancements = await getAvancementSurfaceCoucheByOf(of.id);
-                const responseArticleCouches = await getArticleCoucheForDemande(createDefaultCommande({id: listDemandeStore().listDemande.demandes.find(demande => demande.id === of.demande.id)?.commande.id ?? 0}))
-                for (let i = 0; i < of.avancements.length; i++) {
-                    of.avancements[i].surfaceCouches.articleCouche = responseArticleCouches[i];
-                }
-            }
+            const jour = getJourEnumValue(this.usineModel.jour);
+            // Vérifier si jour est un nombre, sinon utiliser 1 (lundi) par défaut
+            const jourValue = typeof jour === 'number' ? jour : 1;
+            this.listOf = await getOfForUsineView(this.usineModel.semaine.id, jourValue);
         },
         getOfBytempAndJour(): Of[] {
             return this.listOf.filter(of => of.jour === this.usineModel.jour).sort((a, b) => a.order - b.order);

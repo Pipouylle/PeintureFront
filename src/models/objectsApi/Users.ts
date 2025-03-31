@@ -1,5 +1,6 @@
 export interface Users {
-    id: number;
-    nameUser: string;
-    archiveUser: boolean;
+    id?: number;
+    nameUser?: string;
+    archiveUser?: boolean;
+    stocksUser?: any[];
 }

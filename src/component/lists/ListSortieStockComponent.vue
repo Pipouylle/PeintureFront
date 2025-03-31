@@ -30,6 +30,7 @@ export default class ListSortieStockComponent extends Vue {
    private listStock: any[] = [];
    private listOf: any[] = [];
    private filter = '';
+   private dialogDelete = false;
    private headerHistorique = [
       {title: 'Date de sortie', value: 'dateSortieFormated'},
       {title: 'Affaire', value: 'numAffaire'},
@@ -217,7 +218,13 @@ export default class ListSortieStockComponent extends Vue {
                   }} </span>
             </template>
             <template v-slot:[`item.action`]="{ item }">
-               <v-icon size="x-large" color="error" @click="unLeave(item)">mdi-delete</v-icon>
+               <v-dialog v-model="dialogDelete">
+                  <v-card>
+                     <v-btn size="x-large" color="primary" @click="dialogDelete = !dialogDelete">annuler</v-btn>
+                     <v-btn size="x-large" color="error" @click="unLeave(item)">confirmer l'annulation de la sortie</v-btn>
+                  </v-card>
+               </v-dialog>
+               <v-icon size="x-large" color="error" @click="dialogDelete = !dialogDelete">mdi-delete</v-icon>
             </template>
          </v-data-table-virtual>
       </v-card-text>

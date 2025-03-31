@@ -1,9 +1,9 @@
 export interface Stocks {
-    id: number;
-    dateStockStock: string | null;
-    dateSortieStock: string;
-    articleStock: string | null;
-    userStock: string | null;
-    ofStock: string | null;
-    isUniqueStock: boolean;
+    id?: number;
+    dateStockStock?: string;
+    dateSortieStock?: string | null;
+    articleStock?: string | object;
+    userStock?: string | object | null;
+    ofStock?: string | object | null;
+    isUniqueStock?: boolean;
 }

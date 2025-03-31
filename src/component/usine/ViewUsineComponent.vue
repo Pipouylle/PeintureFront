@@ -17,10 +17,6 @@ import {useRoute} from "vue-router";
 
 export default class ViewUsineComponent extends Vue {
    private store = OperateurViewStore();
-   private demandeStore = listDemandeStore();
-   private commandeStore = listCommandeStore();
-   private affaireStore = listAffaireStore();
-   private systemeStore = listSystemeStore();
    private header = [
       {title: "Num affaire", value: "numAffaire", sortable: false},
       {title: "Nom affaire", value: "nomAffaire", sortable: false},
@@ -138,40 +134,40 @@ export default class ViewUsineComponent extends Vue {
          >
             <template v-slot:[`item.numAffaire`]="{ item }">
                <span> {{
-                     this.affaireStore.listAffaire.affaires.find(affaire => affaire.id === this.commandeStore.listCommande.commandes.find(commande => commande.id === this.demandeStore.listDemande.demandes.find(demande => demande.id === item.demande.id)?.commande.id)?.affaire.id)?.numero
+                  item.demande.commande.affaire.id
                   }} </span>
             </template>
             <template v-slot:[`item.nomAffaire`]="{ item }">
                <span> {{
-                     this.affaireStore.listAffaire.affaires.find(affaire => affaire.id === this.commandeStore.listCommande.commandes.find(commande => commande.id === this.demandeStore.listDemande.demandes.find(demande => demande.id === item.demande.id)?.commande.id)?.affaire.id)?.nom
+                     item.demande.commande.affaire.nom
                   }} </span>
             </template>
             <template v-slot:[`item.numDemande`]="{ item }">
                <span> {{
-                     this.demandeStore.listDemande.demandes.find(demande => demande.id === item.demande.id)?.numero
+                     item.demande.numero
                   }} </span>
             </template>
             <template v-slot:[`item.nomSysteme`]="{ item }">
                <span> {{
-                     this.systemeStore.listSysteme.systemes.find(systeme => systeme.id === this.commandeStore.listCommande.commandes.find(commande => commande.id === this.demandeStore.listDemande.demandes.find(demande => demande.id === item.demande.id)?.commande.id)?.systeme.id)?.nom
+                  item.demande.commande.systeme.nom
                   }} </span>
             </template>
             <template v-slot:[`item.ral`]="{ item }">
                <span> {{
-                     this.commandeStore.listCommande.commandes.find(commande => commande.id === this.demandeStore.listDemande.demandes.find(demande => demande.id === item.demande.id)?.commande.id)?.ral
+                  item.demande.commande.ral
                   }} </span>
             </template>
             <template v-slot:[`item.pvPeinture`]="{ item }">
-               <v-icon v-if="this.demandeStore.listDemande.demandes.find(demande => demande.id === item.demande.id)?.reservation" color="red" size="x-large">mdi-close</v-icon>
+               <v-icon v-if="item.demande.reservation" color="red" size="x-large">mdi-close</v-icon>
             </template>
             <template v-slot:[`item.commentaire`]="{ item }">
                <span> {{
-                     this.demandeStore.listDemande.demandes.find(demande => demande.id === item.demande.id)?.commentaire
+                  item.demande.commentaire
                   }} </span>
             </template>
             <template v-slot:[`item.dateDemande`]="{ item }">
                <span> {{
-                     new Date(this.demandeStore.listDemande.demandes.find(demande => demande.id === item.demande.id)?.date ?? "").toLocaleDateString()
+                     new Date(item.demande.date).toLocaleDateString()
                   }} </span>
             </template>
          </v-data-table-virtual>

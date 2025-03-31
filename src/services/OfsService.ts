@@ -111,3 +111,13 @@ export const getOfForSortie = async (): Promise<Of[]> => {
         throw error;
     }
 }
+
+export const getOfForUsineView = async (semaineId: number, jourId: number): Promise<Of[]> => {
+    try {
+        const response = await apiClient.get<Ofs[]>(`/ofsOperateurView/${semaineId}/${jourId}`);
+        return Ofsmapper.mapArrayOf(response.data);
+    } catch (error) {
+        console.error('Erreur lors de la récupération des ofs:', error);
+        throw error;
+    }
+}
