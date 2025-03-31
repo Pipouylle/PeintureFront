@@ -31,7 +31,6 @@ export const OperateurViewStore = defineStore('OperateurViewStore', {
             await listUserStore().load();
             listUserStore().archived = false;
             listUserStore().notArchived = true;
-            await this.setJour(this.usineModel.date);
         },
         unLoad() {
             listUserStore().unLoad();
@@ -50,7 +49,6 @@ export const OperateurViewStore = defineStore('OperateurViewStore', {
         },
         async setOf() {
             const jour = getJourEnumValue(this.usineModel.jour);
-            // Vérifier si jour est un nombre, sinon utiliser 1 (lundi) par défaut
             const jourValue = typeof jour === 'number' ? jour : 1;
             this.listOf = await getOfForUsineView(this.usineModel.semaine.id, jourValue);
         },

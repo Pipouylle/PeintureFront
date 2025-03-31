@@ -2,18 +2,20 @@
 import {Vue, Component} from 'vue-facing-decorator';
 import {listFournisseurStore} from "@/stores/FournisseurStore";
 import NotificationHandler from "@/services/NotificationHandler";
+import {Fournisseur} from "@/models/types/fournisseur";
 
 @Component({})
 
 export default class ListFournisseurComponent extends Vue {
    private store = listFournisseurStore();
+   private itemToDelete: any = null;
    private dialogDelete = false;
    private header = [
       {title: 'Nom', value: 'nom'},
       {title: 'Action', value: 'actions', align: 'end'}
    ];
 
-  async mounted() {
+   async mounted() {
       await this.store.load();
    }
 
@@ -31,13 +33,20 @@ export default class ListFournisseurComponent extends Vue {
       }
    };
 
-   private async deleteFournisseur(item: any) {
-      if (await this.store.delete(item)) {
-         NotificationHandler.showNewNotification('Fournisseur supprimé avec succès !');
-      } else {
-         NotificationHandler.showNewNotification('Erreur lors de la suppression du fournisseur.', true);
+   private async deleteFournisseur() {
+      if (this.itemToDelete) {
+         if (await this.store.delete(this.itemToDelete)) {
+            NotificationHandler.showNewNotification('Fournisseur supprimé avec succès !');
+         } else {
+            NotificationHandler.showNewNotification('Erreur lors de la suppression du fournisseur.', true);
+         }
       }
    };
+
+   private openDeleteFournissuer(item: Fournisseur) {
+      this.dialogDelete = true;
+      this.itemToDelete = item;
+   }
 
 
 }
@@ -85,10 +94,10 @@ export default class ListFournisseurComponent extends Vue {
                <v-dialog v-model="dialogDelete">
                   <v-card>
                      <v-btn size="x-large" color="primary" @click="dialogDelete = !dialogDelete">annuler</v-btn>
-                     <v-btn size="x-large" color="error" @click="deleteFournisseur(item)">confirmer la supression</v-btn>
+                     <v-btn size="x-large" color="error" @click="deleteFournisseur()">confirmer la supression</v-btn>
                   </v-card>
                </v-dialog>
-               <v-icon size="x-large" color="error" @click="dialogDelete = !dialogDelete">mdi-delete</v-icon>
+               <v-icon size="x-large" color="error" @click="openDeleteFournissuer(item)">mdi-delete</v-icon>
             </template>
          </v-data-table-virtual>
       </v-card-text>

@@ -17,6 +17,7 @@ export default class ListArticleComponent extends Vue {
    private modifStore = updateArticleStore();
    private fournisseurStore = listFournisseurStore();
    private router = useRouter();
+   private itemToDelete: Article | null = null;
    private dialogDelete = false;
    private header = [
       {title: "Code", value: "id"},
@@ -49,12 +50,14 @@ export default class ListArticleComponent extends Vue {
       this.router.push({name: 'modifArticle'});
    }
 
-   async deleteArticle(item: any) {
-      if (await this.store.delete(item)) {
-         NotificationHandler.showNewNotification('Article supprimé avec succès !');
-      } else {
-         NotificationHandler.showNewNotification('Erreur lors de la suppression de l\'article.', true);
-         await this.reload();
+   async deleteArticle() {
+      if (this.itemToDelete) {
+         if (await this.store.delete(this.itemToDelete)) {
+            NotificationHandler.showNewNotification('Article supprimé avec succès !');
+         } else {
+            NotificationHandler.showNewNotification('Erreur lors de la suppression de l\'article.', true);
+            await this.reload();
+         }
       }
    }
 
@@ -116,6 +119,11 @@ export default class ListArticleComponent extends Vue {
       setTimeout(() => {
          (this.$refs.vNumberRef as VTextField)?.focus();
       }, 10);
+   }
+
+   private openDeleteArticle(item: Article) {
+      this.dialogDelete = true;
+      this.itemToDelete = item;
    }
 }
 </script>
@@ -213,10 +221,10 @@ export default class ListArticleComponent extends Vue {
                <v-dialog v-model="dialogDelete">
                   <v-card>
                      <v-btn size="x-large" color="primary" @click="dialogDelete = !dialogDelete">annuler</v-btn>
-                     <v-btn size="x-large" color="error" @click="deleteArticle(item)">confirmer la supression</v-btn>
+                     <v-btn size="x-large" color="error" @click="deleteArticle()">confirmer la supression</v-btn>
                   </v-card>
                </v-dialog>
-               <v-icon size="x-large" color="error" @click="dialogDelete = !dialogDelete">mdi-delete</v-icon>
+               <v-icon size="x-large" color="error" @click="openDeleteArticle(item)">mdi-delete</v-icon>
             </template>
          </v-data-table-virtual>
       </v-card-text>

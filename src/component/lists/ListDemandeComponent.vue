@@ -17,6 +17,7 @@ export default class ListDemandeComponent extends Vue {
    private affaireStore = listAffaireStore();
    private systemeStore = listSystemeStore();
    private router = useRouter();
+   private itemToDelete: Demande | null = null;
    private dialogDelete = false;
    private header = [
       {title: 'Numéro affaire', value: 'numAffaire'},
@@ -42,11 +43,13 @@ export default class ListDemandeComponent extends Vue {
       await this.store.load();
    }
 
-   async deleteDemande(item: Demande) {
-      if(await this.store.delete(item)) {
-         NotificationHandler.showNewNotification('Demande supprimée avec succès !');
-      } else {
-         NotificationHandler.showNewNotification('Erreur lors de la suppression de la demande.', true);
+   async deleteDemande() {
+      if (this.itemToDelete) {
+         if(await this.store.delete(this.itemToDelete)) {
+            NotificationHandler.showNewNotification('Demande supprimée avec succès !');
+         } else {
+            NotificationHandler.showNewNotification('Erreur lors de la suppression de la demande.', true);
+         }
       }
    }
 
@@ -74,13 +77,18 @@ export default class ListDemandeComponent extends Vue {
       }
    }
 
+   private openDeleteDemande(item: Demande) {
+      this.dialogDelete = true;
+      this.itemToDelete = item;
+   }
+
    get formatedDemande() {
       return this.store.listDemande.demandes.map(demande => ({
          ...demande,
          numAffaire: this.affaireStore.listAffaire.affaires.find(affaire => affaire.id === this.commandeStore.listCommande.commandes.find(commande => commande.id === demande.commande.id)?.affaire.id)?.numero,
          nomAffaire: this.affaireStore.listAffaire.affaires.find(affaire => affaire.id === this.commandeStore.listCommande.commandes.find(commande => commande.id === demande.commande.id)?.affaire.id)?.nom,
          nomSysteme: this.systemeStore.listSysteme.systemes.find(systeme => systeme.id === this.commandeStore.listCommande.commandes.find(commande => commande.id === demande.commande.id)?.systeme.id)?.nom
-      }))
+      })).sort((a,b) => b.id - a.id);
    }
 
 }
@@ -130,16 +138,16 @@ export default class ListDemandeComponent extends Vue {
                <v-icon v-if="item.reservation" color="red">mdi-close</v-icon>
             </template>
             <template v-slot:[`item.actions`]="{ item }">
-               <v-btn v-if="!(item.etat === 'terminé')" color="primary" @click="finish(item)">Terminer</v-btn>
+               <v-btn v-if="!(item.etat === 'Terminée')" color="primary" @click="finish(item)">Terminer</v-btn>
                <v-btn v-else color="primary" @click="notFinish(item)">Réouvrir</v-btn>
                <v-icon size="x-large" color="primary" @click="editDemande(item)">mdi-pencil</v-icon>
                <v-dialog v-model="dialogDelete">
                   <v-card>
                      <v-btn size="x-large" color="primary" @click="dialogDelete = !dialogDelete">annuler</v-btn>
-                     <v-btn size="x-large" color="error" @click="deleteDemande(item)">confirmer la supression</v-btn>
+                     <v-btn size="x-large" color="error" @click="deleteDemande()">confirmer la supression</v-btn>
                   </v-card>
                </v-dialog>
-               <v-icon size="x-large" color="error" @click="dialogDelete = !dialogDelete">mdi-delete</v-icon>
+               <v-icon size="x-large" color="error" @click="openDeleteDemande(item)">mdi-delete</v-icon>
             </template>
          </v-data-table-virtual>
       </v-card-text>

@@ -12,6 +12,7 @@ export default class ListAffaireComponent extends Vue {
    private storeModif = updateAffaireStore();
    private router = useRouter();
    private dialogDelete = false;
+   private itemToDelete: Affaire | null = null;
    private header = [
       {title: 'Numero Affaire', value: 'numero'},
       {title: 'Nom Affaire', value: 'nom'},
@@ -22,12 +23,14 @@ export default class ListAffaireComponent extends Vue {
       this.store.load();
    }
 
-   private async deleteAffaire(item: Affaire) {
-      if (await this.store.delete(item)) {
-         this.dialogDelete = false;
-         NotificationHandler.showNewNotification('Affaire supprimée avec succès !');
-      } else {
-         NotificationHandler.showNewNotification('Erreur lors de la suppression de l\'affaire.', true);
+   private async deleteAffaire() {
+      if (this.itemToDelete){
+         if (await this.store.delete(this.itemToDelete)) {
+            this.dialogDelete = false;
+            NotificationHandler.showNewNotification('Affaire supprimée avec succès !');
+         } else {
+            NotificationHandler.showNewNotification('Erreur lors de la suppression de l\'affaire.', true);
+         }
       }
    }
 
@@ -36,13 +39,20 @@ export default class ListAffaireComponent extends Vue {
       this.store.load();
    }
 
-   get list() {
-      return this.store.listAffaire.affaires;
-   }
-
    private editAffaire(item: Affaire) {
       this.storeModif.affaire = JSON.parse(JSON.stringify(item));
       this.router.push({name: 'modifAffaire'});
+   }
+
+   private openDialogDelete(item: Affaire) {
+      this.dialogDelete = true;
+      this.itemToDelete = item;
+   }
+
+   get formatedAffaire() {
+      return this.store.listAffaire.affaires.map(affaire => ({
+         ...affaire
+      })).sort((a,b) => b.id - a.id);
    }
 }
 </script>
@@ -71,7 +81,7 @@ export default class ListAffaireComponent extends Vue {
       <v-card-text>
          <v-data-table-virtual
              :headers="this.header"
-             :items="list"
+             :items="formatedAffaire"
              v-model:search="this.store.listAffaire.filter"
              :filter-keys="['numero','nom']"
              variant="outlined"
@@ -83,10 +93,10 @@ export default class ListAffaireComponent extends Vue {
                <v-dialog v-model="dialogDelete">
                   <v-card>
                      <v-btn size="x-large" color="primary" @click="dialogDelete = !dialogDelete">annuler</v-btn>
-                     <v-btn size="x-large" color="error" @click="deleteAffaire(item)">confirmer la supression</v-btn>
+                     <v-btn size="x-large" color="error" @click="deleteAffaire">confirmer la supression</v-btn>
                   </v-card>
                </v-dialog>
-               <v-icon size="x-large" color="error" @click="dialogDelete = !dialogDelete">mdi-delete</v-icon>
+               <v-icon size="x-large" color="error" @click="openDialogDelete(item)">mdi-delete</v-icon>
             </template>
          </v-data-table-virtual>
       </v-card-text>

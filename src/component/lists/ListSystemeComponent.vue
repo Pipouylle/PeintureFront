@@ -8,6 +8,7 @@ import {listSystemeStore, updateSystemeStore} from "@/stores/SystemeStore";
 import {listFournisseurStore} from "@/stores/FournisseurStore";
 import {listGrenaillageStore} from "@/stores/GrenaillageStore";
 import NotificationHandler from "@/services/NotificationHandler";
+import {Systeme} from "@/models/types/systeme";
 
 @Component({})
 
@@ -19,6 +20,7 @@ export default class ListSystemeComponent extends Vue {
    private grenaillageStore = listGrenaillageStore();
    private modifStore = updateSystemeStore();
    private router = useRouter();
+   private itemToDelete: Systeme | null = null;
    private dialogDelete = false;
    private selectedCouches: Record<number, Couche> = {};
    private header = [
@@ -42,12 +44,14 @@ export default class ListSystemeComponent extends Vue {
       await this.store.load();
    }
 
-   async deleteSysteme(item: any) {
-      if (await this.store.delete(item)) {
-         NotificationHandler.showNewNotification('Systeme supprimé avec succès !');
-      } else {
-         NotificationHandler.showNewNotification('Erreur lors de la suppression du systeme.', true);
-         await this.reload();
+   async deleteSysteme() {
+      if (this.itemToDelete) {
+         if (await this.store.delete(this.itemToDelete)) {
+            NotificationHandler.showNewNotification('Systeme supprimé avec succès !');
+         } else {
+            NotificationHandler.showNewNotification('Erreur lors de la suppression du systeme.', true);
+            await this.reload();
+         }
       }
    }
 
@@ -60,12 +64,17 @@ export default class ListSystemeComponent extends Vue {
       this.selectedCouches[systemeId] = couche; // Stockage de la sélection
    }
 
+   private openDeleteSysteme(item: Systeme) {
+      this.dialogDelete = true;
+      this.itemToDelete = item;
+   }
+
    get formatedSysteme(){
       return this.store.listSysteme.systemes.map(systeme => ({
          ...systeme,
          nomFournisseur: this.fournisseurStore.listFournisseur.fournisseurs.find(fournisseur => fournisseur.id === systeme.fournisseur.id)?.nom,
          nomGrenaillage: systeme.grenaillage?.nom || 'AUCUN',
-      }));
+      })).sort((a,b) => b.id - a.id);
    }
 }
 </script>
@@ -122,10 +131,10 @@ export default class ListSystemeComponent extends Vue {
                <v-dialog v-model="dialogDelete">
                   <v-card>
                      <v-btn size="x-large" color="primary" @click="dialogDelete = !dialogDelete">annuler</v-btn>
-                     <v-btn size="x-large" color="error" @click="deleteSysteme(item)">confirmer la supression</v-btn>
+                     <v-btn size="x-large" color="error" @click="deleteSysteme()">confirmer la supression</v-btn>
                   </v-card>
                </v-dialog>
-               <v-icon size="x-large" color="error" @click="dialogDelete = !dialogDelete">mdi-delete</v-icon>
+               <v-icon size="x-large" color="error" @click="openDeleteSysteme(item)">mdi-delete</v-icon>
             </template>
          </v-data-table-virtual>
       </v-card-text>

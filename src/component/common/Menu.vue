@@ -10,32 +10,35 @@ export default class Menu extends Vue {
    private list: { path?: string, name: string, children?: any[] }[] = [
       {path: "", name: "Home"},
       {
-         name: "Données", children: [
+         name: "Clients", children: [
             {path: "list/affaire", name: "Affaires"},
             {path: "list/commande", name: "Commandes"},
             {path: "list/demande", name: "Demandes"},
-            {path: "list/stock/sortie", name: "Stock Sortie"},
          ]
       },
       {
          name: 'Planification', children: [
             {path: "calendar2", name: "Planning"},
+            {path: "avancement/saisie", name: "Saisie Avancement"},
             {path: "usine/view?cabine=1", name: "Cabine 1"},
             {path: "usine/view?cabine=2", name: "Cabine 2"},
-            {path: "avancement/saisie", name: "Saisie Avancement"},
+         ]
+      },
+      {
+         name: "Stocks", children: [
+            {path: "list/stock/sortie", name: "Stock Sortie"},
+            {path: "list/article", name: "Articles"},
          ]
       },
       {
          name: 'Paramétrages', children: [
-            {path: "list/article", name: "Articles"},
             {path: "list/systeme", name: "Systemes"},
-            {path: "list/user", name: "Opérateur"},
+            {path: "list/user", name: "Opérateurs"},
             {path: "list/fournisseur", name: "Fournisseurs"},
             {path: "list/grenaillage", name: "Grenaillages"},
             {path: "list/semaine", name: "Semaines"},
          ]
       },
-
       //{path: "calendar", name: "Planing"},
       //{path: "calendarUsineCabine1", name: "Planing Atelier Cabine 1"},
       //{path: "calendarUsineCabine2", name: "Planing Atelier Cabine 2"},

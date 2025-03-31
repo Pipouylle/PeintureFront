@@ -25,6 +25,7 @@ export default class ListCommandeComponent extends Vue {
    private modifStore = updateCommandeStore();
    private demandeStore = listDemandeStore();
    private router = useRouter();
+   private itemToDelete: Commande | null = null;
    private dialogDelete = false;
    private header = [
       {title: 'Eureka', value: 'eureka'},
@@ -54,14 +55,22 @@ export default class ListCommandeComponent extends Vue {
       this.router.push({name: 'modifCommande'});
    }
 
-   async deleteCommande(item: Commande) {
-      if (await this.store.delete(item)) {
-         NotificationHandler.showNewNotification('Commande supprimée avec succès !');
-         this.dialogDelete = false;
-      } else {
-         NotificationHandler.showNewNotification('Erreur lors de la suppression de la commande.', true);
-         await this.reload();
+   async deleteCommande() {
+      console.log(this.itemToDelete)
+      if (this.itemToDelete) {
+         if (await this.store.delete(this.itemToDelete)) {
+            NotificationHandler.showNewNotification('Commande supprimée avec succès !');
+            this.dialogDelete = false;
+         } else {
+            NotificationHandler.showNewNotification('Erreur lors de la suppression de la commande.', true);
+            await this.reload();
+         }
       }
+   }
+
+   private openDeleteCommande(item: Commande) {
+      this.dialogDelete = true;
+      this.itemToDelete = item;
    }
 
    get formatedCommande() {
@@ -70,18 +79,12 @@ export default class ListCommandeComponent extends Vue {
          nomAffaire: this.affaireStore.listAffaire.affaires.find(affaire => affaire.id === commande.affaire.id)?.nom,
          numAffaire: this.affaireStore.listAffaire.affaires.find(affaire => affaire.id === commande.affaire.id)?.numero,
          nomSysteme: this.systemeStore.listSysteme.systemes.find(systeme => systeme.id === commande.systeme.id)?.nom,
-      }))
+      })).sort((a,b) => b.id - a.id);
    }
 }
 </script>
 
 <template>
-   <v-dialog v-model="dialogDelete">
-      <v-card>
-         <v-btn size="x-large" color="primary" @click="dialogDelete = !dialogDelete">annuler</v-btn>
-         <v-btn size="x-large" color="error" @click="deleteCommande()">confirmer la supression</v-btn>
-      </v-card>
-   </v-dialog>
    <v-card class="containerList">
       <v-card-title class="d-flex justify-space-between align-center titleList">
          <span> Liste des Commandes </span>
@@ -125,10 +128,10 @@ export default class ListCommandeComponent extends Vue {
                <v-dialog v-model="dialogDelete">
                   <v-card>
                      <v-btn size="x-large" color="primary" @click="dialogDelete = !dialogDelete">annuler</v-btn>
-                     <v-btn size="x-large" color="error" @click="deleteCommande(item)">confirmer la supression</v-btn>
+                     <v-btn size="x-large" color="error" @click="deleteCommande()">confirmer la supression</v-btn>
                   </v-card>
                </v-dialog>
-               <v-icon size="x-large" color="error" @click="dialogDelete = !dialogDelete">mdi-delete</v-icon>
+               <v-icon size="x-large" color="error" @click="openDeleteCommande(item)">mdi-delete</v-icon>
             </template>
          </v-data-table-virtual>
       </v-card-text>

@@ -22,7 +22,7 @@ export default class ListDemandeCalendarComponent extends Vue {
    }
 
    get formatedDemande() {
-      return this.demandeStore.listDemande.demandes.filter(demande => demande.etat !== 'terminé');
+      return this.demandeStore.listDemande.demandes.filter(demande => demande.etat !== 'terminé').sort((a,b) => b.id - a.id);
    }
 
 

@@ -112,3 +112,19 @@ export const getDemandeNotFinish = async (): Promise<Demande[]> => {
         throw error;
     }
 }
+
+export const getAllAvancement = async () => {
+    try {
+        const response = await apiClient.get<{
+            demandeId: number,
+            avancement: string
+        }[]>('/allAvancements');
+        return response.data.map(item => ({
+            demandeId: item.demandeId,
+            avancement: parseInt(item.avancement)
+        }));
+    } catch (error) {
+        console.log('Erreur lors de la récupération de tous les avancements:', error)
+        throw error;
+    }
+}
