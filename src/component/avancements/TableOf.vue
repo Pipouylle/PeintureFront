@@ -59,7 +59,6 @@ export default class TableOf extends Vue {
                density="comfortable"
                v-model="item.avancement"
                min="0"
-               :max="100 - (store.avancementModel.listPrevious.find(previous => previous.demandeId === item.demande.id)?.avancement ?? 0)"
             ></v-number-input>
          </template>
          <template v-slot:[`item.regieFP`]="{ item }">
