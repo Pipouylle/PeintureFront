@@ -17,7 +17,7 @@ export default class ArticleCouchemapper {
             tarif: parseFloat(obj?.tarifArticleCouche ?? "0"),
             couche: obj?.coucheArticleCouche ? typeof obj.coucheArticleCouche === 'object' ? Couchemapper.mapCouche(obj.coucheArticleCouche) : createDefaultCouche({id: parseInt(obj.coucheArticleCouche.split("/")[3])}) : createDefaultCouche(),
             commande: obj?.commandeArticleCouche ? typeof obj.commandeArticleCouche === 'object' ? Commandemapper.mapCommande(obj.commandeArticleCouche) : createDefaultCommande({id: parseInt(obj.commandeArticleCouche.split("/")[3])}) : createDefaultCommande(),
-            articles: obj?.articlesArticleCouche ? obj.articlesArticleCouche.map((article: string | object) => typeof article === 'object' ? Articlemapper.mapArticle(article) : createDefaultArticle({id: parseInt(article.split("T")[3])})) : [],
+            articles: obj?.articlesArticleCouche ? Object.values(obj.articlesArticleCouche).map((article: string | object) => typeof article === 'object' ? Articlemapper.mapArticle(article) : createDefaultArticle({id: parseInt(article.split("T")[3])})) : [],
             surfaces: obj?.surfaceCouchesArticleCouche ? obj.surfaceCouchesArticleCouche.map((sc: string | object) => typeof sc === 'object' ? SurfaceCouchemapper.mapSurfaceCouche(sc) : createDefaultSurfaceCouche({id: parseInt(sc.split("/")[3])})) : [],
         }
     }

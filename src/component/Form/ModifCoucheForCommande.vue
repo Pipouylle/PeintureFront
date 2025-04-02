@@ -95,12 +95,12 @@ export default class ModifCoucheForCommande extends Vue {
                            <v-btn
                                v-if="articleSelect.id == this.modifCommandeCouche.articles.length - 1"
                                @click="addMoreArticle">
-                              add Article
+                              ajouté
                            </v-btn>
                            <v-btn
                                v-if="this.modifCommandeCouche.articles.length > 1"
                                @click="removeArticle(articleSelect)"
-                           > remove
+                           > enlevé
                            </v-btn>
                         </v-row>
                      </v-col>

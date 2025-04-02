@@ -12,7 +12,7 @@ export default class Articlemapper {
             descriptif: obj?.designationArticle ?? "",
             ral: obj?.RALArticle ?? "",
             fournisseur: obj?.fournisseurArticle ? typeof obj.fournisseurArticle === 'object' ? FournisseurMapper.mapFournisseur(obj.fournisseurArticle) : createDefaultFournisseur({id: parseInt(obj.fournisseurArticle.split('/')[3])}) : createDefaultFournisseur(),
-            couches: obj?.articleCouchesArticle ? obj.articleCouchesArticle.map((ac: string | object) => typeof ac === 'object' ? ArticleCouchemapper.mapArticleCouche(ac) : createDefaultArticleCouche({id: parseInt(ac.split("/")[3])})) : [],
+            couches: obj?.articleCouchesArticle ? Object.values(obj.articleCouchesArticle).map((ac: string | object) => typeof ac === 'object' ? ArticleCouchemapper.mapArticleCouche(ac) : createDefaultArticleCouche({id: parseInt(ac.split("/")[3])})) : [],
         }
     }
 

@@ -57,16 +57,16 @@ export default class DialogOfComponent extends Vue {
                if (test){
                   this.stockSelect.push(stock);
                } else {
-                  NotificationHandler.showNewNotification("mauvais article", true);
+                  NotificationHandler.showNewNotification("Article non autorisé pour ce chantier.", true);
                }
             } else {
-               NotificationHandler.showNewNotification("le stock a déjà été selectionner", true);
+               NotificationHandler.showNewNotification("Le bidon a déjà été selectionné", true);
             }
          } else {
-            NotificationHandler.showNewNotification("le stock est déjà sortie", true);
+            NotificationHandler.showNewNotification("le bidon est déjà sortie", true);
          }
       } else {
-         NotificationHandler.showNewNotification("le stock est inexistant", true);
+         NotificationHandler.showNewNotification("le bidon est inexistant", true);
       }
       this.scanne = "";
       await nextTick();
