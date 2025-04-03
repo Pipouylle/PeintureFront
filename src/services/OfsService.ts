@@ -94,7 +94,7 @@ export const getOfBySemaine = async (semaine: Semaine): Promise<Of[]> => {
 export const updateAvancementOf = async (of: Of): Promise<Of> => {
     try {
         const ofs = Ofsmapper.mapOfs(of);
-        const response = await apiClientPatch.patch<Ofs>(`/ofsAvancement/${of.id}`, ofs);
+        const response = await apiClientPatch.patch<Ofs>(`/avancement/ofs/${of.id}`, ofs);
         return Ofsmapper.mapOf(response.data);
     } catch (error) {
         console.error('Erreur lors de la récupération des ofs:', error);
@@ -119,5 +119,15 @@ export const getOfForUsineView = async (semaineId: number, jourId: number): Prom
     } catch (error) {
         console.error('Erreur lors de la récupération des ofs:', error);
         throw error;
+    }
+}
+
+export const getOfForAvancement = async (semaineId: number): Promise<Of[]> => {
+    try {
+        const response = await apiClient.get<ApiResponseCollection>(`/avancement/ofs?semaine_of=${semaineId}`);
+        return Ofsmapper.mapArrayOf(response.data.member);
+    } catch (e) {
+        console.error('Erreur lors de la récupération des of pour l\'avacement', e);
+        throw e;
     }
 }

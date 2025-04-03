@@ -66,3 +66,16 @@ export const getAvancementSurfaceCoucheByOf = async (ofId: number): Promise<Avan
         throw error;
     }
 }
+
+export const updateAvancementAvancementSurfaceCouche = async (avancementSurfaceCouche: AvancementSurfaceCouche) => {
+    try {
+        const avancementSurfaceCouches = AvancementSurfaceCouchemapper.mapAvancementSurfaceCouches(avancementSurfaceCouche);
+        const response = await apiClientPatch.patch<AvancementSurfaceCouches>(`/avancement/avancementSurfaceCouches/${avancementSurfaceCouche.id}`,
+            {avancementAvancement : avancementSurfaceCouches.avancementAvancement}
+        );
+        return AvancementSurfaceCouchemapper.mapAvancementSurfaceCouche(response.data);
+    } catch (error) {
+        console.error('Erreur lors de la récupération des avancement surface couches:', error);
+        throw error;
+    }
+}

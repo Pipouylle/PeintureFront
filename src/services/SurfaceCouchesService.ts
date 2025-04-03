@@ -47,6 +47,7 @@ export const getSurfaceCoucheByDemande = async (id: number): Promise<SurfaceCouc
 export const updateSurfaceCouche = async (surfaceCouche: SurfaceCouche): Promise<SurfaceCouche> => {
     try {
         const surfaceCouches = SurfaceCouchemapper.mapSurfaceCouches(surfaceCouche);
+        console.log('surfaceCouches :', surfaceCouches);
         const response = await apiClientPatch.patch<SurfaceCouches>(`/surface_couches/${surfaceCouche.id}`, surfaceCouches);
         return SurfaceCouchemapper.mapSurfaceCouche(response.data);
     } catch (error) {
