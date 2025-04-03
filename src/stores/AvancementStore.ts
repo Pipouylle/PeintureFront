@@ -30,7 +30,6 @@ export const avancementStore = defineStore('avancementStore',{
                 await this.setSemaine(listSemaineStore().getCurrentSemaine() ?? createDefaultSemaine());
                 this.isLoad = true;
             }
-            console.log(this.avancementModel.listOF);
         },
         unLoad(){
             this.isLoad = false;
@@ -93,7 +92,6 @@ export const avancementStore = defineStore('avancementStore',{
                     this.avancementModel.listAffaire.push(affaire);
                 }
             }
-            console.log(this.avancementModel.listPrevious);
         },
 
         async previousSemaine(){

@@ -39,7 +39,7 @@ export default class TableOf extends Vue {
       >
          <template v-slot:[`item.nom`]="{ item }">
             <span>{{
-                  verifyOf(item) ? 'grenaillage' : 'couche n°' + ((this.store.avancementModel.listOF.find(of => of.avancements.some(couche => couche.id === item.id))?.avancements?.findIndex(c => c.id === item.id) ?? 0) + 1) + ' - ' + this.store.avancementModel.listOF.find(of => of.avancements.some(couche => couche.id === item.id))?.avancements?.find(c => c.id === item.id)?.surfaceCouches.articleCouche.couche.nom
+                  verifyOf(item) ? 'grenaillage' : 'couche n°' + ((this.store.avancementModel.listOF.find(of => of.avancements.some(couche => couche.id === item.id))?.avancements?.findIndex(c => c.id === item.id) ?? 0) + 1)
                }}</span>
          </template>
          <template v-slot:[`item.ral`]="{ item }">
