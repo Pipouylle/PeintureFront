@@ -53,6 +53,7 @@ export const avancementStore = defineStore('avancementStore',{
             this.avancementModel.listCommande = [];
             this.avancementModel.listAffaire = [];
             this.avancementModel.listSysteme = [];
+            this.avancementModel.listPrevious = [];
             /**
              * On récupère les demandes, commandes, affaires et systèmes uniquement en lien avec les of
              * l'on remplit aussi la list des avancement précedent
@@ -64,7 +65,7 @@ export const avancementStore = defineStore('avancementStore',{
                 if (test === -1) {
                     this.avancementModel.listDemande.push(demande);
                     try {
-                        this.avancementModel.listPrevious.push(await getPreviousAvancement(demande.id));
+                        this.avancementModel.listPrevious.push(await getPreviousAvancement(demande.id, of.id));
                     } catch (e) {
                         NotificationHandler.showNewNotification('je n\'ai pas pu récupérer les avancements précédents', true);
                     }

@@ -14,7 +14,7 @@ export interface AvancementModel {
     listAffaire: Affaire[];
     listDemande: Demande[];
     listSysteme: Systeme[];
-    listPrevious: {demandeId: number, avancement: number}[];
+    listPrevious: {demandeId: number, avancement: number, avancementCouche: number[]}[];
     cabines: string[];
     cabine: string;
     temps: string[];
