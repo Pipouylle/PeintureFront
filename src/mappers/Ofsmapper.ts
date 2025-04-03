@@ -20,7 +20,7 @@ export default class Ofsmapper {
             semaine: obj?.semaineOf ? typeof obj.semaineOf === 'object' ? Semainemapper.mapSemaine(obj.semaineOf) : createDefaultSemaine({id: parseInt(obj.semaineOf.split("/")[3])}) : createDefaultSemaine(),
             jour: obj?.jourOf ? Jour[parseInt(obj.jourOf.split("/")[3] ?? "0")] : Jour.AUTRE,
             demande: obj?.demandeOf ? typeof obj.demandeOf === 'object' ? Demandesmapper.mapDemande(obj.demandeOf) : createDefaultDemande({id: parseInt(obj.demandeOf.split("/")[3])}) : createDefaultDemande(),
-            avancements: obj.avancementSurfaceCouchesOf ? obj.avancementSurfaceCouchesOf.map((av: object | string) => typeof av === 'object' ? AvancementSurfaceCouchemapper.mapAvancementSurfaceCouche(av) : createDefaultAvancementSurfaceCouche({id: parseInt(av.split("/")[3])})) : [],
+            avancements: obj?.avancementSurfaceCouchesOf ? obj.avancementSurfaceCouchesOf.map((av: object | string) => typeof av === 'object' ? AvancementSurfaceCouchemapper.mapAvancementSurfaceCouche(av) : createDefaultAvancementSurfaceCouche({id: parseInt(av.split("/")[3])})).sort((a, b) => a.id - b.id) : [],
             order: obj?.orderOf ?? 0
         }
     }
