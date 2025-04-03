@@ -27,13 +27,6 @@ export default class TableOf extends Vue {
    private verifyOf(item: Of | AvancementSurfaceCouche): boolean {
       return item && typeof item === 'object' && 'cabine' in item;
    }
-
-   get formatedItems() {
-      return this.items.map((item: Of | AvancementSurfaceCouche) => ({
-         ...item,
-         nbCouche: this.verifyOf(item) ? undefined : this.store.avancementModel.listOF.find(of => of.avancements.some(couche => couche.id === item.id))?.avancements?.findIndex(c => c.id === item.id)
-      }))
-   }
 }
 </script>
 
@@ -41,12 +34,12 @@ export default class TableOf extends Vue {
    <v-card>
       <v-data-table-virtual
           :headers="this.header"
-          :items="formatedItems"
+          :items="this.items"
           variant="outlined"
       >
          <template v-slot:[`item.nom`]="{ item }">
             <span>{{
-                  verifyOf(item) ? 'grenaillage' : 'couche n°' + (item.nbCouche + 1)
+                  verifyOf(item) ? 'grenaillage' : 'couche n°' + ((this.store.avancementModel.listOF.find(of => of.avancements.some(couche => couche.id === item.id))?.avancements?.findIndex(c => c.id === item.id) ?? 0) + 1) + ' - ' + this.store.avancementModel.listOF.find(of => of.avancements.some(couche => couche.id === item.id))?.avancements?.find(c => c.id === item.id)?.surfaceCouches.articleCouche.couche.nom
                }}</span>
          </template>
          <template v-slot:[`item.ral`]="{ item }">
@@ -64,12 +57,12 @@ export default class TableOf extends Vue {
          </template>
          <template v-slot:[`item.pourcentageDemandePrevious`]="{ item }">
             <span>{{
-                  verifyOf(item) ? store.avancementModel.listPrevious.find(previous => previous.demandeId === item.demande.id)?.avancement + ' %' : store.avancementModel.listPrevious.find(previous => previous.demandeId === this.store.avancementModel.listOF.find(of => of.avancements.some(couche => couche.id === item.id))?.demande.id)?.avancementCouche[item.nbCouche ?? 0] + ' %'
+                  verifyOf(item) ? store.avancementModel.listPrevious.find(previous => previous.demandeId === item.demande.id)?.avancement + ' %' : store.avancementModel.listPrevious.find(previous => previous.demandeId === this.store.avancementModel.listOF.find(of => of.avancements.some(couche => couche.id === item.id))?.demande.id)?.avancementCouche[this.store.avancementModel.listOF.find(of => of.avancements.some(couche => couche.id === item.id))?.avancements?.findIndex(c => c.id === item.id) ?? 0 ?? 0] + ' %'
                }}</span>
          </template>
          <template v-slot:[`item.surfaceDemandePrevious`]="{ item }">
             <span>{{
-                  verifyOf(item) ? Math.floor((store.avancementModel.listPrevious.find(previous => previous.demandeId === item.demande.id)?.avancement ?? 0) * (item.demande.surface ?? 0) / 100) + " m²" : Math.floor((store.avancementModel.listPrevious.find(previous => previous.demandeId === this.store.avancementModel.listOF.find(of => of.avancements.some(couche => couche.id === item.id))?.demande.id)?.avancementCouche[item.nbCouche ?? 0] ?? 0) * (item.surfaceCouches.surface ?? 0) / 100) + " m²"
+                  verifyOf(item) ? Math.floor((store.avancementModel.listPrevious.find(previous => previous.demandeId === item.demande.id)?.avancement ?? 0) * (item.demande.surface ?? 0) / 100) + " m²" : Math.floor((store.avancementModel.listPrevious.find(previous => previous.demandeId === this.store.avancementModel.listOF.find(of => of.avancements.some(couche => couche.id === item.id))?.demande.id)?.avancementCouche[this.store.avancementModel.listOF.find(of => of.avancements.some(couche => couche.id === item.id))?.avancements?.findIndex(c => c.id === item.id) ?? 0 ?? 0] ?? 0) * (item.surfaceCouches.surface ?? 0) / 100) + " m²"
                }}</span>
          </template>
          <template v-slot:[`item.piecePrevious`]="{ item }">
@@ -120,7 +113,7 @@ export default class TableOf extends Vue {
          </template>
          <template v-slot:[`item.surfaceDemandeAfter`]="{ item }">
             <span>{{
-                  verifyOf(item) ? Math.floor((store.avancementModel.listPrevious.find(previous => previous.demandeId === item.demande.id)?.avancement + item.avancement) * (item.demande.surface ?? 0) / 100) : Math.floor((store.avancementModel.listPrevious.find(previous => previous.demandeId === this.store.avancementModel.listOF.find(of => of.avancements.some(couche => couche.id === item.id))?.demande.id)?.avancementCouche[item.nbCouche ?? 0] ?? 0 + item.avancement) * (item.surfaceCouches.surface ?? 0) / 100)
+                  verifyOf(item) ? Math.floor((store.avancementModel.listPrevious.find(previous => previous.demandeId === item.demande.id)?.avancement + item.avancement) * (item.demande.surface ?? 0) / 100) : Math.floor((store.avancementModel.listPrevious.find(previous => previous.demandeId === this.store.avancementModel.listOF.find(of => of.avancements.some(couche => couche.id === item.id))?.demande.id)?.avancementCouche[this.store.avancementModel.listOF.find(of => of.avancements.some(couche => couche.id === item.id))?.avancements?.findIndex(c => c.id === item.id) ?? 0] ?? 0 + item.avancement) * (item.surfaceCouches.surface ?? 0) / 100)
                }}</span>
          </template>
       </v-data-table-virtual>
